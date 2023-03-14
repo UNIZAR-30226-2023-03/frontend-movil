@@ -1,5 +1,0 @@
-primera linea
-segunda linea
-tercera linea
-hola mundo cruel
-adiós

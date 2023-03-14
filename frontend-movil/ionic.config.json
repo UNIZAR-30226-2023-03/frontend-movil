@@ -1,0 +1,7 @@
+{
+  "name": "frontend-movil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
