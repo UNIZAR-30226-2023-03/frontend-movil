@@ -1,0 +1,3 @@
+#Ficheros y directorios a ignorar
+*.vscode
+frontend-movil/node_modules
