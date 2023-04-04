@@ -4,12 +4,18 @@ import TabsPage from '../views/TabsPage.vue'
 import LoginPage from '../views/LoginPage.vue'
 import ParchisPage from '../views/ParchisPage.vue'
 import RegistroPage from '../views/RegistroPage.vue'
+import MenuPage from '../views/MenuPage.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: LoginPage
+    //redirect: '/tabs/tab1'
+  },
+  {
+    path: '/menu',
+    component: MenuPage
     //redirect: '/tabs/tab1'
   },
   {

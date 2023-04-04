@@ -1,3 +1,7 @@
+a {
+  text-align: center;
+}
+
 .pantalla{
     padding: 5%;
     background-color: #ffc957;
@@ -9,3 +13,146 @@
     height:50px;
     width:50px;
 }
+
+.containerBotonesJugar {
+  padding-top:40%;
+  color:white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#torneo{
+  color:white;
+  font-size: large;
+  padding: 13px;
+}
+
+#jugar{
+  color:white;
+  font-size: large;
+    padding: 13px;
+}
+
+.containerTablero{
+  border-radius: 20px;
+  padding-top: 125px ;
+  max-width: auto;
+  max-height: 45%;
+}
+
+.boton-menu-nombre{
+  float: left;
+  min-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boton-menu{
+  height: 50px;
+  width: 50px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgb(82,65,28);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.containerMenu1{
+  padding-top: 5%;
+}
+
+.containerMenu2{
+  padding-top: 20%;
+}
+
+.boton-menu-vict{
+  float: left;
+}
+
+
+
+.boton-menu-notis{
+  float: right;
+}
+
+.modal-container {
+    max-height: 400px;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* make the container position relative */
+  }
+  
+  .close-icon-img {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: fixed; /* fix the position of the close icon */
+    top: 10px;
+    right: 10px;
+    z-index: 9999; /* ensure the close icon appears above the modal */
+  }
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.33);
+    display: flex;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-container {
+      overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 300px;
+    margin: auto;
+    padding: 20px 30px;
+    border: 5px solid rgb(34,34,34);
+    border-radius: 13px;
+    
+    background-color:  rgb(69,69,69);;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+    transition: all 0.3s ease;
+  }
+  
+  .modal-header h3 {
+    margin-top: 0;
+    color: #42b983;
+  }
+  
+  .modal-body {
+    margin: 20px 0;
+  }
+  
+  .modal-default-button {
+    float: right;
+  }
+  
+  /*
+   * The following styles are auto-applied to elements with
+   * transition="modal" when their visibility is toggled
+   * by Vue.js.
+   *
+   * You can easily play with the modal transition by editing
+   * these styles.
+   */
+  
+  .modal-enter-from {
+    opacity: 0;
+  }
+  
+  .modal-leave-to {
+    opacity: 0;
+  }
+  
+  .modal-enter-from .modal-container,
+  .modal-leave-to .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
