@@ -1,0 +1,114 @@
+.pantalla{
+    padding: 5%;
+    background-color: #ffc957;
+    width: 100%;
+    height: 100%;
+}
+
+.boton{
+    height:50px;
+    width:50px;
+}
+
+
+.login-container {
+    position: absolute;
+    z-index: 2; /* Coloca el formulario encima de la imagen de fondo */
+    width: 75%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra el formulario en la pantalla */
+  }
+  
+  .login-background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .bg-image {
+    /* The image used */
+    background-image: url("../../public/assets/tableroFondo.png");
+  
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(8px); 
+  
+    /* Full height */
+    height: 100%;
+  
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  
+  /* Ajusta el tamaño de la imagen de fondo para que se ajuste a la pantalla */
+  @media (max-width: 768px) {
+    .bg-image {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  
+  
+  
+  h1 { 
+    font-size: 18px; 
+    font-weight: normal;
+    margin: 0; 
+    padding: 0; 
+    margin-bottom: 20px;
+  }
+  
+  form.login-form {
+    border-radius: 20px;
+    background-color: #262424;
+    border-radius: 5px;
+    margin: 50px auto 0 auto;
+    padding: 25px 15px;
+    text-align: center;
+    width: 100%;
+    
+  }
+  
+  input, button {
+    border-radius: 5px;
+  }
+  
+  span{
+    color: rgb(10, 181, 238);
+  }
+  
+  input {
+    border: 1px solid #dbd9d9;
+    background-color: rgb(247, 244, 241);
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 15px;
+    outline: 0;
+    padding: 9px 12px;
+    width: 100%;
+  }
+  
+  .register-link {
+    color: rgb(4, 210, 237);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+
+  .login-button {
+    background-color: rgb(238, 124, 10);
+    border: 2px solid #ffffff; /* Add this line to set the border color */
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    height: 50px;
+    margin-top: 10px;
+    outline: 0;
+    text-transform: uppercase;
+    width: 100%;
+  }
+  

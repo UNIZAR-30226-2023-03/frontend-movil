@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <ion-page>
     <ion-header>
       <ion-toolbar>
@@ -22,7 +22,26 @@
       </form>
     </ion-content>
   </ion-page>
-</template>
+</template> -->
+
+
+<template>
+  <div class="login-background">
+  <div class="bg-image"></div> 
+    <div class="login-container">
+      <form action="" name="login_form" class="login-form" method="post">
+        <h1>Iniciar sesion</h1>
+        <input type="text" placeholder="Username" aria-label="Username" name="username" v-model="userLogin" required autofocus>
+        <input type="password" placeholder="Password" aria-label="Password" name="password" v-model="password" required>
+        <button class="login-button" type="submit">Iniciar Sesión</button>
+        ¿Aun no tienes una cuenta? 
+        Registrate <span class="register-link" @click="moveToRegister">aquí</span>
+      </form>
+      
+    </div>
+  
+</div>
+  </template>
   
 <script>
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton } from '@ionic/vue';
@@ -31,17 +50,7 @@ import axios from 'axios';
 import router from "@/router";
 
 export default defineComponent({
-  components: {
-    IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonButton
-  },
+
   data() {
     return {
       userLogin: '',
@@ -66,7 +75,17 @@ export default defineComponent({
           console.log(error);
         });
     }
+    ,
+    moveToRegister() {
+  window.location.href = "/registrarse";
+  }
   }
 });
 </script>
+
+<style>
+@import '../theme/estilosInicio.css';
+</style>
+
+
   

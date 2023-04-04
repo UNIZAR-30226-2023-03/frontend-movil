@@ -3,12 +3,18 @@ import { RouteRecordRaw } from 'vue-router';
 import TabsPage from '../views/TabsPage.vue'
 import LoginPage from '../views/LoginPage.vue'
 import ParchisPage from '../views/ParchisPage.vue'
+import RegistroPage from '../views/RegistroPage.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: LoginPage
+    //redirect: '/tabs/tab1'
+  },
+  {
+    path: '/registrarse',
+    component: RegistroPage
     //redirect: '/tabs/tab1'
   },
   {
