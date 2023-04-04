@@ -4,10 +4,10 @@
     <div class="login-container">
       <form action="" name="login_form" class="login-form" method="post">
         <h1>Registrarse</h1>
-        <input type="text" placeholder="Nombre" aria-label="Username" name="username" v-model="userReg" required autofocus>
-        <input type="text" placeholder="Email" aria-label="Email" name="email" v-model="email" required autofocus>
-        <input type="password" placeholder="Contraseña" aria-label="Password" name="password" v-model="password1" required>
-        <input type="password" placeholder="Repita contraseña" aria-label="Password" name="password" v-model="password2" required>
+        <input type="text" class="login-input" placeholder="Nombre" aria-label="Username" name="username" v-model="userReg" required autofocus>
+        <input type="text" class="login-input" placeholder="Email" aria-label="Email" name="email" v-model="email" required autofocus>
+        <input type="password" class="login-input" placeholder="Contraseña" aria-label="Password" name="password" v-model="password1" required>
+        <input type="password" class="login-input" placeholder="Repita contraseña" aria-label="Password" name="password" v-model="password2" required>
         <button class="login-button" type="submit">Crear cuenta</button>
         ¿ya tienes cuenta? 
         Inicia sesión  <span class="register-link" @click="moveToLogin">aquí</span>
@@ -62,11 +62,5 @@ export default defineComponent({
 @import '../theme/estilosInicio.css';
 </style>
 
-<style>
-
-
-
-
-</style>
   
   

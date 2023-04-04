@@ -31,8 +31,8 @@
     <div class="login-container">
       <form action="" name="login_form" class="login-form" method="post">
         <h1>Iniciar sesion</h1>
-        <input type="text" placeholder="Username" aria-label="Username" name="username" v-model="userLogin" required autofocus>
-        <input type="password" placeholder="Password" aria-label="Password" name="password" v-model="password" required>
+        <input class="login-input" type="text" placeholder="Username" aria-label="Username" name="username" v-model="userLogin" required autofocus>
+        <input class="login-input" type="password" placeholder="Password" aria-label="Password" name="password" v-model="password" required>
         <button class="login-button" type="submit">Iniciar Sesión</button>
         ¿Aun no tienes una cuenta? 
         Registrate <span class="register-link" @click="moveToRegister">aquí</span>
