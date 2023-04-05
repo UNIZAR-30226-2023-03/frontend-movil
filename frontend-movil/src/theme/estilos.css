@@ -2,6 +2,20 @@ a {
   text-align: center;
 }
 
+.jugar-button {
+  background-color: rgb(34,124,213);
+  border: 2px solid #ffffff; /* Add this line to set the border color */
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  height: 50px;
+  margin-top: 10px;
+  outline: 0;
+  text-transform: uppercase;
+  width: 100%;
+  box-shadow: 0px 3px 10px rgba(246, 141, 29, 0.563);
+}
+
 .pantalla{
     padding: 5%;
     background-color: #ffc957;
@@ -15,12 +29,14 @@ a {
 }
 
 .containerBotonesJugar {
-  padding-top:40%;
-  color:white;
+  padding-top: 40%;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 10px; 
 }
+
 
 #torneo{
   color:white;
@@ -34,13 +50,22 @@ a {
     padding: 13px;
 }
 
-.containerTablero{
+.containerTablero {
   border-radius: 20px;
-  padding-top: 125px ;
+  padding-top: 125px;
   max-width: auto;
   max-height: 45%;
+  position: relative; 
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
+@keyframes bounce {
+  from { top: 0px; }
+  to { top: 10px; }
+}
 .boton-menu-nombre{
   float: left;
   min-width: 150px;

@@ -24,7 +24,7 @@
         <a class="login-button" id="torneo" @click="showModalNoti = true">
             Torneo
         </a>
-        <a class="login-button" id="jugar" @click="showModalNoti = true">
+        <a class="login-button" id="jugar" @click="showModalJugar = true">
             Jugar
         </a>
     </div>
@@ -34,6 +34,8 @@
     </Notificacion>
     <Victorias :show="showModalVict" @close="showModalVict = false">
     </Victorias>
+    <Jugar :show="showModalJugar" @close="showModalJugar = false">
+    </Jugar>
   </Teleport>
 </div>
   </template>
@@ -41,16 +43,19 @@
   <script>
   import Notificacion from "@/components/NotificacionesComponent.vue"
   import Victorias from "@/components/VictoriasComponent.vue"
+  import Jugar from "@/components/JugarComponent.vue"
   
   export default {
     components: {
       Notificacion,
-      Victorias
+      Victorias,
+      Jugar
     },
     data() {
       return {
         showModalNoti: false,
-        showModalVict: false
+        showModalVict: false,
+        showModalJugar: false
       }
     }
   }
