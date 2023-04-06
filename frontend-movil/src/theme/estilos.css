@@ -17,11 +17,14 @@ a {
 }
 
 .pantalla{
-    padding: 5%;
-    background-color: #ffc957;
-    width: 100%;
-    height: 100%;
+  padding: 5%;
+  background-color: #ffc957;
+  width: 100%;
+  height: 100%;
+  display:flex;
+  align-items:center;
 }
+
 
 .boton{
     height:50px;
@@ -29,7 +32,8 @@ a {
 }
 
 .containerBotonesJugar {
-  padding-top: 40%;
+  padding: 10px;
+  margin-bottom: 10%;
   color: white;
   display: flex;
   justify-content: center;
@@ -37,6 +41,12 @@ a {
   gap: 10px; 
 }
 
+@media (max-width: 768px) {
+  
+  .containerBotonesJugar {
+    margin-top: 20px;
+  }
+}
 
 #torneo{
   color:white;
@@ -52,14 +62,14 @@ a {
 
 .containerTablero {
   border-radius: 20px;
-  padding-top: 125px;
+  margin-top: 20px;
   max-width: auto;
-  max-height: 45%;
-  position: relative; 
-  animation-name: bounce;
+  max-height: 50%;
+  position:relative; 
+  /* animation-name: bounce;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
+  animation-direction: alternate; */
 }
 
 @keyframes bounce {
@@ -86,11 +96,11 @@ a {
 }
 
 .containerMenu1{
-  padding-top: 5%;
+  margin-top: 10px;
 }
 
 .containerMenu2{
-  padding-top: 20%;
+  margin-top: 80px;
 }
 
 .boton-menu-vict{

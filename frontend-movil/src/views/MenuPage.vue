@@ -62,7 +62,7 @@
   </script>
 
 <style>
-@import '../theme/estilos.css';
+@import '../theme/prueba.css';
 @import '../theme/estilosInicio.css';
 </style>
   
