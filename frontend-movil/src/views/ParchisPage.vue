@@ -13,6 +13,7 @@
             <IconoJugador :nombreUsuario="jugadores[1].nombre" izquierda="false" class="ion-float-right" style="width: 30%;"/>
         </div>
         <div style="width: 80%; margin: auto;">
+        
             <TableroComponent />
         </div>
         <div style="margin-bottom: 20px; overflow: hidden;">

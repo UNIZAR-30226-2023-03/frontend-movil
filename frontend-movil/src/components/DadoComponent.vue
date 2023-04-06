@@ -23,7 +23,6 @@ export default{
             return new Promise((resolve) => setTimeout(resolve, milliseconds));
         },
         crearDado(d){
-            console.log("crear");
             const canvas = document.getElementById('dado');
             const ctx = canvas.getContext('2d');
 
@@ -37,7 +36,6 @@ export default{
             }
         },
         async tirarDado(){
-            console.log("tirar");
             const canvas = document.getElementById('dado');
             const ctx = canvas.getContext('2d');
 
