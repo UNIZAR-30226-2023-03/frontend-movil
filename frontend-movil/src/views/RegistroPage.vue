@@ -48,8 +48,8 @@ export default defineComponent({
           const success = response.status === 200;
           console.log(success);
           if(success){
-            // router.push('/')
-            window.location.href = "/";
+            router.push('/')
+            //window.location.href = "/";
           }
         })
         .catch(function (error) {
@@ -58,7 +58,7 @@ export default defineComponent({
     }
     ,
     moveToLogin() {
-  window.location.href = "/";
+      router.push('/')
 }
   }
 });

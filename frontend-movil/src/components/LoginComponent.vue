@@ -17,50 +17,41 @@
 </div>
   </template>
   
-<script>
-
-import { defineComponent } from 'vue';
-import axios from 'axios';
-import router from "@/router";
-
-export default defineComponent({
-
-  data() {
-    return {
-      userLogin: '',
-      password: ''
-    };
-  },
-  methods: {
-    login() {
-  console.log("antes del post");
-  axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
-    login: this.userLogin,
-    password: this.password
-  })
-  .then((response) => {
-    console.log("despues del post");
-    console.log(response);
-    const success = response.status === 200;
-    console.log(success);
-    if (success) {
-      console.log("pase usted");
-      // this.$router.push('/menu');
-      window.location.href = "/menu";
+  <script>
+  import { defineComponent } from 'vue';
+  import axios from 'axios';
+  import router from "@/router";
+  
+  export default defineComponent({
+    data() {
+      return {
+        userLogin: '',
+        password: ''
+      };
+    },
+    methods: {
+      login() {
+        axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
+          login: this.userLogin,
+          password: this.password
+        })
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            router.push('/menu'); // navigate to /menu route
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      },
+      moveToRegister() {
+        router.push('/registrarse'); // navigate to /registrarse route
+      }
     }
-  })
-  .catch((error) => {
-    console.log(error);
   });
-}
-  ,
-  moveToRegister() {
-    window.location.href = "/registrarse";
-  }
-}
-
-});
-</script>
+  </script>
+  
 
 <style>
 @import '../theme/estilosInicio.css';
