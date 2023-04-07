@@ -3,7 +3,7 @@
     <div class="containerMenu1">
         
         <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalVict = true">
-            Nombre mio 
+          {{ this.$route.query.username }} 
         </a>
         <a class="boton1 boton-menu-notis boton-menu" id="show-modalN" @click="showModalNoti = true">
             <img src="../../public/assets/noti.png" alt="cerrar popup">
@@ -53,11 +53,18 @@
     },
     data() {
       return {
+        userId: this.$route.query.userId,
         showModalNoti: false,
         showModalVict: false,
         showModalJugar: false
       }
-    }
+    },
+    mounted() {
+    
+    console.log('Component created!')
+    console.log('username: ',this.$route.query.username)
+    console.log('userId: ', this.userId)
+  }
   }
   </script>
 

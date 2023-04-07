@@ -37,8 +37,9 @@
         })
         .then((response) => {
           const success = response.status === 200;
+          console.log(response.data.username)
           if (success) {
-            router.push('/menu'); // navigate to /menu route
+            router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
           }
         })
         .catch((error) => {
