@@ -1,5 +1,5 @@
 <template>
-<div class="pantalla">
+<div class="pantalla-menu">
     <div class="containerMenu1">
         
         <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalVict = true">

@@ -3,7 +3,7 @@
   <div class="login-background">
   <div class="bg-image"></div> 
     <div class="login-container">
-      <form action="" name="login_form" class="login-form" method="post">
+      <form @submit.prevent="login" name="login_form" class="login-form" method="post">
         <h1>Iniciar sesion</h1>
         <input class="login-input" type="text" placeholder="Username" aria-label="Username" name="username" v-model="userLogin" required autofocus>
         <input class="login-input" type="password" placeholder="Password" aria-label="Password" name="password" v-model="password" required>
@@ -18,7 +18,7 @@
   </template>
   
 <script>
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton } from '@ionic/vue';
+
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import router from "@/router";
@@ -33,27 +33,32 @@ export default defineComponent({
   },
   methods: {
     login() {
-      axios.post('https://backend-sy93.onrender.com/usuarios/login', {
-        login: this.userLogin,
-        password: this.password
-      })
-        .then(function (response) {
-          console.log(response);
-          const success = response["data"];
-          console.log(success);
-          if(success){
-            router.push('/tabs/tab1')
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+  console.log("antes del post");
+  axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
+    login: this.userLogin,
+    password: this.password
+  })
+  .then((response) => {
+    console.log("despues del post");
+    console.log(response);
+    const success = response.status === 200;
+    console.log(success);
+    if (success) {
+      console.log("pase usted");
+      // this.$router.push('/menu');
+      window.location.href = "/menu";
     }
-    ,
-    moveToRegister() {
-  window.location.href = "/registrarse";
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+  ,
+  moveToRegister() {
+    window.location.href = "/registrarse";
   }
-  }
+}
+
 });
 </script>
 
