@@ -17,14 +17,14 @@ export default {
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
         <div style=" display:flex;">
-        <a style="padding:15px; color: white;" class="jugar-button" id="privada" @click="showModalJugar = true">
+        <ion-button id="privada" class="boton-submenu" @click="$emit('partidaPrivada')">
             Privada
-        </a>
+        </ion-button>
         </div>
         <div style=" display:flex;">
-          <a style="padding:15px; color: white;" class="jugar-button" id="publica" @click="showModalJugar = true">
+          <ion-button id="publica" class="boton-submenu" @click="$emit('partidaPublica')">
             Pública
-        </a>
+        </ion-button>
         </div>
         
       </div>

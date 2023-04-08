@@ -11,8 +11,23 @@ export default{
     data(){
         return{
            fichas:[
-            {idFicha:'r1', x:0.5, y:0.5, color:'red'},
-            {idFicha:'r2', x:0.1445, y:0.1445,color:'blue'}
+            {idFicha:'y1', casilla: 12, color:'yellow'},
+            {idFicha:'y2', casilla: 13, color:'yellow'},
+            {idFicha:'y3', casilla: 14, color:'yellow'},
+            {idFicha:'y4', casilla: 15, color:'yellow'},
+            {idFicha:'b1', casilla: 4, color:'blue'},
+            {idFicha:'b2', casilla: 5, color:'blue'},
+            {idFicha:'b3', casilla: 6, color:'blue'},
+            {idFicha:'b4', casilla: 7, color:'blue'},
+            {idFicha:'r1', casilla: 0, color:'red'},
+            {idFicha:'r2', casilla: 1, color:'red'},
+            {idFicha:'r3', casilla: 2, color:'red'},
+            {idFicha:'r4', casilla: 3, color:'red'},
+            {idFicha:'g1', casilla: 8, color:'green'},
+            {idFicha:'g2', casilla: 9, color:'green'},
+            {idFicha:'g3', casilla: 10, color:'green'},
+            {idFicha:'g4', casilla: 11, color:'green'}
+            
            ],
            casillas:[
             {idCasilla:0, numCasilla:0, x:0.2262382865, y:0.6037234043, numFichas:0, esVertical:true},
@@ -87,40 +102,44 @@ export default{
         }
     },
     methods:{
+        actualizarPosiciones(){
+            const canvas = document.getElementById('parchisBoard');
+            const rect = canvas.getBoundingClientRect();
+            const xTablero = rect.left;
+            const yTablero = rect.top;
+            const widthTablero = rect.width;
+            const heightTablero = rect.height;
+
+            this.fichas.forEach(ficha => {
+                const casilla = this.casillas[ficha.casilla];
+                const boton = document.getElementById(ficha.idFicha);
+
+                boton.style.position = "absolute";
+                boton.style.backgroundColor = ficha.color;
+                boton.style.width = widthTablero * 0.044 +"px";
+                boton.style.height = widthTablero * 0.044 +"px";
+
+                const pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
+                const pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 3 ;
+
+                boton.style.left = pixelesx+"px";
+                boton.style.top = pixelesy+"px";
+            });
+        },
         crearTablero() {
-    const canvas = document.getElementById('parchisBoard');
-    const ctx = canvas.getContext('2d');
+            const canvas = document.getElementById('parchisBoard');
+            const ctx = canvas.getContext('2d');
 
-    canvas.height = canvas.width;
-    const boardImage = new Image();
-    boardImage.src = 'assets/tablero.png';
+            canvas.height = canvas.width;
+            const boardImage = new Image();
+            boardImage.src = 'assets/tablero.png';
 
-    boardImage.onload = () => { // Arrow function instead of regular function
-        ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
+            boardImage.onload = () => { // Arrow function instead of regular function
+                ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
 
-        const rect = canvas.getBoundingClientRect();
-        const xTablero = rect.left;
-        const yTablero = rect.top;
-        const widthTablero = rect.width;
-        const heightTablero = rect.height;
-
-        this.fichas.forEach(ficha => {
-            const boton = document.getElementById(ficha.idFicha);
-
-
-            boton.style.position = "absolute";
-            boton.style.backgroundColor = ficha.color;
-            boton.style.width = widthTablero * 0.044 +"px";
-            boton.style.height = widthTablero * 0.044 +"px";
-
-            const pixelesx = xTablero + ficha.x * widthTablero - boton.getBoundingClientRect().width / 2;
-            const pixelesy = (yTablero + ficha.y * heightTablero) - boton.getBoundingClientRect().height / 3 ;
-
-            boton.style.left = pixelesx+"px";
-            boton.style.top = pixelesy+"px";
-        });
-  }
-}
+                this.actualizarPosiciones();
+            }
+        }
 
     }    
     ,

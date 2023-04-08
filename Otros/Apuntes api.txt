@@ -1,0 +1,28 @@
+Partida pública:
+/partida/publica
+
+Partida privada:
+/partida/crear y /partida/empezar o /partida/conectar
+
+Guardar ID, color y jugadores
+
+crear websocket stompjs (Código en discord). topics:
+- nuevo-jugador: Mostrar jugador que se ha unido
+- dado: Salir de casa o pasar de turno si no hay nada que mover.
+- movimiento: Movimiento de otros jugadores
+- chat: Mensajes que llegan
+- turno: Solo al principio
+Sirven para escuchar movimientos de otros jugadores. Tienen el mismo formato de JSON que el que devuelven los respectivos Webservices.
+
+La partida empieza cuando llega turno, que dice quién empieza. Después se va mandando el turno con los movimientos.
+
+Si se pasa el tiempo lanzar el dado automáticamente y hacer una jugada aleatoria.
+
+/partida/dado: Mandar valor del dado
+Si sacar es false, fichas son las fichas que NO se pueden mover
+Si sacar es true, se saca una ficha de casa a casilla
+Si se fuerza a hacer un movimiento como salir de casas y o no poder hacer nada turno será el del siguiente y no el mismo.
+
+/partida/movimiento Mandar partida, ficha y dado
+Devuelve la nueva posición destino de la ficha, el color e id de la ficha comida (si la hay), el siguiente turno y si la partida se ha terminado.
+
