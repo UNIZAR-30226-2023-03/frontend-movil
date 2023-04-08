@@ -34,37 +34,62 @@
     </Notificacion>
     <Victorias :show="showModalVict" @close="showModalVict = false">
     </Victorias>
-    <Jugar :show="showModalJugar" @close="showModalJugar = false">
+    <Jugar :show="showModalJugar" @close="showModalJugar = false" @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="jugar">
     </Jugar>
+    <Privada :show="showModalPrivada" :idJugador="idUsuario" @close="showModalPrivada = false">
+    </Privada>
   </Teleport>
 </div>
   </template>
   
   <script>
+  import axios from 'axios';
+  import router from "@/router";
   import Notificacion from "@/components/NotificacionesComponent.vue"
   import Victorias from "@/components/VictoriasComponent.vue"
   import Jugar from "@/components/JugarComponent.vue"
+  import Privada from "@/components/PrivadaComponent.vue"
   
   export default {
     components: {
       Notificacion,
       Victorias,
-      Jugar
+      Jugar,
+      Privada
     },
     data() {
       return {
-        userId: this.$route.query.userId,
+        idUsuario: this.$route.query.userId,
+        nombreUsuario: this.$route.query.username,
         showModalNoti: false,
         showModalVict: false,
-        showModalJugar: false
+        showModalJugar: false,
+        showModalPrivada: false
+      }
+    },
+    methods:{
+      jugar(){
+        console.log("jugar publica:", this.codigoPartida, this.passwdPartida, this.idJugador);
+        axios.post('https://lamesa-backend.azurewebsites.net/partida/publica', {
+            jugador: this.idJugador,
+            configuracionB: "SOLO_SEGUROS",
+            configuracionF: "NORMAL"
+          })
+          .then((response) => {
+            const success = response.status === 200;
+            if (success) {
+              router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     },
     mounted() {
-    
-    console.log('Component created!')
-    console.log('username: ',this.$route.query.username)
-    console.log('userId: ', this.userId)
-  }
+      console.log('IdUsuario: ',this.idUsuario)
+      console.log('NombreUsuario: ', this.nombreUsuario)
+    }
   }
   </script>
 

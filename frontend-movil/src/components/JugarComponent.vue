@@ -4,7 +4,7 @@ export default {
     show: Boolean
   },
   methods: {
-    // Any additional methods you need can be defined here
+
   }
 }
 </script>

@@ -1,6 +1,13 @@
 <template>
-    <canvas id="dado" style="width: 100%"></canvas>
+    <canvas id="dado" style="width: 100%" :class="{ dadoActivado:activado }"></canvas>
 </template>
+
+<style>
+.dadoActivado {
+  border-radius: 10px;
+  border: 6px solid #ffffff;
+}
+</style>
 
 <script>
 
@@ -15,7 +22,7 @@ const rutas = ['assets/dado/1.png',
 export default{
     data() {
         return {
-            
+            activado: false
         }
     },
     methods:{
@@ -36,6 +43,7 @@ export default{
             }
         },
         async tirarDado(){
+            this.activado = false;
             const canvas = document.getElementById('dado');
             const ctx = canvas.getContext('2d');
 
@@ -46,11 +54,13 @@ export default{
                 this.crearDado(num);
             }
             return num;
+        },
+        activarDado(){
+            this.activado = true;
         }
     },
     mounted(){
         this.crearDado(0);
-        console.log(this.tirarDado());
     }
 }
 </script>

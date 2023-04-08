@@ -1,3 +1,10 @@
+.dado{
+  border-radius: 10px;
+}
+.dado :active{
+  border: 2px solid #ffffff;
+}
+
 .boton-submenu{
   border: 2px solid #ffffff; /* Add this line to set the border color */
   border-radius: 10px;
