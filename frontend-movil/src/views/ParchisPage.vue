@@ -39,9 +39,10 @@ import IconoJugador from '../components/IconoJugador';
 import DadoComponent from '../components/DadoComponent';
 import TableroComponent from '../components/TableroComponent';
 import TimerComponent from '../components/TimerComponent';
-
 import * as SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
+import { defineComponent } from 'vue';
+
 
 
 
@@ -91,7 +92,7 @@ export default {
         movimiento(idFicha, colorFicha, nuevaCasilla, idComida = 0, colorComida = 0){
             //Mover ficha
             const offset = this.offsetColor(colorFicha);
-            this.$refs.tablero.fichas[offset + idFicha - 1].casilla = nuevaCasilla;
+            this.$refs.tablero.fichas[offset + idFicha - 1].casilla = nuevaCasilla-1;
 
             //Si hay comida
             if(idComida != 0){
@@ -120,20 +121,27 @@ export default {
                     //Un jugador ha sacado ficha de casa -> Actualizar tablero
                     const data = JSON.parse(response.body);
                     console.log(data);
+
+                    if(data.sacar == "true"){
+                        //Sacar casilla de casa
+                        const idFicha = data.casilla.fichas[response.data.casilla.fichas.length -1].id;
+                        const colorFicha = data.casilla.fichas[response.data.casilla.fichas.length -1].color; //Debería ser siempre mi color
+                        const idCasillaDestino = data.casilla.posicion;
+                        this.movimiento(idFicha, colorFicha, idCasillaDestino);
+                    }
+                    this.actualizarTurno(data.turno);
                 })
                 stompClient.subscribe("/topic/movimiento/" + idPartida, (response) => {
                     //Un jugador ha hecho un movimiento -> Actualizar tablero
                     const data = JSON.parse(response.body);
                     console.log(data);
                     const casillaDestino = data.destino.posicion;
-                    const fichas = data.fichas;
-                    fichas.forEach(ficha => {
-                        if(data.comida != 0){
-                            this.movimiento(ficha.id, ficha.color, casillaDestino);
-                        }else{
-                            this.movimiento(ficha.id, ficha.color, casillaDestino, data.comida.id, data.comida.color);
-                        }
-                    });
+                    const ficha = data.ficha;
+                    if(data.comida != 0){
+                        this.movimiento(ficha.id, ficha.color, casillaDestino);
+                    }else{
+                        this.movimiento(ficha.id, ficha.color, casillaDestino, data.comida.id, data.comida.color);
+                    }
                     this.actualizarTurno(data.turno);
 
                 })
@@ -145,8 +153,7 @@ export default {
                 stompClient.subscribe("/topic/turno/" + idPartida, (response) => {
                     //Empezar partida
                     const data = JSON.parse(response.body);
-                    console.log(data);
-                    this.comenzarPartida(data.color);
+                    this.comenzarPartida(data);
                 })
             })
         },
@@ -169,10 +176,8 @@ export default {
         },
         realizarTurno(){
             //Realizar jugada
-            if(this.turno == this.color){
-                this.miTurno = true;
-                this.$refs.dado.activarDado();
-            }
+            this.miTurno = true;
+            this.$refs.dado.activarDado();
         },
         actualizarTurno(color){
             if(color !=this.turno){
@@ -180,9 +185,10 @@ export default {
                 this.$refs.timer.resetTimer();
                 this.$refs.timer.encenderTimer();
 
-                this.turno == color;
+                this.turno = color;
                 if(this.color == this.turno){
                     //Toca jugar
+                    console.log("Mi turno");
                     this.miTurno = true;
                     this.realizarTurno();
                 }
@@ -191,23 +197,24 @@ export default {
         async dadoPulsado(){
             if(this.$refs.dado.activado){
                 const valorDado = await this.$refs.dado.tirarDado();
+                console.log("Valor dado:", valorDado);
                 this.verMovimientos(valorDado);
             }
         },
         verMovimientos(valorDado){
-            axios.post('https://lamesa-backend.azurewebsites.net/partida/dado/' + this.idPartida, {
-                dado: valorDado
-            })
+            axios.post('https://lamesa-backend.azurewebsites.net/partida/dado/'+ this.idPartida + "?dado=" + valorDado, {})
             .then((response) => {
                 const success = response.status === 200;
                 if (success) {
-                    if(response.data.sacar == "true"){
+                    console.log(response.data);
+                    if(response.data.sacar == true){
                         //Sacar casilla de casa
-                        const idFicha = response.data.casilla.fichas[response.data.casilla.fichas.length -1].id;
+                        console.log("sacar");
+                        const numeroFicha = response.data.casilla.fichas[response.data.casilla.fichas.length -1].numero;
                         const colorFicha = response.data.casilla.fichas[response.data.casilla.fichas.length -1].color; //Debería ser siempre mi color
-                        const idCasillaDestino = response.dada.casilla.posicion;
-                        this.movimiento(idFicha, colorFicha, idCasillaDestino);
-                    }else if(response.data.sacar == "false"){
+                        const casillaDestino = response.data.casilla.posicion;
+                        this.movimiento(numeroFicha, colorFicha, casillaDestino);
+                    }else if(response.data.sacar == false){
                         //Mostrar todas las fichas
                         this.$refs.tablero.fichas.forEach(ficha => {
                             ficha.activada = true;
@@ -222,9 +229,8 @@ export default {
                         this.valorDado = valorDado;
                     }
                     //Cambiar de turno si corresponde
-                    if(response.data.turno != this.turno){
-                        this.actualizarTurno(response.data.turno);
-                    }
+                    this.actualizarTurno(response.data.turno);
+                    
                     
                 }
             })
@@ -232,7 +238,7 @@ export default {
                 console.log(error);
             });
         },
-        realizarMovimiento(ficha){
+        realizarMovimiento(event, ficha){
             if(!ficha.activada){
                 return;
             }

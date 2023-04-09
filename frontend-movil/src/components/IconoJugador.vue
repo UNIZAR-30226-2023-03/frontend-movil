@@ -15,7 +15,10 @@
     .icono{
         width: 100%;
         border-radius: 10px;
-        background-color:#cca045
+        background-color:#cca045;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .remarcar{
@@ -24,12 +27,12 @@
 </style>
 
 <script>
+import { IonImg } from '@ionic/vue';
+import { defineComponent } from 'vue';
+
 export default {
     props: ['nombreUsuario',
             'izquierda',
-            'seleccionado'],
-    mounted(){
-        console.log(this.seleccionado)
-    }
+            'seleccionado']
 };
 </script>

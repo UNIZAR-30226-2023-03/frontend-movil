@@ -53,7 +53,7 @@ export default{
                 num = Math.floor(Math.random() * 6);
                 this.crearDado(num);
             }
-            return num;
+            return num+1;
         },
         activarDado(){
             this.activado = true;

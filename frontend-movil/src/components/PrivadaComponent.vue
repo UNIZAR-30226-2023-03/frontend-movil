@@ -25,7 +25,7 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:true } });
+            router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores.username, hostPrivada:true } });
           }
         })
         .catch((error) => {

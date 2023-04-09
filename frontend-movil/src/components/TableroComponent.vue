@@ -1,32 +1,34 @@
 <template>
-    <button style="border-radius: 50%;" v-for="(ficha, index) in fichas" :id="ficha.idFicha" :key="index" :item="ficha" @click="$emit('fichaPulsada', item)"> </button>
+    <button style="border-radius: 50%;" v-for="(ficha, index) in fichas" :id="ficha.idFicha" :key="index"  @click="$emit('fichaPulsada', $event, ficha)"> </button>
     
     <canvas id="parchisBoard" style="width: 100%; border-radius: 10px;"></canvas> 
     
 </template>
 
 <script>
+import { IonButton } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
 export default{
     data(){
         return{
            fichas:[
-            {idFicha:'y1', id:1, color:'AMARILLO',casilla: 12, colorEstilo:'yellow', activada:false},
-            {idFicha:'y2', id:2, color:'AMARILLO',casilla: 13, colorEstilo:'yellow', activada:false},
-            {idFicha:'y3', id:3, color:'AMARILLO',casilla: 14, colorEstilo:'yellow', activada:false},
-            {idFicha:'y4', id:4, color:'AMARILLO',casilla: 15, colorEstilo:'yellow', activada:false},
-            {idFicha:'b1', id:1, color:'AZUL',casilla: 4, colorEstilo:'blue', activada:false},
-            {idFicha:'b2', id:2, color:'AZUL',casilla: 5, colorEstilo:'blue', activada:false},
-            {idFicha:'b3', id:3, color:'AZUL',casilla: 6, colorEstilo:'blue', activada:false},
-            {idFicha:'b4', id:4, color:'AZUL',casilla: 7, colorEstilo:'blue', activada:false},
+            {idFicha:'y1', id:1, color:'AMARILLO',casilla: 0, colorEstilo:'yellow', activada:false},
+            {idFicha:'y2', id:2, color:'AMARILLO',casilla: 0, colorEstilo:'yellow', activada:false},
+            {idFicha:'y3', id:3, color:'AMARILLO',casilla: 0, colorEstilo:'yellow', activada:false},
+            {idFicha:'y4', id:4, color:'AMARILLO',casilla: 0, colorEstilo:'yellow', activada:false},
+            {idFicha:'b1', id:1, color:'AZUL',casilla: 0, colorEstilo:'blue', activada:false},
+            {idFicha:'b2', id:2, color:'AZUL',casilla: 0, colorEstilo:'blue', activada:false},
+            {idFicha:'b3', id:3, color:'AZUL',casilla: 0, colorEstilo:'blue', activada:false},
+            {idFicha:'b4', id:4, color:'AZUL',casilla: 0, colorEstilo:'blue', activada:false},
             {idFicha:'r1', id:1, color:'ROJO',casilla: 0, colorEstilo:'red', activada:false},
-            {idFicha:'r2', id:2, color:'ROJO',casilla: 1, colorEstilo:'red', activada:false},
-            {idFicha:'r3', id:3, color:'ROJO',casilla: 2, colorEstilo:'red', activada:false},
-            {idFicha:'r4', id:4, color:'ROJO',casilla: 3, colorEstilo:'red', activada:false},
-            {idFicha:'g1', id:1, color:'VERDE',casilla: 8, colorEstilo:'green', activada:false},
-            {idFicha:'g2', id:2, color:'VERDE',casilla: 9, colorEstilo:'green', activada:false},
-            {idFicha:'g3', id:3, color:'VERDE',casilla: 10, colorEstilo:'green', activada:false},
-            {idFicha:'g4', id:4, color:'VERDE',casilla: 11, colorEstilo:'green', activada:false}
+            {idFicha:'r2', id:2, color:'ROJO',casilla: 0, colorEstilo:'red', activada:false},
+            {idFicha:'r3', id:3, color:'ROJO',casilla: 0, colorEstilo:'red', activada:false},
+            {idFicha:'r4', id:4, color:'ROJO',casilla: 0, colorEstilo:'red', activada:false},
+            {idFicha:'g1', id:1, color:'VERDE',casilla: 0, colorEstilo:'green', activada:false},
+            {idFicha:'g2', id:2, color:'VERDE',casilla: 0, colorEstilo:'green', activada:false},
+            {idFicha:'g3', id:3, color:'VERDE',casilla: 0, colorEstilo:'green', activada:false},
+            {idFicha:'g4', id:4, color:'VERDE',casilla: 0, colorEstilo:'green', activada:false}
             
            ],
            casillas:[
@@ -126,7 +128,7 @@ export default{
                 boton.style.top = pixelesy+"px";
 
                 if(ficha.activada){
-                    boton.style.border = "3px solid #ffffff";
+                    boton.style.border = "3px solid black";
                 }
             });
         },
