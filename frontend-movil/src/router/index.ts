@@ -24,6 +24,7 @@ const routes: Array<RouteRecordRaw> = [
     //redirect: '/tabs/tab1'
   },
   {
+    name: 'partida',
     path: '/partida',
     component: ParchisPage
   },

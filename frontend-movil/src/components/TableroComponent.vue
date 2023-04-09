@@ -1,5 +1,5 @@
 <template>
-    <button style="border-radius: 50%;" v-for="(ficha, index) in fichas" :id="ficha.idFicha" :key="index"> </button>
+    <button style="border-radius: 50%;" v-for="(ficha, index) in fichas" :id="ficha.idFicha" :key="index" :item="ficha" @click="$emit('fichaPulsada', item)"> </button>
     
     <canvas id="parchisBoard" style="width: 100%; border-radius: 10px;"></canvas> 
     
@@ -11,22 +11,22 @@ export default{
     data(){
         return{
            fichas:[
-            {idFicha:'y1', casilla: 12, color:'yellow', activada:false},
-            {idFicha:'y2', casilla: 13, color:'yellow', activada:false},
-            {idFicha:'y3', casilla: 14, color:'yellow', activada:false},
-            {idFicha:'y4', casilla: 15, color:'yellow', activada:false},
-            {idFicha:'b1', casilla: 4, color:'blue', activada:false},
-            {idFicha:'b2', casilla: 5, color:'blue', activada:false},
-            {idFicha:'b3', casilla: 6, color:'blue', activada:false},
-            {idFicha:'b4', casilla: 7, color:'blue', activada:false},
-            {idFicha:'r1', casilla: 0, color:'red', activada:false},
-            {idFicha:'r2', casilla: 1, color:'red', activada:false},
-            {idFicha:'r3', casilla: 2, color:'red', activada:false},
-            {idFicha:'r4', casilla: 3, color:'red', activada:false},
-            {idFicha:'g1', casilla: 8, color:'green', activada:false},
-            {idFicha:'g2', casilla: 9, color:'green', activada:false},
-            {idFicha:'g3', casilla: 10, color:'green', activada:false},
-            {idFicha:'g4', casilla: 11, color:'green', activada:false}
+            {idFicha:'y1', id:1, color:'AMARILLO',casilla: 12, colorEstilo:'yellow', activada:false},
+            {idFicha:'y2', id:2, color:'AMARILLO',casilla: 13, colorEstilo:'yellow', activada:false},
+            {idFicha:'y3', id:3, color:'AMARILLO',casilla: 14, colorEstilo:'yellow', activada:false},
+            {idFicha:'y4', id:4, color:'AMARILLO',casilla: 15, colorEstilo:'yellow', activada:false},
+            {idFicha:'b1', id:1, color:'AZUL',casilla: 4, colorEstilo:'blue', activada:false},
+            {idFicha:'b2', id:2, color:'AZUL',casilla: 5, colorEstilo:'blue', activada:false},
+            {idFicha:'b3', id:3, color:'AZUL',casilla: 6, colorEstilo:'blue', activada:false},
+            {idFicha:'b4', id:4, color:'AZUL',casilla: 7, colorEstilo:'blue', activada:false},
+            {idFicha:'r1', id:1, color:'ROJO',casilla: 0, colorEstilo:'red', activada:false},
+            {idFicha:'r2', id:2, color:'ROJO',casilla: 1, colorEstilo:'red', activada:false},
+            {idFicha:'r3', id:3, color:'ROJO',casilla: 2, colorEstilo:'red', activada:false},
+            {idFicha:'r4', id:4, color:'ROJO',casilla: 3, colorEstilo:'red', activada:false},
+            {idFicha:'g1', id:1, color:'VERDE',casilla: 8, colorEstilo:'green', activada:false},
+            {idFicha:'g2', id:2, color:'VERDE',casilla: 9, colorEstilo:'green', activada:false},
+            {idFicha:'g3', id:3, color:'VERDE',casilla: 10, colorEstilo:'green', activada:false},
+            {idFicha:'g4', id:4, color:'VERDE',casilla: 11, colorEstilo:'green', activada:false}
             
            ],
            casillas:[
@@ -115,7 +115,7 @@ export default{
                 const boton = document.getElementById(ficha.idFicha);
 
                 boton.style.position = "absolute";
-                boton.style.backgroundColor = ficha.color;
+                boton.style.backgroundColor = ficha.colorEstilo;
                 boton.style.width = widthTablero * 0.044 +"px";
                 boton.style.height = widthTablero * 0.044 +"px";
 
