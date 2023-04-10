@@ -1,3 +1,28 @@
+
+.loading-spinner {
+  /* Set the width and height of the spinner */
+  width: 2em;
+  height: 2em;
+
+  /* Center the spinner horizontally */
+  margin: 0 auto;
+
+  /* Set the border and border radius */
+  border-radius: 50%;
+  border: 0.25em solid #ccc;
+  border-top-color: #333;
+
+  /* Set the animation properties */
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
 .dado{
   border-radius: 10px;
 }

@@ -7,6 +7,8 @@
         <h1>Iniciar sesion</h1>
         <input class="login-input" type="text" placeholder="Username" aria-label="Username" name="username" v-model="userLogin" required autofocus>
         <input class="login-input" type="password" placeholder="Password" aria-label="Password" name="password" v-model="password" required>
+        <div v-if="loading" class="loading-spinner"></div>
+        <div v-if="showErrorPass" class="error-message" style="color: red;">Usuario o contraseña incorrectos</div>
         <button class="login-button" type="submit">Iniciar Sesión</button>
         ¿Aun no tienes una cuenta? 
         Registrate <span class="register-link" @click="moveToRegister">aquí</span>
@@ -26,11 +28,15 @@
     data() {
       return {
         userLogin: '',
-        password: ''
+        password: '',
+        showErrorPass: false,
+        loading: false
       };
     },
     methods: {
       login() {
+        this.showErrorPass = false;
+        this.loading = true;
         axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
           login: this.userLogin,
           password: this.password
@@ -43,8 +49,14 @@
           }
         })
         .catch((error) => {
-          console.log(error);
-        });
+        console.log(error);
+        if (error.response && error.response.status === 400) {
+          this.showErrorPass = true;
+          
+        }
+      }).finally(() => {
+      this.loading = false;
+    });
       },
       moveToRegister() {
         router.push('/registrarse'); // navigate to /registrarse route
