@@ -46,7 +46,6 @@ import { defineComponent } from 'vue';
 
 
 
-
 export default {
     components: {
         IconoJugador,
@@ -92,7 +91,7 @@ export default {
         movimiento(idFicha, colorFicha, nuevaCasilla, idComida = 0, colorComida = 0){
             //Mover ficha
             const offset = this.offsetColor(colorFicha);
-            this.$refs.tablero.fichas[offset + idFicha - 1].casilla = nuevaCasilla-1;
+            this.$refs.tablero.fichas[offset + idFicha - 1].casilla = nuevaCasilla;
 
             //Si hay comida
             if(idComida != 0){
@@ -122,12 +121,14 @@ export default {
                     const data = JSON.parse(response.body);
                     console.log(data);
 
-                    if(data.sacar == "true"){
+                    if(data.sacar == true){
+                        console.log("sacarSocket");
+                        console.log("Casilla: ", data.casilla)
                         //Sacar casilla de casa
-                        const idFicha = data.casilla.fichas[response.data.casilla.fichas.length -1].id;
-                        const colorFicha = data.casilla.fichas[response.data.casilla.fichas.length -1].color; //Debería ser siempre mi color
-                        const idCasillaDestino = data.casilla.posicion;
-                        this.movimiento(idFicha, colorFicha, idCasillaDestino);
+                        const numeroFicha = data.casilla.fichas[data.casilla.fichas.length -1].numero;
+                        const colorFicha = data.casilla.fichas[data.casilla.fichas.length -1].color; //Debería ser siempre mi color
+                        const casillaDestino = data.casilla.posicion;
+                        this.movimiento(numeroFicha, colorFicha, casillaDestino);
                     }
                     this.actualizarTurno(data.turno);
                 })
@@ -138,12 +139,13 @@ export default {
                     const casillaDestino = data.destino.posicion;
                     const ficha = data.ficha;
                     if(data.comida != 0){
-                        this.movimiento(ficha.id, ficha.color, casillaDestino);
+                        this.movimiento(ficha.numero, ficha.color, casillaDestino);
                     }else{
-                        this.movimiento(ficha.id, ficha.color, casillaDestino, data.comida.id, data.comida.color);
+                        this.movimiento(ficha.numero, ficha.color, casillaDestino, data.comida.numero, data.comida.color);
                     }
+                    this.activarFichas(false);
+                    this.$refs.tablero.actualizarPosiciones();
                     this.actualizarTurno(data.turno);
-
                 })
                 stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
                     //Mensaje de chat recibido
@@ -201,7 +203,24 @@ export default {
                 this.verMovimientos(valorDado);
             }
         },
+        activarFichasColor(color, activar){
+            const inicio = this.offsetColor(color); // 0 4 8 12
+            this.$refs.tablero.fichas[inicio].activada = activar;
+            this.$refs.tablero.fichas[inicio + 1].activada = activar;
+            this.$refs.tablero.fichas[inicio + 2].activada = activar;
+            this.$refs.tablero.fichas[inicio + 3].activada = activar;
+        },
+        activarFicha(numero, color, activar){
+            const inicio = this.offsetColor(color); // 0 4 8 12
+            this.$refs.tablero.fichas[inicio + numero - 1].activada = activar;
+        },
+        activarFichas(activar){
+            this.$refs.tablero.fichas.forEach(ficha => {
+                ficha.activada = activar;
+            });
+        },
         verMovimientos(valorDado){
+            console.log("verMovimientos");
             axios.post('https://lamesa-backend.azurewebsites.net/partida/dado/'+ this.idPartida + "?dado=" + valorDado, {})
             .then((response) => {
                 const success = response.status === 200;
@@ -209,22 +228,16 @@ export default {
                     console.log(response.data);
                     if(response.data.sacar == true){
                         //Sacar casilla de casa
-                        console.log("sacar");
-                        const numeroFicha = response.data.casilla.fichas[response.data.casilla.fichas.length -1].numero;
-                        const colorFicha = response.data.casilla.fichas[response.data.casilla.fichas.length -1].color; //Debería ser siempre mi color
-                        const casillaDestino = response.data.casilla.posicion;
-                        this.movimiento(numeroFicha, colorFicha, casillaDestino);
-                    }else if(response.data.sacar == false){
-                        //Mostrar todas las fichas
-                        this.$refs.tablero.fichas.forEach(ficha => {
-                            ficha.activada = true;
-                        });
+                        return;  //Se encarga el websocket
+                    }else if(response.data.sacar == false && response.data.fichas.length < 4){
+                        //Mostrar todas las fichas del color
+                        this.activarFichasColor(this.turno, true);
                         //Desactivar no disponibles
                         const noDisponibles = response.data.fichas;
                         noDisponibles.forEach(ficha => {
-                            const indexFicha = this.offsetColor(ficha.color) + ficha.id;
-                            this.$refs.tablero.fichas[indexFicha].activada = false;
+                            this.activarFicha(ficha.numero, ficha.color, false);
                         });
+                        this.$refs.tablero.actualizarPosiciones();
                         //Guardar dado
                         this.valorDado = valorDado;
                     }
@@ -242,16 +255,14 @@ export default {
             if(!ficha.activada){
                 return;
             }
-
+            console.log("Ficha seleccionada");
             this.miTurno = false;
 
-            //Desactivar todas las fichas
-            this.$refs.tablero.fichas.forEach(ficha => {
-                ficha.activada = false;
-            });
+            console.log(this.color);
+            this.activarFichasColor(this.color, false);
 
             //Mandar movimiento al backend
-            axios.post('https://lamesa-backend.azurewebsites.net/partida/movimiento/', {
+            axios.post('https://lamesa-backend.azurewebsites.net/partida/movimiento', {
                 partida: this.idPartida,
                 ficha: ficha.id,
                 dado: this.valorDado
@@ -260,10 +271,7 @@ export default {
                 const success = response.status === 200;
                 if (success) {
                     //Mover ficha a donde corresponde
-                    const destino = response.data.casilla.id;
-                    const comida = response.data.comida;
-                    this.movimiento(ficha.id, ficha.color, destino, comida.id, comida.color);
-                    this.actualizarTurno(response.data.turno);
+                    return  //Se encarga el socket
                 }
             })
             .catch((error) => {
