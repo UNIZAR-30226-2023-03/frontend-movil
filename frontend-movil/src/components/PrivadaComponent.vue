@@ -1,7 +1,14 @@
 <script>
   import axios from 'axios';
   import router from "@/router";
+  import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 export default {
+  components: {
+    IonLabel,
+    IonSegment,
+    IonSegmentButton,
+    IonButton
+  },
   props: {
     show: Boolean,
     idJugador: Number

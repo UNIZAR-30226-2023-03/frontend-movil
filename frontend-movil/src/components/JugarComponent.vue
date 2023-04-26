@@ -1,5 +1,10 @@
 <script>
+import {IonButton} from '@ionic/vue';
+
 export default {
+  components: {
+    IonButton
+  },
   props: {
     show: Boolean
   },
