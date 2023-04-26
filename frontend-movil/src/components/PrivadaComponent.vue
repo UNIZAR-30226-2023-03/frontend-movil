@@ -16,10 +16,17 @@ export default {
   data(){
     return{
       confF:"NORMAL",
-      confB:"SOLO_SEGUROS"
+      confB:"SOLO_SEGUROS",
+      codigoPartida:'',
+      passwdPartida:'',
+      showError:false
     }
   },
   methods: {
+    mostrarError(mensaje){
+      this.showError = true;
+      document.getElementById("mensajeError").innerHTML = mensaje;
+    },
     crearPrivada(){
       console.log("jugar:", this.codigoPartida, this.passwdPartida, this.idJugador, this.confB, this.confF);
       axios.post('https://lamesa-backend.azurewebsites.net/partida/crear', {
@@ -36,6 +43,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.mostrarError("No se puede crear la partida");
           console.log(error);
         });
     },
@@ -55,6 +63,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.mostrarError("La partida no existe");
           console.log(error);
         });
     }  
@@ -66,7 +75,7 @@ export default {
   <Transition name="privada">
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
-        <a class="close-icon-img" @click="$emit('close')">
+        <a class="close-icon-img" @click="this.showError = false; $emit('close')">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
         <h5 style="width: 100%; margin-top: 10px; margin-bottom: 0px;">Conexión</h5>
@@ -101,6 +110,7 @@ export default {
               UNIRSE
           </ion-button>
         </div>
+        <p id="mensajeError" style="margin:0px; text-align: center; color: red; font-weight: bold; font-size: small;" v-show="showError">La partida no existe</p>
         
       </div>
     </div>
