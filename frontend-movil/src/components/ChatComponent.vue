@@ -3,46 +3,49 @@
 <script>
 import { IonIcon } from '@ionic/vue';
 import { send } from 'ionicons/icons';
+import Stomp from 'stompjs';
+
 
 export default {
   data() {
     return {
-      message: '',
-      socket,
-      stompClient
+      message: ''
 
     }
   },
   props: {
-    show: Boolean
+    show: {
+      type: Boolean,
+      required: true
+    },
+    stompClient: {
+      type: Object,
+      required: true
+    },
+    idPartida: {
+      type: String,
+      required: true
+    }
   },
   methods: {
     actualizarChat(data) {
-      let chatElement = this.$refs.chat; // hay que crear la referencia en la view (es un modal)
-      let messageElement = document.createElement("div");
+      const chatElement = this.$refs.chat; // hay que crear la referencia en la view (es un modal)
+      const messageElement = document.createElement("div");
       messageElement.classList.add("message");
       messageElement.textContent = data;
       chatElement.appendChild(messageElement);
     },
     sendMessage() {
+    this.stompClient.send("/app/chat/" + this.idPartida, {}, JSON.stringify({
+    usuario: "<usuario>",
+    mensaje: this.message
+  }));
 
-      stompClient.send("/app/chat/" + idPartida, {}, JSON.stringify({
-        usuario: "<usuario>",
-        mensaje: this.message
-      }));
+  console.log('enviando msg');
 
-      console.log('enviando msg')
+  this.message = '';
+}
 
-      this.message = '';
-    },
-    mounted() {
-      const url = "https://lamesa-backend.azurewebsites.net/";
-      console.log("connecting to the game");
-      this.socket = new SockJS(url + "/ws");
-      this.stompClient = Stomp.over(socket);
-
-
-    }
 
   }
 }

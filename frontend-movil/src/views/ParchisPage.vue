@@ -37,10 +37,15 @@
     </div>
 
     <Teleport to="body">
-        <Chat ref="chatHijo" :show="showModalChat" @close="showModalChat = false">
-        </Chat>
+  <Chat 
+    ref="chatHijo" 
+    :show="showModalChat" 
+    @close="showModalChat = false"
+    :stompClient="stompClient"
+    :idPartida="idPartida"
+  />
+</Teleport>
 
-    </Teleport>
 </template>
 
 <style>
