@@ -36,7 +36,7 @@
     </Victorias>
     <Jugar :show="showModalJugar" @close="showModalJugar = false" @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="jugar">
     </Jugar>
-    <Privada :show="showModalPrivada" :idJugador="idUsuario" @close="showModalPrivada = false">
+    <Privada :show="showModalPrivada" :nombreUsuario="nombreUsuario" :idJugador="idUsuario" @close="showModalPrivada = false">
     </Privada>
   </Teleport>
 </div>
@@ -78,7 +78,7 @@
           .then((response) => {
             const success = response.status === 200;
             if (success) {
-              router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
+              router.push({ path: '/partida', query: { nombreUsuario:this.nombreUsuario, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
             }
           })
           .catch((error) => {

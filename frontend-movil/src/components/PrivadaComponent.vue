@@ -11,6 +11,7 @@ export default {
   },
   props: {
     show: Boolean,
+    nombreUsuario: String,
     idJugador: Number
   },
   data(){
@@ -39,7 +40,8 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores.username, hostPrivada:true } });
+            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores.username, hostPrivada:true } });
+
           }
         })
         .catch((error) => {
@@ -59,7 +61,7 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            router.push({ path: '/partida', query: { id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
+            router.push({ path: '/partida', query: {nombreUsuario: this.nombreUsuario, idJugador:this.idJugador, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
           }
         })
         .catch((error) => {

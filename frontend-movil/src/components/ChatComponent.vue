@@ -1,56 +1,3 @@
-
-
-<script>
-import { IonIcon } from '@ionic/vue';
-import { send } from 'ionicons/icons';
-import Stomp from 'stompjs';
-
-
-export default {
-  data() {
-    return {
-      message: ''
-
-    }
-  },
-  props: {
-    show: {
-      type: Boolean,
-      required: true
-    },
-    stompClient: {
-      type: Object,
-      required: true
-    },
-    idPartida: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    actualizarChat(data) {
-      const chatElement = this.$refs.chat; // hay que crear la referencia en la view (es un modal)
-      const messageElement = document.createElement("div");
-      messageElement.classList.add("message");
-      messageElement.textContent = data;
-      chatElement.appendChild(messageElement);
-    },
-    sendMessage() {
-    this.stompClient.send("/app/chat/" + this.idPartida, {}, JSON.stringify({
-    usuario: "<usuario>",
-    mensaje: this.message
-  }));
-
-  console.log('enviando msg');
-
-  this.message = '';
-}
-
-
-  }
-}
-</script>
-
 <template>
   <Transition name="victorias">
     <div v-if="show" class="modal-mask">
@@ -59,19 +6,89 @@ export default {
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
 
-        <form class="chat-input" @submit.prevent="sendMessage">
+        <div class="messages-container">
+          <div v-for="(msg, index) in messages" :key="index" class="message">
+            {{ msg.usuario }}: {{ msg.mensaje }}
 
-          <ion-input v-model="message" placeholder="Escribe un mensaje..."></ion-input>
+          </div>
+        </div>
+
+        <form class="chat-input" @submit.prevent="sendMessage">
+          <input v-model="message" placeholder="Escribe un mensaje...">
           <ion-button type="submit">
-            <ion-icon name="send"></ion-icon>
             Enviar
           </ion-button>
-
         </form>
       </div>
     </div>
   </Transition>
 </template>
+
+
+<script>
+import { IonIcon } from '@ionic/vue';
+
+import Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+
+export default {
+  data() {
+    return {
+      message:  null,
+      stompClient: null,
+      messages: []
+    }
+  },
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    },
+    idPartida: {
+      type: String,
+      required: true
+    },
+    nombreUsuario: {
+      type: String,
+      required: true
+    }
+  },
+  mounted() {
+    const url = "https://lamesa-backend.azurewebsites.net/";
+    console.log("connecting to the game");
+    const socket = new SockJS(url + "/ws");
+    this.stompClient = Stomp.over(socket);
+    this.stompClient.connect({}, () => {
+      console.log("connected to the game");
+      this.stompClient.subscribe("/topic/chat/" + this.idPartida, (data) => {
+        this.actualizarChat(JSON.parse(data.body));
+      });
+    });
+  },
+  methods: {
+    actualizarChat(data) {
+      this.messages.push(data);
+    },
+
+    sendMessage() {
+      console.log("Id Partida:" + this.idPartida);
+      console.log("Stomp:" + this.stompClient);
+      console.log('enviando msg: '+this.$data.message);
+      this.stompClient.send("/app/chat/" + this.idPartida, {}, JSON.stringify({
+        usuario: this.nombreUsuario,
+        mensaje: this.$data.message
+      }));
+
+      
+
+      this.message = '';
+    },
+    Prueba() {
+      console.log('Prueba msg: '+this.message);
+    }
+  }
+}
+</script>
 
 <style>
 @import '../theme/estilos.css';

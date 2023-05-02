@@ -31,7 +31,7 @@
             COMENZAR PARTIDA
         </ion-button>
 
-        <ion-icon name="chatbox-ellipses-outline" @click="showModalChat = true"></ion-icon>
+        <ion-button name="chatbox"  @click="showModalChat = true">CHAT</ion-button>
 
         
     </div>
@@ -41,7 +41,7 @@
     ref="chatHijo" 
     :show="showModalChat" 
     @close="showModalChat = false"
-    :stompClient="stompClient"
+    :nombreUsuario="nombreUsuario"
     :idPartida="idPartida"
   />
 </Teleport>
@@ -90,6 +90,7 @@ export default {
             turno: "",
             hostPrivada: this.$route.query.hostPrivada,
             partidaComenzada: false,
+            nombreUsuario: this.$route.query.nombreUsuario,
             idPartida: this.$route.query.id,
             color: this.$route.query.color,
             miTurno: false,
