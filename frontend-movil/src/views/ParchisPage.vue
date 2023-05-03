@@ -1,7 +1,7 @@
 <template>
     <div class="pantalla">
         <div style="margin-bottom: 20px;">
-            <ion-button class="ion-float-left boton">Salir</ion-button>
+            <ion-button class="ion-float-left boton" @click="logout">Salir</ion-button>
             <ion-button class="ion-float-right boton">Amigos</ion-button>
         </div>
         <div style="text-align: center;">
@@ -65,6 +65,7 @@ import { defineComponent } from 'vue';
 import { IonIcon } from '@ionic/vue';
 import { send } from 'ionicons/icons';
 import Chat from "@/components/ChatComponent.vue"
+import Cookies from 'js-cookie';
 
 
 
@@ -98,6 +99,11 @@ export default {
         }
     },
     methods: {
+        logout() {
+            Cookies.remove('sessionId');
+      // redirigir al usuario a la página de inicio de sesión
+      this.$router.push('/');
+    },
         offsetColor(colorFicha) {
             let offset = 0;
             if (colorFicha == "AZUL") {

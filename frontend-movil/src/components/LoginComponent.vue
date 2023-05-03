@@ -23,7 +23,7 @@
   import { defineComponent } from 'vue';
   import axios from 'axios';
   import router from "@/router";
-  
+  import Cookies from 'js-cookie';
   export default defineComponent({
     data() {
       return {
@@ -45,6 +45,7 @@
           const success = response.status === 200;
           console.log(response.data.username)
           if (success) {
+            Cookies.set('sessionId', response.data.id);
             router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
           }
         })
