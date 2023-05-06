@@ -6,7 +6,7 @@ import LoginPage from '../views/LoginPage.vue';
 import ParchisPage from '../views/ParchisPage.vue';
 import RegistroPage from '../views/RegistroPage.vue';
 import MenuPage from '../views/MenuPage.vue';
-
+import TiendaPage from '../views/TiendaPage.vue';
 // Middleware para comprobar si el usuario está autenticado
 const comprobarAutenticacion = (to:any, from:any, next:any) => {
   const sessionId = Cookies.get('sessionId');
@@ -27,6 +27,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/menu',
     component: MenuPage,
+    beforeEnter: comprobarAutenticacion
+  },
+  {
+    path: '/tienda',
+    component: TiendaPage,
     beforeEnter: comprobarAutenticacion
   },
   {
