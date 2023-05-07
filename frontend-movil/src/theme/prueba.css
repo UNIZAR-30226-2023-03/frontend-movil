@@ -12,9 +12,16 @@
   .containerMenu1,
   .containerMenu2{
      width: 100%;
-    
+  
     
   }
+
+  .containerMenu2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .containerTablero{
     max-width: 100%;
     max-height: 100%;

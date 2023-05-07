@@ -5,8 +5,8 @@
         <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalVict = true">
           {{ this.$route.query.username }} 
         </a>
-        <a class="boton1 boton-menu-notis boton-menu" id="show-modalN" @click="showModalNoti = true">
-            <img src="../../public/assets/noti.png" alt="cerrar popup">
+        <a class="boton1 boton-menu-notis boton-menu"  @click="goShop">
+            <img  src="../../public/assets/tienda.png" >
         </a>
     </div>
     <div class="containerMenu2">
@@ -18,7 +18,10 @@
         </a>
     </div>
     <div class="containerTablero">
-        <img style="border-radius: 10px" src="../../public/assets/tablero.png" alt="skin del tablero">
+      <a  @click="showModalVict = true">
+        <img :class="{ 'small-image': showModalVict }" style="border-radius: 10px" src="../../public/assets/tablero.png" alt="skin del tablero">
+        </a>
+        
     </div>
     <div class="containerBotonesJugar">
         <a class="login-button" id="torneo" @click="showModalNoti = true">
@@ -59,6 +62,7 @@
     },
     data() {
       return {
+        tableroActivo: '1',
         idUsuario: this.$route.query.userId,
         nombreUsuario: this.$route.query.username,
         showModalNoti: false,
@@ -84,8 +88,17 @@
           .catch((error) => {
             console.log(error);
           });
-      }
+      },
+      goShop(){
+      console.log("a la tiendaaaa");
+      router.push({ path: '/tienda' });
+      
+
+
+    }    
+    
     },
+
     mounted() {
       console.log('IdUsuario: ',this.idUsuario)
       console.log('NombreUsuario: ', this.nombreUsuario)
@@ -96,5 +109,9 @@
 <style>
 @import '../theme/prueba.css';
 @import '../theme/estilosInicio.css';
+.small-image {
+  transform: scale(0.9);
+  transition: transform 0.2s ease-in-out;
+}
 </style>
   
