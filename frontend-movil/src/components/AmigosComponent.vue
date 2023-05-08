@@ -1,17 +1,29 @@
 <script>
+import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 export default {
+  components:{
+    IonLabel,
+    IonSegment,
+    IonSegmentButton
+  },
   props: {
     show: Boolean
+  },
+  data(){
+    return{
+      tabSelected : "amigos"
+    }
   }
 }
 </script>
 
 <style>
 .modal-container {
- 
+
   justify-content: space-between;
   align-items: center;
-  position: relative; /* make the container position relative */
+  position: relative;
+  /* make the container position relative */
 }
 
 .close-icon-img {
@@ -31,17 +43,25 @@ export default {
         <a class="close-icon-img" @click="$emit('close')">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
-        <div class="modal-header">
-          <slot name="header">default header</slot>
-        </div>
 
-        <div class="modal-body">
-          <slot name="body">default body</slot>
-        </div>
+        <!-- Cabecera tabs -->
+        <ion-segment value="default">
+        <ion-segment-button value="default" @click="tabSelected='amigos'">
+          <ion-label style="font-size: smaller;">Amigos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="segment" @click="tabSelected='solicitudes'">
+          <ion-label style="font-size: smaller;">Solicitudes</ion-label>
+        </ion-segment-button>
+      </ion-segment>
 
-        <div class="modal-footer">
-          <slot name="footer">default footer</slot>
-        </div>
+      <!-- Tabs -->
+      <div class="customTab" v-show="tabSelected == 'amigos'">
+        amigos
+      </div>
+
+      <div v-show="tabSelected == 'solicitudes'">
+        v
+      </div>
       </div>
     </div>
   </Transition>
@@ -49,6 +69,11 @@ export default {
 
 
 <style>
+.customTab{
+  height: 200px;
+  width: 100%;
+}
+
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -62,15 +87,16 @@ export default {
 }
 
 .modal-container {
-    overflow-y: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   width: 300px;
   margin: auto;
   padding: 20px 30px;
-  border: 5px solid rgb(34,34,34);
+  border: 5px solid rgb(34, 34, 34);
   border-radius: 13px;
-  
-  background-color:  rgb(69,69,69);;
+
+  background-color: rgb(69, 69, 69);
+  ;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
 }
