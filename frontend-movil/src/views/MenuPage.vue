@@ -33,8 +33,8 @@
     </div>
   
   <Teleport to="body">
-    <Notificacion :show="showModalNoti" @close="showModalNoti = false">
-    </Notificacion>
+    <Amigos :show="showModalNoti" @close="showModalNoti = false">
+    </Amigos>
     <Victorias :show="showModalVict" @close="showModalVict = false">
     </Victorias>
     <Jugar :show="showModalJugar" @close="showModalJugar = false" @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="jugar">
@@ -48,14 +48,14 @@
   <script>
   import axios from 'axios';
   import router from "@/router";
-  import Notificacion from "@/components/NotificacionesComponent.vue"
+  import Amigos from "@/components/AmigosComponent.vue"
   import Victorias from "@/components/VictoriasComponent.vue"
   import Jugar from "@/components/JugarComponent.vue"
   import Privada from "@/components/PrivadaComponent.vue"
   
   export default {
     components: {
-      Notificacion,
+      Amigos,
       Victorias,
       Jugar,
       Privada

@@ -66,6 +66,7 @@ import { IonIcon } from '@ionic/vue';
 import { send } from 'ionicons/icons';
 import Chat from "@/components/ChatComponent.vue"
 import Cookies from 'js-cookie';
+import { IonButton } from '@ionic/vue'
 
 
 
@@ -75,7 +76,8 @@ export default {
         DadoComponent,
         TableroComponent,
         TimerComponent,
-        Chat
+        Chat,
+        IonButton
     },
     data() {
         return {
@@ -165,11 +167,12 @@ export default {
                 })
                 stompClient.subscribe("/topic/movimiento/" + idPartida, (response) => {
                     //Un jugador ha hecho un movimiento -> Actualizar tablero
+                    console.log('/topic/movimiento/');
                     const data = JSON.parse(response.body);
                     console.log(data);
                     const casillaDestino = data.destino.posicion;
                     const ficha = data.ficha;
-                    if (data.comida != 0) {
+                    if (data.comida == null) {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino);
                     } else {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino, data.comida.numero, data.comida.color);
@@ -214,7 +217,15 @@ export default {
             this.$refs.dado.activarDado();
         },
         actualizarTurno(color) {
-            if (color != this.turno) {
+            let fichasFuera = 0;
+            const oc = this.offsetColor(color);
+            console.log("Actualizando turno. Fichas fuera: ", this.fichasFuera);
+            fichasFuera = this.$refs.tablero.fichas[oc + 0].activada ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 1].activada ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 2].activada ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 3].activada ? fichasFuera + 1 : fichasFuera;
+
+            if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6)) {
                 //Encender timer
                 this.$refs.timer.resetTimer();
                 this.$refs.timer.encenderTimer();
@@ -223,7 +234,6 @@ export default {
                 if (this.color == this.turno) {
                     //Toca jugar
                     console.log("Mi turno");
-                    this.miTurno = true;
                     this.realizarTurno();
                 }
             }
@@ -291,7 +301,7 @@ export default {
             this.miTurno = false;
 
             console.log(this.color);
-            this.activarFichasColor(this.color, false);
+            this.activarFichas(false);
 
             //Mandar movimiento al backend
             axios.post('https://lamesa-backend.azurewebsites.net/partida/movimiento', {
@@ -304,6 +314,8 @@ export default {
                     if (success) {
                         //Mover ficha a donde corresponde
                         return  //Se encarga el socket
+                    }else{
+                        console.log("Error al mandar movimiento. Estado ", response.status);
                     }
                 })
                 .catch((error) => {
@@ -330,8 +342,18 @@ export default {
         }
     },
     mounted() {
-        this.connectToSocket(this.idPartida);
+        const jugadores = JSON.parse(this.$route.query.jugadores);
         this.ocuparJugador({ color: this.color, username: 'YO' });
+        
+        
+        console.log('Jugadores:', jugadores);
+      
+        jugadores.forEach(j => {
+            this.ocuparJugador({ color: j.color, username: j.username});
+            console.log('cookies get');
+        });
+
+        this.connectToSocket(this.idPartida);
     },
     actualizarChatHijo(data) {
         this.$refs.chatHijo.actualizarChat(data);

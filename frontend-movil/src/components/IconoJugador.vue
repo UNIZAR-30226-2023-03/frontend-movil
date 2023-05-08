@@ -31,6 +31,9 @@ import { IonImg } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 export default {
+    components:{
+        IonImg
+    },
     props: ['nombreUsuario',
             'izquierda',
             'seleccionado']

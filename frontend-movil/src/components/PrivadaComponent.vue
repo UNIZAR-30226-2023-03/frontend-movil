@@ -1,6 +1,7 @@
 <script>
   import axios from 'axios';
   import router from "@/router";
+  import Cookies from 'js-cookie';
   import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 export default {
   components: {
@@ -40,7 +41,9 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores.username, hostPrivada:true } });
+            Cookies.set('jugadores', response.data.jugadores);
+            console.log('jugadores en partida: ',response.data.jugadores);
+            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, jugadores: JSON.stringify(response.data.jugadores) , color: response.data.color, hostPrivada:true } });
 
           }
         })
@@ -61,7 +64,9 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            router.push({ path: '/partida', query: {nombreUsuario: this.nombreUsuario, idJugador:this.idJugador, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada:false } });
+            Cookies.set('jugadores', response.data.jugadores);
+            console.log('jugadores en partida: ',response.data.jugadores);
+            router.push({ path: '/partida', query: {nombreUsuario: this.nombreUsuario, idJugador:this.idJugador, jugadores: JSON.stringify(response.data.jugadores) , id: response.data.id, color: response.data.color, hostPrivada:false } });
           }
         })
         .catch((error) => {

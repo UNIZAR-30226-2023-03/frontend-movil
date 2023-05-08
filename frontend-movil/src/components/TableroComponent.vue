@@ -153,6 +153,8 @@ export default{
 
                 if(ficha.activada){
                     boton.style.border = "3px solid black";
+                }else{
+                    boton.style.border = '0px';  //devolver el estilo de ficha no seleccionable
                 }
             });
         },

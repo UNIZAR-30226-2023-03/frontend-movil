@@ -25,7 +25,7 @@
           <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
           <h2>{{ producto.nombre }}</h2>
           <p>{{ producto.descripcion }}</p>
-          <ionbutton @click="comprarProducto(producto.id)">Comprar</ionbutton>
+          <ion-button @click="comprarProducto(producto.id)">Comprar</ion-button>
 
         </div>
 
@@ -36,12 +36,15 @@
 </template>
   
 <script>
+import {IonButton} from '@ionic/vue'
 import axios from 'axios';
 import router from "@/router";
 import Cookies from 'js-cookie';
 
 export default {
-
+  components: {
+    IonButton
+    },
   data() {
     return {
       idUsuario: '',
