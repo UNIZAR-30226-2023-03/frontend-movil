@@ -19,7 +19,7 @@
     </div>
     <div class="containerTablero">
       <a  @click="showModalVict = true">
-        <img :class="{ 'small-image': showModalVict }" style="border-radius: 10px" src="../../public/assets/tablero.png" alt="skin del tablero">
+        <img  ref="tablero" :class="{ 'small-image': showModalVict }" style="border-radius: 10px"  alt="skin del tablero">
         </a>
         
     </div>
@@ -31,6 +31,7 @@
             Jugar
         </a>
     </div>
+    <button v-on:click="changeImageSrc">ponertablero</button>
   
   <Teleport to="body">
     <Amigos :show="showModalNoti" @close="showModalNoti = false">
@@ -62,7 +63,7 @@
     },
     data() {
       return {
-        tableroActivo: '1',
+        tableroActivo: 1,
         idUsuario: this.$route.query.userId,
         nombreUsuario: this.$route.query.username,
         showModalNoti: false,
@@ -71,6 +72,12 @@
         showModalPrivada: false
       }
     },
+  //   watch: {
+  //   tableroActivo() {
+  //     const tablero = this.$refs.tablero;
+  //     tablero.src = "../../public/assets/TABLERO" + this.tableroActivo + ".png";
+  //   }
+  // },
     methods:{
       jugar(){
         console.log("jugar publica:", this.codigoPartida, this.passwdPartida, this.idJugador);
@@ -95,11 +102,20 @@
       
 
 
-    }    
+    },
+    changeImageSrc() {
+  const tablero = this.$refs.tablero;
+  import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
+    tablero.src = imageUrl.default;
+  });
+}
+   
     
     },
 
     mounted() {
+      //ver que tablero tiene activo el user para cambiar el tablero activo
+      this.changeImageSrc();
       console.log('IdUsuario: ',this.idUsuario)
       console.log('NombreUsuario: ', this.nombreUsuario)
     }

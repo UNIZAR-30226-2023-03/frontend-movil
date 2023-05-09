@@ -27,12 +27,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/menu',
     component: MenuPage,
-    beforeEnter: comprobarAutenticacion
+    //beforeEnter: comprobarAutenticacion
   },
   {
     path: '/tienda',
     component: TiendaPage,
-    beforeEnter: comprobarAutenticacion
+    //beforeEnter: comprobarAutenticacion
   },
   {
     path: '/registrarse',
