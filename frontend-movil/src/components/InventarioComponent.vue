@@ -69,6 +69,9 @@ export default {
       //     console.log(error);
       //   });
     },
+    callParentMethodImage() {
+      this.$parent.changeImageSrc();
+    },
     activarProducto(productoId,tipo){
       
       // axios.post('https://lamesa-backend.azurewebsites.net/usuario/activar/',{
@@ -93,10 +96,13 @@ export default {
       if (tipo == "TABLERO") { //paara probar mientras no va el backend
                this.tableroActivo = productoId;
                console.log('tablero activado');
+               Cookies.set('tableroActivo', this.tableroActivo);
             }else{
               this.fichaActiva = productoId;
               console.log('ficha activada');
+              Cookies.set('fichaActiva', this.fichaActiva);
       }
+      this.callParentMethodImage();
           
     }
   },
@@ -162,10 +168,7 @@ export default {
 
       </div>
 
-      <!-- Tabs -->
-      <div class="customTab" v-show="tabSelected == 'amigos'">
-        amigos
-      </div>
+    
 
       <div v-show="tabSelected == 'solicitudes'">
         v
@@ -258,6 +261,7 @@ export default {
 
 .producto {
   width: 200px;
+  height: 180px;
   margin: 10px;
   border: 3px solid rgb(172, 119, 20);
   padding: 10px;

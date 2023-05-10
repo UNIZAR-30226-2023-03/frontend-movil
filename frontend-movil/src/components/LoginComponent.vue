@@ -43,10 +43,37 @@ export default defineComponent({
       password: '',
       showErrorPass: false,
       loading: false,
-      showModalPass: false
+      showModalPass: false,
+      fichaActiva: '2',
+      tableroActivo: '2'
     };
   },
   methods: {
+    verSkinsActivas(){
+      // console.log('cargando skins activas');
+      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+this.IdUsuario)
+      //   .then(response => {
+      //     console.log('TableroAvtivo= ',response.data.id);
+      //     this.tableroActivo = response.data.id;
+      //     Cookies.set('tableroActivo', this.tableroActivo);
+      //   })
+      //   .catch(error => {
+      //     console.log(error); 
+      //   });
+
+      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+this.IdUsuario)
+      //   .then(response => {
+      //     console.log('TableroAvtivo= ',response.data.id);
+      //     this.fichaActiva = response.data.id;
+      //     Cookies.set('fichaActiva', this.fichaActiva);
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
+
+        Cookies.set('tableroActivo', this.tableroActivo);
+        Cookies.set('fichaActiva', this.fichaActiva);
+    },
     login() {
       this.showErrorPass = false;
       this.loading = true;
@@ -58,6 +85,7 @@ export default defineComponent({
           const success = response.status === 200;
           console.log(response.data.username)
           if (success) {
+            this.verSkinsActivas(); // cambiar funcion cuando funcione el backend
             Cookies.set('sessionId', response.data.id);
             router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
           }

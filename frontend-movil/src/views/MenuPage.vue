@@ -50,6 +50,7 @@
     
     <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
     import router from "@/router";
     import Amigos from "@/components/AmigosComponent.vue"
     import Victorias from "@/components/VictoriasComponent.vue"
@@ -108,8 +109,9 @@
   
       },
       changeImageSrc() {
-    const tablero = this.$refs.tablero;
-    import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
+        this.tableroActivo = Cookies.get('tableroActivo');
+      const tablero = this.$refs.tablero;
+      import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
       tablero.src = imageUrl.default;
     });
   }
@@ -119,6 +121,7 @@
   
       mounted() {
         //ver que tablero tiene activo el user para cambiar el tablero activo
+        
         this.changeImageSrc();
         console.log('IdUsuario: ',this.idUsuario)
         console.log('NombreUsuario: ', this.nombreUsuario)
