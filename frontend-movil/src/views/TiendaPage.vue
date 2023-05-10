@@ -145,7 +145,7 @@ export default {
   z-index: 1;
   position: relative;
   /* Set the background image */
-  background-image: url("../../public/assets/TABLERO1.png");
+  background-image: url("../../public/assets/TABLERO1.png"); 
   /* Set the background size */
   background-size: cover;
   /* Set the background position */

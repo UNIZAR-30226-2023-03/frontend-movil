@@ -18,7 +18,7 @@
           </a>
       </div>
       <div class="containerTablero">
-        <a  @click="showModalVict = true">
+        <a  @click="showModalInventario = true">
           <img  ref="tablero" :class="{ 'small-image': showModalVict }" style="border-radius: 10px"  alt="skin del tablero">
           </a>
           
@@ -42,6 +42,8 @@
       </Jugar>
       <Privada :show="showModalPrivada" :nombreUsuario="nombreUsuario" :idJugador="idUsuario" @close="showModalPrivada = false">
       </Privada>
+      <Inventario :show="showModalInventario"  @close="showModalInventario = false">
+      </Inventario>
     </Teleport>
   </div>
     </template>
@@ -53,12 +55,13 @@
     import Victorias from "@/components/VictoriasComponent.vue"
     import Jugar from "@/components/JugarComponent.vue"
     import Privada from "@/components/PrivadaComponent.vue"
-    
+    import Inventario from "@/components/InventarioComponent.vue"
     export default {
       components: {
         Amigos,
         Victorias,
         Jugar,
+        Inventario,
         Privada
       },
       data() {
@@ -69,7 +72,8 @@
           showModalNoti: false,
           showModalVict: false,
           showModalJugar: false,
-          showModalPrivada: false
+          showModalPrivada: false,
+          showModalInventario: false
         }
       },
     //   watch: {
