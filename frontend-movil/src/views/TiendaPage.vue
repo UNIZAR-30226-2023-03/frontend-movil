@@ -24,7 +24,7 @@
           </div>
           <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
           <h2>{{ producto.nombre }}</h2>
-          <p>{{ producto.descripcion }}</p>
+          <!-- <p>{{ producto.descripcion }}</p> -->
           <ion-button @click="comprarProducto(producto.id)">Comprar</ion-button>
 
         </div>
@@ -143,7 +143,30 @@ export default {
   background-color: #007bff;
   text-align: center;
   z-index: 1;
+  position: relative;
+  /* Set the background image */
+  background-image: url("../../public/assets/TABLERO1.png");
+  /* Set the background size */
+  background-size: cover;
+  /* Set the background position */
+  background-position: center center;
+  /* Set the background repeat */
+  background-repeat: no-repeat;
 }
+
+.producto::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.8); 
+  border-radius: 10%;
+}
+
+
 
 .image-container {
   display: flex;
@@ -199,7 +222,7 @@ video {
 
 ion-button {
   margin-top: 10px;
-  --background: #007bff;
+  --background: #457341;
   --color: #fff;
 }
 </style>
