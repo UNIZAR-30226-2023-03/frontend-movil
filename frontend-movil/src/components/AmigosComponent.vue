@@ -20,27 +20,120 @@ export default {
   data() {
     return {
       tabSelected: "amigos",
-      listaAmigos: []
+      listaAmigos: [],
+      listaSolicitudes: [],
+      usuarioEnviar: ""
     }
   },
-  methods:{
-    enviarSolicitud(){
-      console.log("Solicitud enviada");
+  methods: {
+    enviarSolicitud() {
+      let idAmigo = 0;
+
+      const sessionId = Cookies.get('sessionId');
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=' + this.usuarioEnviar, {})
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log("Id de usuario:" + response.data);
+            idAmigo = response.data
+
+            console.log('Enviando solicitud de amistad');
+            axios.post('https://lamesa-backend.azurewebsites.net/usuario/enviar-solicitud', {
+              usuario: sessionId,
+              amigo: idAmigo
+            })
+              .then((response) => {
+                const success = response.status === 200;
+                if (success) {
+                  console.log("Solicitud de amistad enviada");
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+          this.cargarDatos();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    aceptarSolicitud(idAmigo) {
+      const sessionId = Cookies.get('sessionId');
+      axios.post('https://lamesa-backend.azurewebsites.net/usuario/aceptar-solicitud', {
+        usuario: sessionId,
+        amigo: idAmigo
+      })
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log("Solicitud de amistad aceptada");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.cargarDatos()
+    },
+
+
+    rechazarSolicitud(idAmigo) {
+      const sessionId = Cookies.get('sessionId');
+      axios.post('https://lamesa-backend.azurewebsites.net/usuario/denegar-solicitud', {
+        usuario: sessionId,
+        amigo: idAmigo
+      })
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log("Solicitud de amistad aceptada");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.cargarDatos()
+    },
+
+    cargarDatos() {
+      // Ver amigos
+      const sessionId = Cookies.get('sessionId');
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/amigos/' + sessionId, {})
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log(response.data);
+            this.listaAmigos = response.data;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      // Ver solicitudes de amistad
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/solicitudes/' + sessionId, {})
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log(response.data);
+            this.listaSolicitudes = response.data;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        this.$forceUpdate();
     }
+
   },
   mounted() {
-    console.log('Amigos mounted');
-    const sessionId = Cookies.get('sessionId');
-    axios.get('https://lamesa-backend.azurewebsites.net/usuario/amigos/' + sessionId, {})
-      .then((response) => {
-        const success = response.status === 200;
-        if (success) {
-          console.log("Amigos:" + response.data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.cargarDatos();
+  },
+  updated(){
+    this.cargarDatos();
   }
 }
 
@@ -101,7 +194,7 @@ export default {
           <ion-card v-for="a in listaAmigos" :key="a.id">
             <ion-card-header style="display: flex;">
               <ion-card-title class="d-block ml-auto"
-                style="width: auto; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                style="width: 100%; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 {{ a.username }}
               </ion-card-title>
               <button class="mr-0"
@@ -119,14 +212,31 @@ export default {
 
         <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll;">
           <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
-          <input v-model="usuarioEnviar" placeholder="Nombre de usuario" style="width: auto; margin-top: 0px; height: 25px;">
-          <button class="mr-0" style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right" @click="enviarSolicitud">
-                <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
-            </button>
+          <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
+            style="width: auto; margin-top: 0px; height: 25px;">
+          <button class="mr-0"
+            style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right"
+            @click="enviarSolicitud">
+            <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
+          </button>
 
-          
+
           <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
           <h2 style="font-size: medium; margin-bottom:0; margin-top:0">Solicitudes recibidas</h2>
+
+          <ion-card v-for="s in listaSolicitudes" :key="s.id">
+            <ion-card-header style="display: flex;">
+              <ion-card-title class="d-block ml-auto"
+                style="width: auto; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ s.username }}
+              </ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content style="display: flex; font-size: small;">
+              <ion-button @click="aceptarSolicitud(s.id)" size="small">ACEPTAR</ion-button>
+              <ion-button @click="rechazarSolicitud(s.id)" size="small">RECHAZAR</ion-button>
+            </ion-card-content>
+          </ion-card>
 
         </div>
       </div>
