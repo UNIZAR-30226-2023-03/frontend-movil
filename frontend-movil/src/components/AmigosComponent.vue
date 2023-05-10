@@ -1,20 +1,49 @@
 <script>
-import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
+import { IonLabel, IonSegment, IonSegmentButton, IonCard, IonButton, IonCardTitle, IonCardContent, IonCardHeader } from '@ionic/vue';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 export default {
-  components:{
+  components: {
     IonLabel,
     IonSegment,
-    IonSegmentButton
+    IonSegmentButton,
+    IonCard,
+    IonButton,
+    IonCardTitle,
+    IonCardContent,
+    IonCardHeader
   },
   props: {
-    show: Boolean
+    show: Boolean,
   },
-  data(){
-    return{
-      tabSelected : "amigos"
+  data() {
+    return {
+      tabSelected: "amigos",
+      listaAmigos: []
     }
+  },
+  methods:{
+    enviarSolicitud(){
+      console.log("Solicitud enviada");
+    }
+  },
+  mounted() {
+    console.log('Amigos mounted');
+    const sessionId = Cookies.get('sessionId');
+    axios.get('https://lamesa-backend.azurewebsites.net/usuario/amigos/' + sessionId, {})
+      .then((response) => {
+        const success = response.status === 200;
+        if (success) {
+          console.log("Amigos:" + response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
+
 </script>
 
 <style>
@@ -34,6 +63,18 @@ export default {
   top: 10px;
   right: 10px;
 }
+
+.mr-0 {
+  margin-right: auto;
+}
+
+.ml-auto {
+  margin-left: 0;
+}
+
+.d-block {
+  display: block;
+}
 </style>
 
 <template>
@@ -46,22 +87,48 @@ export default {
 
         <!-- Cabecera tabs -->
         <ion-segment value="default">
-        <ion-segment-button value="default" @click="tabSelected='amigos'">
-          <ion-label style="font-size: smaller;">Amigos</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="segment" @click="tabSelected='solicitudes'">
-          <ion-label style="font-size: smaller;">Solicitudes</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+          <ion-segment-button value="default" @click="tabSelected = 'amigos'">
+            <ion-label style="font-size: smaller;">Amigos</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="segment" @click="tabSelected = 'solicitudes'">
+            <ion-label style="font-size: smaller;">Solicitudes</ion-label>
+          </ion-segment-button>
+        </ion-segment>
 
-      <!-- Tabs -->
-      <div class="customTab" v-show="tabSelected == 'amigos'">
-        amigos
-      </div>
+        <!-- Tabs -->
+        <div class="customTab" v-show="tabSelected == 'amigos'" style="overflow: scroll;">
 
-      <div v-show="tabSelected == 'solicitudes'">
-        v
-      </div>
+          <ion-card v-for="a in listaAmigos" :key="a.id">
+            <ion-card-header style="display: flex;">
+              <ion-card-title class="d-block ml-auto"
+                style="width: auto; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ a.username }}
+              </ion-card-title>
+              <button class="mr-0"
+                style="margin: 0px; padding: 0px; background-color: rgb(219, 52, 52); border-radius: 5px; width: 20px; float: right">
+                <img src="../../public/assets/eliminar.png" style="width:100%; height: 100%;">
+              </button>
+            </ion-card-header>
+
+            <ion-card-content style="display: flex; font-size: small;">
+              {{ a.estado }}
+              <ion-button v-if="a.estado == 'ESPERANDO JUGADORES'" size="small">UNIRSE</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll;">
+          <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
+          <input v-model="usuarioEnviar" placeholder="Nombre de usuario" style="width: auto; margin-top: 0px; height: 25px;">
+          <button class="mr-0" style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right" @click="enviarSolicitud">
+                <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
+            </button>
+
+          
+          <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
+          <h2 style="font-size: medium; margin-bottom:0; margin-top:0">Solicitudes recibidas</h2>
+
+        </div>
       </div>
     </div>
   </Transition>
@@ -69,7 +136,7 @@ export default {
 
 
 <style>
-.customTab{
+.customTab {
   height: 200px;
   width: 100%;
 }
