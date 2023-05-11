@@ -131,10 +131,10 @@ export default {
   },
   mounted() {
     this.cargarDatos();
-  },
-  updated(){
-    this.cargarDatos();
   }
+  // updated(){
+  //   this.cargarDatos();
+  // }
 }
 
 </script>

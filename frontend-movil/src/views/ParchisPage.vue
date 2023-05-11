@@ -97,7 +97,8 @@ export default {
             idPartida: this.$route.query.id,
             color: this.$route.query.color,
             miTurno: false,
-            valorDado: 0
+            valorDado: 0,
+            tableroActivo: ''
         }
     },
     methods: {
@@ -339,7 +340,15 @@ export default {
                 this.jugadores[3].nombre = jugador.username;
                 this.jugadores[3].ocupado = true;
             }
-        }
+        },
+        
+      changeImageSrc() {
+        this.tableroActivo = Cookies.get('tableroActivo');
+      const tablero = this.$refs.tablero;
+      import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
+      tablero.src = imageUrl.default;
+    });
+  }
     },
     mounted() {
         const jugadores = JSON.parse(this.$route.query.jugadores);

@@ -45,7 +45,7 @@ export default defineComponent({
       loading: false,
       showModalPass: false,
       fichaActiva: '2',
-      tableroActivo: '2'
+      tableroActivo: '0'
     };
   },
   methods: {
