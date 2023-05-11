@@ -293,8 +293,8 @@ export default {
             </ion-card-header>
 
             <ion-card-content style="display: flex; font-size: small;">
-              <ion-button @click="aceptarSolicitud(s.id)" size="small" style="width: 40%;">ACEPTAR</ion-button>
-              <ion-button @click="rechazarSolicitud(s.id)" size="small" style="width: 40%;">RECHAZAR</ion-button>
+              <ion-button color="success" @click="aceptarSolicitud(s.id)" size="small" style="width: 40%;">ACEPTAR</ion-button>
+              <ion-button color="danger" @click="rechazarSolicitud(s.id)" size="small" style="width: 50%;">RECHAZAR</ion-button>
             </ion-card-content>
           </ion-card>
 
