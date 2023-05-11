@@ -6,11 +6,18 @@ export default {
   props: {
     show: Boolean
   },
-  data(){
-    return{
-      tabSelected : "amigos",
+  data() {
+    return {
+      tabSelected: "amigos",
       IdUsuario: '',
-      productos: [ 
+      productos: [
+        {
+          "id": 0,
+          "nombre": "Tablero Default",
+          "descripcion": "Tablero de ajedrez clásico hecho de madera de alta calidad",
+          "precio": 29.99,
+          "tipoProducto": "TABLERO"
+        },
         {
           "id": 1,
           "nombre": "Tablero de HALLOWEEN",
@@ -20,24 +27,32 @@ export default {
         },
         {
           "id": 2,
-          "nombre": "Fichas de plástico",
+          "nombre": "Tablero de NAVIDAD",
           "descripcion": "Set de 32 fichas de ajedrez hechas de plástico resistente",
           "precio": 12.99,
-          "tipoProducto": "FICHA"
+          "tipoProducto": "TABLERO"
         },
         {
           "id": 3,
-          "nombre": "Tablero de NAVIDAD",
+          "nombre": "Fichas de NAVIDAD",
           "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
           "precio": 59.99,
-          "tipoProducto": "TABLERO"
-        }],
+          "tipoProducto": "FICHA"
+        },
+        {
+          "id": 4,
+          "nombre": "Fichas de HALLOWEEN",
+          "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
+          "precio": 59.99,
+          "tipoProducto": "FICHA"
+        }
+      ],
       fichaActiva: '',
       tableroActivo: ''
     }
   },
-  methods:{
-    cargarProductos(){
+  methods: {
+    cargarProductos() {
       console.log('cargando skins ');
 
       //peticion a azzure backend thisProductos = response.data
@@ -49,7 +64,7 @@ export default {
       //     console.log(error);
       //   });
     },
-    verSkinsActivas(){
+    verSkinsActivas() {
       console.log('cargando skins activas');
       // axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+this.IdUsuario)
       //   .then(response => {
@@ -68,12 +83,15 @@ export default {
       //   .catch(error => {
       //     console.log(error);
       //   });
+      this.tableroActivo = Cookies.get('tableroActivo');
+      this.fichaActiva = Cookies.get('fichaActiva')
     },
+
     callParentMethodImage() {
       this.$parent.changeImageSrc();
     },
-    activarProducto(productoId,tipo){
-      
+    activarProducto(productoId, tipo) {
+
       // axios.post('https://lamesa-backend.azurewebsites.net/usuario/activar/',{
       //   usuario: this.IdUsuario,
       //   producto: productoId
@@ -87,38 +105,41 @@ export default {
       //         this.fichaActiva = productoId;
       //       }
       //     }
-          
+
       //   })
       //   .catch(error => {
       //     console.log(error);
       //   });
 
       if (tipo == "TABLERO") { //paara probar mientras no va el backend
-               this.tableroActivo = productoId;
-               console.log('tablero activado');
-               Cookies.set('tableroActivo', this.tableroActivo);
-            }else{
-              this.fichaActiva = productoId;
-              console.log('ficha activada');
-              Cookies.set('fichaActiva', this.fichaActiva);
+        this.tableroActivo = productoId;
+        console.log('tablero activado');
+        Cookies.set('tableroActivo', this.tableroActivo);
+      } else {
+        this.fichaActiva = productoId;
+        console.log('ficha activada');
+        Cookies.set('fichaActiva', this.fichaActiva);
       }
       this.callParentMethodImage();
-          
+
     }
   },
-  
-  mounted() {
-    const sessionId = Cookies.get('sessionId');
-    console.log('sessionId: ',sessionId);
-    this.IdUsuario = sessionId;
+  beforeMount() {
     //ver que tablero tiene activo el user para cambiar el tablero activo
     this.verSkinsActivas();
+  },
+
+  mounted() {
+    const sessionId = Cookies.get('sessionId');
+    console.log('sessionId: ', sessionId);
+    this.IdUsuario = sessionId;
+
     // cargar los productos que tiene el user
     this.cargarProductos();
 
-   
 
-    
+
+
   }
 }
 </script>
@@ -146,7 +167,7 @@ export default {
   <Transition name="notificaciones">
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
-        
+
         <a class="close-icon-img" @click="$emit('close')">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
@@ -154,25 +175,27 @@ export default {
         <!-- Cabecera tabs -->
         <div class="productos" v-if="productos.length > 0">
 
-        <div v-for="producto in productos" :key="producto.id" class="producto" :class="{ 'producto-seleccionado': producto.id === tableroActivo || producto.id === fichaActiva }">
+          <div v-for="producto in productos" :key="producto.id" class="producto"
+            :class="{ 'producto-seleccionado': producto.id == tableroActivo || producto.id == fichaActiva }">
 
-          <!-- <div class="producto" v-for="producto in productos" :key="producto.id"> -->
-          <!-- LAS IMAGENES SE TIENEN QUE LLAMAR COMO ESPECIFICA EN LA SIGUIENTE LINEA -->
-  
-          <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
-          <h2>{{ producto.nombre }}</h2>
-          <!-- <p>{{ producto.descripcion }}</p> -->
-          <ion-button v-if="!(producto.id === tableroActivo || producto.id === fichaActiva)" @click="activarProducto(producto.id,producto.tipoProducto)">Activar</ion-button>
+            <!-- <div class="producto" v-for="producto in productos" :key="producto.id"> -->
+            <!-- LAS IMAGENES SE TIENEN QUE LLAMAR COMO ESPECIFICA EN LA SIGUIENTE LINEA -->
+
+            <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
+            <h2>{{ producto.nombre }}</h2>
+            <!-- <p>{{ producto.descripcion }}</p> -->
+            <ion-button v-if="!(producto.id == tableroActivo || producto.id == fichaActiva)"
+              @click="activarProducto(producto.id, producto.tipoProducto)">Activar</ion-button>
+
+          </div>
 
         </div>
 
-      </div>
 
-    
 
-      <div v-show="tabSelected == 'solicitudes'">
-        v
-      </div>
+        <div v-show="tabSelected == 'solicitudes'">
+          v
+        </div>
       </div>
     </div>
   </Transition>
@@ -180,7 +203,7 @@ export default {
 
 
 <style>
-.customTab{
+.customTab {
   height: 200px;
   width: 100%;
 }
@@ -271,7 +294,7 @@ export default {
   z-index: 1;
   position: relative;
   /* Set the background image */
-  background-image: url("../../public/assets/TABLERO1.png"); 
+  background-image: url("../../public/assets/TABLERO1.png");
   /* Set the background size */
   background-size: cover;
   /* Set the background position */
@@ -288,7 +311,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: -1;
-  background-color: rgba(0, 0, 0, 0.8); 
+  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 10%;
 }
 
@@ -304,7 +327,7 @@ export default {
   z-index: 1;
   position: relative;
   /* Set the background image */
-  background-image: url("../../public/assets/TABLERO1.png"); 
+  background-image: url("../../public/assets/TABLERO1.png");
   /* Set the background size */
   background-size: cover;
   /* Set the background position */

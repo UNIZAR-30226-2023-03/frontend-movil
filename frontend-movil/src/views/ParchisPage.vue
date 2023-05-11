@@ -97,7 +97,8 @@ export default {
             idPartida: this.$route.query.id,
             color: this.$route.query.color,
             miTurno: false,
-            valorDado: 0
+            valorDado: 0,
+            tableroActivo: ''
         }
     },
     methods: {
@@ -341,6 +342,10 @@ export default {
             }
         }
     },
+    beforeMount(){
+        Cookies.set('miColor',this.color);
+    }
+    ,
     mounted() {
         const jugadores = JSON.parse(this.$route.query.jugadores);
         this.ocuparJugador({ color: this.color, username: 'YO' });

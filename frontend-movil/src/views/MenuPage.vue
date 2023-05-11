@@ -31,7 +31,7 @@
               Jugar
           </a>
       </div>
-      <button v-on:click="changeImageSrc">ponertablero</button>
+      
     
     <Teleport to="body">
       <Amigos :show="showModalNoti" @close="showModalNoti = false">

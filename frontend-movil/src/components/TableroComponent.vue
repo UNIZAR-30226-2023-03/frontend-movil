@@ -6,12 +6,16 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie';
 import { IonButton } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 export default{
     data(){
         return{
+            miColor: 'AMARILLO',
+            fichaActiva: '',
+           tableroActivo: '',
            fichas:[
             {idFicha:'y1', id:1, color:'AMARILLO',casilla: 76, colorEstilo:'yellow', activada:false},
             {idFicha:'y2', id:2, color:'AMARILLO',casilla: 77, colorEstilo:'yellow', activada:false},
@@ -137,11 +141,32 @@ export default{
             const heightTablero = rect.height;
 
             this.fichas.forEach(ficha => {
-                const casilla = this.casillas[ficha.casilla];
-                const boton = document.getElementById(ficha.idFicha);
+            const casilla = this.casillas[ficha.casilla];
+            const boton = document.getElementById(ficha.idFicha);
 
-                boton.style.position = "absolute";
+            boton.style.position = "absolute";
+
+            
+            const tablero = this.$refs.tablero;
+            console.log('ficha.color: ',ficha.color);
+            console.log('this.miColor:', this.miColor);
+            if (ficha.color == this.miColor) {
+                import(`../../public/assets/FICHA${this.fichaActiva}.png`).then(imageUrl => {
+                    boton.style.backgroundImage =  `url(${imageUrl.default})`;
+                    
+                });
+                    /* Set the background size */
+                    boton.style.backgroundSize = "cover";
+                    /* Set the background position */
+                    boton.style.backgroundPosition = "center center";
+                    /* Set the background repeat */
+                    boton.style.backgroundRepeat = "no-repeat";
+            }
+
+
                 boton.style.backgroundColor = ficha.colorEstilo;
+
+
                 boton.style.width = widthTablero * 0.044 +"px";
                 boton.style.height = widthTablero * 0.044 +"px";
 
@@ -158,14 +183,23 @@ export default{
                 }
             });
         },
+        
+        
+      changeImageSrc(boardImage) {
+        this.tableroActivo = Cookies.get('tableroActivo');
+     
+      import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
+        boardImage.src = imageUrl.default;
+    });
+  },
         crearTablero() {
             const canvas = document.getElementById('parchisBoard');
             const ctx = canvas.getContext('2d');
 
             canvas.height = canvas.width;
             const boardImage = new Image();
-            boardImage.src = 'assets/tablero.png';
-
+            this.changeImageSrc(boardImage); // cargar skin del tablero
+            
             boardImage.onload = () => { // Arrow function instead of regular function
                 ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
 
@@ -176,6 +210,9 @@ export default{
     }    
     ,
     mounted(){
+        this.miColor = Cookies.get('miColor');
+        this.tableroActivo = Cookies.get('tableroActivo');
+        this.fichaActiva = Cookies.get('fichaActiva');
         this.crearTablero();
     }
 }
