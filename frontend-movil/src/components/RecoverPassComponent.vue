@@ -1,6 +1,10 @@
 <script>
+import { IonButton } from '@ionic/vue';
 import axios from 'axios';
 export default {
+  components:{
+    IonButton
+  },
   props: {
     show: Boolean
   },
@@ -74,11 +78,11 @@ export default {
         <div v-if="!Enviado" class="modal-header">
           <slot name="header">Recuperar Contraseña</slot>
         </div>
-        <P></P>
+        <p></p>
         <div v-if="Enviado">Ve a tu correo</div>
         <form  v-if="!Enviado" class="chat-input" @submit.prevent="recoverPass">
           <input  v-model="username" placeholder="Nombre de usuario" required>
-          <P></P>
+          <p></p>
           <div v-if="errorUser" style="color: red;">El usuario no existe</div>
           <div style="display: flex; justify-content: center;">
             <ion-button type="submit">

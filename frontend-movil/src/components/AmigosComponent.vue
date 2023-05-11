@@ -2,6 +2,7 @@
 import { IonLabel, IonSegment, IonSegmentButton, IonCard, IonButton, IonCardTitle, IonCardContent, IonCardHeader } from '@ionic/vue';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import router from "@/router";
 
 export default {
   components: {
@@ -22,7 +23,9 @@ export default {
       tabSelected: "amigos",
       listaAmigos: [],
       listaSolicitudes: [],
-      usuarioEnviar: ""
+      usuarioEnviar: "",
+      msgError: "",
+      colorError: ""
     }
   },
   methods: {
@@ -43,18 +46,26 @@ export default {
               amigo: idAmigo
             })
               .then((response) => {
+                if (idAmigo == sessionId) {
+                  this.mostrarError("No puedes enviarte una solicitud a tí mismo", "red");
+                  return;
+                }
+
                 const success = response.status === 200;
                 if (success) {
                   console.log("Solicitud de amistad enviada");
+                  this.mostrarError("Solicitud enviada", "green");
+                  this.cargarDatos();
                 }
               })
               .catch((error) => {
+                this.mostrarError("No puedo enviar la solicitud", "red");
                 console.log(error);
               });
           }
-          this.cargarDatos();
         })
         .catch((error) => {
+          this.mostrarError("Usuario no encontrado", "red");
           console.log(error);
         });
     },
@@ -69,13 +80,12 @@ export default {
           const success = response.status === 200;
           if (success) {
             console.log("Solicitud de amistad aceptada");
+            this.cargarDatos();
           }
         })
         .catch((error) => {
           console.log(error);
         });
-
-      this.cargarDatos()
     },
 
 
@@ -89,13 +99,35 @@ export default {
           const success = response.status === 200;
           if (success) {
             console.log("Solicitud de amistad aceptada");
+            this.cargarDatos();
           }
         })
         .catch((error) => {
           console.log(error);
         });
+    },
 
-      this.cargarDatos()
+    eliminarAmigo(idAmigo) {
+      const sessionId = Cookies.get('sessionId');
+      axios.post('https://lamesa-backend.azurewebsites.net/usuario/eliminar-amigo', {
+        usuario: sessionId,
+        amigo: idAmigo
+      })
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log("Amigo eliminado");
+            this.cargarDatos()
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    cambiarTab(tab) {
+      //this.cargarDatos();
+      this.tabSelected = tab;
     },
 
     cargarDatos() {
@@ -125,14 +157,40 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-        this.$forceUpdate();
+      //this.$forceUpdate();
+    },
+
+    cerrar() {
+      this.cargarDatos();
+      this.$emit('close');
+    },
+
+    unirseAmigo(partidaAmigo) {
+      const sessionId = Cookies.get('sessionId');
+      axios.post('https://lamesa-backend.azurewebsites.net/partida/conectar-amigo', {
+        jugador: sessionId,
+        partida: partidaAmigo
+      })
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            Cookies.set('jugadores', response.data.jugadores);
+            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, idJugador: this.idJugador, jugadores: JSON.stringify(response.data.jugadores), id: response.data.id, color: response.data.color, hostPrivada: false } });
+          }
+        })
+        .catch((error) => {
+          this.mostrarError("La partida no existe");
+          console.log(error);
+        });
+    },
+
+    mostrarError(mensaje, color) {
+      this.msgError = mensaje;
+      this.colorError = color;
     }
 
   },
   mounted() {
-    this.cargarDatos();
-  },
-  updated(){
     this.cargarDatos();
   }
 }
@@ -174,16 +232,16 @@ export default {
   <Transition name="notificaciones">
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
-        <a class="close-icon-img" @click="$emit('close')">
+        <a class="close-icon-img" @click="cerrar()">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
 
         <!-- Cabecera tabs -->
         <ion-segment value="default">
-          <ion-segment-button value="default" @click="tabSelected = 'amigos'">
+          <ion-segment-button value="default" @click="cambiarTab('amigos')">
             <ion-label style="font-size: smaller;">Amigos</ion-label>
           </ion-segment-button>
-          <ion-segment-button value="segment" @click="tabSelected = 'solicitudes'">
+          <ion-segment-button value="segment" @click="cambiarTab('solicitudes')">
             <ion-label style="font-size: smaller;">Solicitudes</ion-label>
           </ion-segment-button>
         </ion-segment>
@@ -197,15 +255,15 @@ export default {
                 style="width: 100%; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 {{ a.username }}
               </ion-card-title>
-              <button class="mr-0"
+              <button @click="eliminarAmigo(a.id)" class="mr-0"
                 style="margin: 0px; padding: 0px; background-color: rgb(219, 52, 52); border-radius: 5px; width: 20px; float: right">
                 <img src="../../public/assets/eliminar.png" style="width:100%; height: 100%;">
               </button>
             </ion-card-header>
 
-            <ion-card-content style="display: flex; font-size: small;">
-              {{ a.estado }}
-              <ion-button v-if="a.estado == 'ESPERANDO JUGADORES'" size="small">UNIRSE</ion-button>
+            <ion-card-content v-if="a.estado == 'ESPERANDO_JUGADORES'" style="display: flex; font-size: small;">
+              Esperando jugadores
+              <ion-button size="small" @click="unirseAmigo(a.idPartida)">UNIRSE</ion-button>
             </ion-card-content>
           </ion-card>
         </div>
@@ -220,6 +278,8 @@ export default {
             <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
           </button>
 
+          <p style="font-size: smaller;" :style="{ 'color': colorError }"> {{ msgError }}</p>
+
 
           <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
           <h2 style="font-size: medium; margin-bottom:0; margin-top:0">Solicitudes recibidas</h2>
@@ -233,8 +293,8 @@ export default {
             </ion-card-header>
 
             <ion-card-content style="display: flex; font-size: small;">
-              <ion-button @click="aceptarSolicitud(s.id)" size="small">ACEPTAR</ion-button>
-              <ion-button @click="rechazarSolicitud(s.id)" size="small">RECHAZAR</ion-button>
+              <ion-button @click="aceptarSolicitud(s.id)" size="small" style="width: 40%;">ACEPTAR</ion-button>
+              <ion-button @click="rechazarSolicitud(s.id)" size="small" style="width: 40%;">RECHAZAR</ion-button>
             </ion-card-content>
           </ion-card>
 

@@ -14,7 +14,7 @@
         <button class="login-button" type="submit">Iniciar Sesión</button>
         ¿Aun no tienes una cuenta?
         Registrate <span class="register-link" @click="moveToRegister">aquí</span>
-        <P></P>
+        <p></p>
       <a class="register-link" @click="showModalPass = true" >Olvidé mi contraseña</a>
       </form>
       
