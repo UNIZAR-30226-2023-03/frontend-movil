@@ -173,14 +173,16 @@ export default {
                     console.log(data);
                     const casillaDestino = data.destino.posicion;
                     const ficha = data.ficha;
+                    let fichaMovida = false;
                     if (data.comida == null) {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino);
                     } else {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino, data.comida.numero, data.comida.color);
+                        fichaMovida = true;
                     }
                     this.activarFichas(false);
                     this.$refs.tablero.actualizarPosiciones();
-                    this.actualizarTurno(data.turno);
+                    this.actualizarTurno(data.turno, fichaMovida);
                 })
                 stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
                     //Mensaje de chat recibido
@@ -217,7 +219,7 @@ export default {
             this.miTurno = true;
             this.$refs.dado.activarDado();
         },
-        actualizarTurno(color) {
+        actualizarTurno(color, fichaComida) {
             let fichasFuera = 0;
             const oc = this.offsetColor(color);
             console.log("Actualizando turno. Fichas fuera: ", this.fichasFuera);
@@ -226,7 +228,7 @@ export default {
             fichasFuera = this.$refs.tablero.fichas[oc + 2].activada ? fichasFuera + 1 : fichasFuera;
             fichasFuera = this.$refs.tablero.fichas[oc + 3].activada ? fichasFuera + 1 : fichasFuera;
 
-            if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6)) {
+            if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6) || fichaComida) {
                 //Encender timer
                 this.$refs.timer.resetTimer();
                 this.$refs.timer.encenderTimer();
