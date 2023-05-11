@@ -27,18 +27,26 @@ export default {
         },
         {
           "id": 2,
-          "nombre": "Fichas de plástico",
+          "nombre": "Tablero de NAVIDAD",
           "descripcion": "Set de 32 fichas de ajedrez hechas de plástico resistente",
           "precio": 12.99,
-          "tipoProducto": "FICHA"
+          "tipoProducto": "TABLERO"
         },
         {
           "id": 3,
-          "nombre": "Tablero de NAVIDAD",
+          "nombre": "Fichas de NAVIDAD",
           "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
           "precio": 59.99,
-          "tipoProducto": "TABLERO"
-        }],
+          "tipoProducto": "FICHA"
+        },
+        {
+          "id": 4,
+          "nombre": "Fichas de HALLOWEEN",
+          "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
+          "precio": 59.99,
+          "tipoProducto": "FICHA"
+        }
+      ],
       fichaActiva: '',
       tableroActivo: ''
     }

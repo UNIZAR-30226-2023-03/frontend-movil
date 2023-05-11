@@ -340,16 +340,12 @@ export default {
                 this.jugadores[3].nombre = jugador.username;
                 this.jugadores[3].ocupado = true;
             }
-        },
-        
-      changeImageSrc() {
-        this.tableroActivo = Cookies.get('tableroActivo');
-      const tablero = this.$refs.tablero;
-      import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
-      tablero.src = imageUrl.default;
-    });
-  }
+        }
     },
+    beforeMount(){
+        Cookies.set('miColor',this.color);
+    }
+    ,
     mounted() {
         const jugadores = JSON.parse(this.$route.query.jugadores);
         this.ocuparJugador({ color: this.color, username: 'YO' });
