@@ -257,28 +257,35 @@ export default {
         </ion-segment>
 
         <!-- Tabs -->
-        <div class="customTab" v-show="tabSelected == 'amigos'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
+        <div class="customTab" v-show="tabSelected == 'amigos'"
+          style="overflow: scroll; -webkit-overflow-scrolling: touch;">
 
-          <ion-card v-for="a in listaAmigos" :key="a.id">
-            <ion-card-header style="display: flex;">
-              <ion-card-title class="d-block ml-auto"
-                style="width: 100%; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                {{ a.username }}
-              </ion-card-title>
-              <button @click="eliminarAmigo(a.id)" class="mr-0"
-                style="margin: 0px; padding: 0px; background-color: rgb(219, 52, 52); border-radius: 5px; width: 20px; float: right">
-                <img src="../../public/assets/eliminar.png" style="width:100%; height: 100%;">
-              </button>
-            </ion-card-header>
+          <div v-if="listaAmigos.length">
+            <ion-card v-for="a in listaAmigos" :key="a.id">
+              <ion-card-header style="display: flex;">
+                <ion-card-title class="d-block ml-auto"
+                  style="width: 100%; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ a.username }}
+                </ion-card-title>
+                <button @click="eliminarAmigo(a.id)" class="mr-0"
+                  style="margin: 0px; padding: 0px; background-color: rgb(219, 52, 52); border-radius: 5px; width: 20px; float: right">
+                  <img src="../../public/assets/eliminar.png" style="width:100%; height: 100%;">
+                </button>
+              </ion-card-header>
 
-            <ion-card-content v-if="a.estado == 'ESPERANDO_JUGADORES'" style="display: flex; font-size: small;">
-              Esperando jugadores
-              <ion-button size="small" @click="unirseAmigo(a.idPartida)">UNIRSE</ion-button>
-            </ion-card-content>
-          </ion-card>
+              <ion-card-content v-if="a.estado == 'ESPERANDO_JUGADORES'" style="display: flex; font-size: small;">
+                Esperando jugadores
+                <ion-button size="small" @click="unirseAmigo(a.idPartida)">UNIRSE</ion-button>
+              </ion-card-content>
+            </ion-card>
+          </div>
+          <div v-else>
+            <p>No tienes ningún amigo 😞</p>
+          </div>
         </div>
 
-        <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
+        <div class="customTab" v-show="tabSelected == 'solicitudes'"
+          style="overflow: scroll; -webkit-overflow-scrolling: touch;">
           <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
           <div style="display: flex; align-items: center;">
             <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
@@ -305,8 +312,10 @@ export default {
             </ion-card-header>
 
             <ion-card-content style="display: flex; font-size: small;">
-              <ion-button color="success" @click="aceptarSolicitud(s.id)" size="small" style="width: 40%;">ACEPTAR</ion-button>
-              <ion-button color="danger" @click="rechazarSolicitud(s.id)" size="small" style="width: 50%;">RECHAZAR</ion-button>
+              <ion-button color="success" @click="aceptarSolicitud(s.id)" size="small"
+                style="width: 40%;">ACEPTAR</ion-button>
+              <ion-button color="danger" @click="rechazarSolicitud(s.id)" size="small"
+                style="width: 50%;">RECHAZAR</ion-button>
             </ion-card-content>
           </ion-card>
 
