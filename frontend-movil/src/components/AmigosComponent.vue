@@ -280,13 +280,15 @@ export default {
 
         <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
           <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
-          <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
-            style="width: auto; margin-top: 0px; height: 25px;">
-          <button class="mr-0"
-            style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right"
-            @click="enviarSolicitud">
-            <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
-          </button>
+          <div style="display: flex; align-items: center;">
+            <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
+              style="width: 85%; margin-top: 0px; height: 25px; margin-right:5%">
+            <button class="mr-0"
+              style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right;"
+              @click="enviarSolicitud">
+              <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
+            </button>
+          </div>
 
           <p style="font-size: smaller;" :style="{ 'color': colorError }"> {{ msgError }}</p>
 
