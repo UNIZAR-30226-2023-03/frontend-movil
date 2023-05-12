@@ -272,7 +272,6 @@ export default {
 
             boardImage.onload = () => { // Arrow function instead of regular function
                 ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
-
                 this.actualizarPosiciones();
             }
         }

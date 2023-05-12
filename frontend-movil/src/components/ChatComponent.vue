@@ -26,12 +26,15 @@
 
 
 <script>
-import { IonIcon } from '@ionic/vue';
+import { IonButton } from '@ionic/vue';
 
 import Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 
 export default {
+  components:{
+    IonButton
+  },
   data() {
     return {
       message:  null,

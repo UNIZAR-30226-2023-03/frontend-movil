@@ -166,6 +166,7 @@ export default {
     },
 
     cerrar() {
+      this.tabSelected = "amigos";
       this.cargarDatos();
       this.$emit('close');
     },
@@ -256,7 +257,7 @@ export default {
         </ion-segment>
 
         <!-- Tabs -->
-        <div class="customTab" v-show="tabSelected == 'amigos'" style="overflow: scroll;">
+        <div class="customTab" v-show="tabSelected == 'amigos'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
 
           <ion-card v-for="a in listaAmigos" :key="a.id">
             <ion-card-header style="display: flex;">
@@ -277,7 +278,7 @@ export default {
           </ion-card>
         </div>
 
-        <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll;">
+        <div class="customTab" v-show="tabSelected == 'solicitudes'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
           <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
           <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
             style="width: auto; margin-top: 0px; height: 25px;">

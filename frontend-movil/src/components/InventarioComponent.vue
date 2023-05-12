@@ -1,8 +1,11 @@
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
+import { IonButton } from '@ionic/vue';
 export default {
+  components:{
+    IonButton
+  },
   props: {
     show: Boolean
   },
