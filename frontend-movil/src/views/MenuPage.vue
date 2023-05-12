@@ -10,16 +10,16 @@
           </a>
       </div>
       <div class="containerMenu2">
-          <a class="boton2 boton-menu-vict boton-menu" id="show-modalV" @click="showModalVict = true">
+          <a class="boton2 boton-menu-vict boton-menu" id="show-modalV" @click="showModalRanking = true">
               <img src="../../public/assets/medallas.png" alt="cerrar popup">
           </a>
-          <a class="boton1 boton-menu-notis boton-menu" id="show-modalN" @click="showModalNoti = true">
+          <a class="boton1 boton-menu-notis boton-menu" id="show-modalN" @click="showModalAmigos = true">
               <img src="../../public/assets/amigos.png" alt="cerrar popup">
           </a>
       </div>
       <div class="containerTablero">
         <a  @click="showModalInventario = true">
-          <img  ref="tablero" :class="{ 'small-image': showModalVict }" style="border-radius: 10px"  alt="skin del tablero">
+          <img  ref="tablero" :class="{ 'small-image': showModalInventario }" style="border-radius: 10px"  alt="skin del tablero">
           </a>
           
       </div>
@@ -34,10 +34,10 @@
       
     
     <Teleport to="body">
-      <Amigos :nombreUsuario="nombreUsuario" :show="showModalNoti" @close="showModalNoti = false">
+      <Amigos :nombreUsuario="nombreUsuario" :show="showModalAmigos" @close="showModalAmigos = false">
       </Amigos>
-      <Victorias :show="showModalVict" @close="showModalVict = false">
-      </Victorias>
+      <Ranking :show="showModalRanking" @close="showModalRanking = false">
+      </Ranking>
       <Jugar :show="showModalJugar" @close="showModalJugar = false" @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="jugar">
       </Jugar>
       <Privada :show="showModalPrivada" :nombreUsuario="nombreUsuario" :idJugador="idUsuario" @close="showModalPrivada = false">
@@ -53,14 +53,14 @@
     import Cookies from 'js-cookie';
     import router from "@/router";
     import Amigos from "@/components/AmigosComponent.vue"
-    import Victorias from "@/components/VictoriasComponent.vue"
+    import Ranking from "@/components/RankingComponent.vue"
     import Jugar from "@/components/JugarComponent.vue"
     import Privada from "@/components/PrivadaComponent.vue"
     import Inventario from "@/components/InventarioComponent.vue"
     export default {
       components: {
         Amigos,
-        Victorias,
+        Ranking,
         Jugar,
         Inventario,
         Privada
@@ -71,10 +71,11 @@
           idUsuario: this.$route.query.userId,
           nombreUsuario: this.$route.query.username,
           showModalNoti: false,
-          showModalVict: false,
           showModalJugar: false,
           showModalPrivada: false,
-          showModalInventario: false
+          showModalInventario: false,
+          showModalAmigos: false,
+          showModalRanking: false
         }
       },
     //   watch: {
