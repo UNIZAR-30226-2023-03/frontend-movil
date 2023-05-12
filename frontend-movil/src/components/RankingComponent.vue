@@ -33,22 +33,19 @@ export default {
         { text: 'Media comidas', value: 'mediaComidas' },
         { text: 'Media en meta', value: 'mediaEnMeta' }
       ],
-      listaRanking: []
+      listaRanking: [],
+      stats: {}
     }
   },
   methods: {
     cambiarTab(tab) {
-      this.cargarDatos();
+      this.cargarRanking();
+      this.cargarEstadisitcas();
       this.tabSelected = tab;
-    },
-
-    cargarDatos() {
-      console.log('Cargar datos');
     },
 
     cerrar() {
       this.cambiarTab("top");
-      this.cargarDatos();
       this.$emit('close');
     },
 
@@ -57,10 +54,9 @@ export default {
       axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected, {})
         .then((response) => {
           const success = response.status === 200;
-          this.listaRanking = response.data;
           if (success) {
             console.log(response.data);
-            this.listaAmigos = response.data;
+            this.listaRanking = response.data;
           } else {
             this.listaRanking = [];
           }
@@ -69,20 +65,41 @@ export default {
           console.log(error);
           this.listaRanking = [];
         });
+    },
+
+    cargarEstadisitcas() {
+      console.log('Cargar estadísticas');
+      const sessionId = Cookies.get('sessionId');
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/estadisticas/' + sessionId, {})
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log(response.data);
+            this.stats = response.data;
+          } else {
+            this.stats = [];
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.stats = [];
+        });
     }
+
+
   },
+
   mounted() {
     this.cambiarTab("top");
-    this.cargarDatos();
+    this.cargarEstadisitcas();
   }
 }
-
 </script>
 
 <style>
 .modal-container {
 
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   position: relative;
   /* make the container position relative */
@@ -120,10 +137,10 @@ export default {
 
         <!-- Cabecera tabs -->
         <ion-segment value="default">
-          <ion-segment-button value="default" @click="cambiarTab('top')">
+          <ion-segment-button :value="tabSelected=='top' ? 'default':'segment'" @click="cambiarTab('top')">
             <ion-label style="font-size: 9px;">Mejores jugadores</ion-label>
           </ion-segment-button>
-          <ion-segment-button value="segment" @click="cambiarTab('misStats')">
+          <ion-segment-button :value="tabSelected=='misStats' ? 'default':'segment'" @click="cambiarTab('misStats')">
             <ion-label style="font-size: 9px;">Mis estadísticas</ion-label>
           </ion-segment-button>
         </ion-segment>
@@ -146,49 +163,32 @@ export default {
 
           <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
 
-
-          <div
-            style="font-size: smaller; display: flex; justify-content: space-evenly; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-            <div
-              style="font-size: smaller; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-              Posición
-            </div>
-
-            <div style=" width: 30%;">
-              Nombre
-            </div>
-
-            <div
-              style="font-size: smaller; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-              Medida
-            </div>
-          </div>
-
-          <ion-card class=" margin0" style="padding: 5px">
-            <div style="display: flex;" justify-content:space-between>
-              <div style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
-                121
-              </div>
-
-              <div style="width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
-                JugadorxD23_zGz
-              </div>
-              <div
-                style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-                237
-              </div>
-            </div>
-          </ion-card>
-
           <div v-if="listaRanking.length">
+            <div
+              style="font-size: smaller; display: flex; justify-content: space-evenly; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+              <div
+                style="font-size: smaller; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+                Posición
+              </div>
+
+              <div style=" width: 50%;">
+                Nombre
+              </div>
+
+              <div
+                style="font-size: smaller; width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+                Medida
+              </div>
+            </div>
+
             <ion-card v-for="(r, index) in listaRanking" :key="index">
               <div style="display: flex;">
 
-                <div style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
-                  {{ index }}
+                <div style="width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                  {{ index + 1}}
                 </div>
 
-                <div style="width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                <div style="width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                   {{ r.username }}
                 </div>
 
@@ -196,7 +196,7 @@ export default {
                   style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
                   {{ r.selected }}
                 </div>
-                
+
               </div>
             </ion-card>
           </div>
@@ -209,6 +209,25 @@ export default {
 
         <div class="customTab" v-show="tabSelected == 'misStats'"
           style="overflow: scroll; -webkit-overflow-scrolling: touch;">
+          <h2> Mis estadísticas: </h2>
+          <div class="estadistica">
+            <div class="nombreStat"> Partidas jugadas </div> <div class="valorStat"> {{ stats.pjugadas }} </div>
+          </div>
+          <div class="estadistica">
+            <div class="nombreStat"> Partidas ganadas </div> <div class="valorStat"> {{ stats.pganadas }} </div>
+          </div>
+          <div class="estadistica">
+            <div class="nombreStat"> Torneos jugados </div> <div class="valorStat"> {{ stats.tjugados }} </div>
+          </div>
+          <div class="estadistica">
+            <div class="nombreStat"> Torneos ganados </div> <div class="valorStat"> {{ stats.tganados }} </div>
+          </div>
+          <div class="estadistica">
+            <div class="nombreStat"> Media comidas </div> <div class="valorStat"> {{ stats.mediaComidas }} </div>
+          </div>
+          <div class="estadistica">
+            <div class="nombreStat"> Media en meta </div> <div class="valorStat"> {{ stats.mediaEnMeta }} </div>
+          </div>
 
         </div>
       </div>
@@ -218,6 +237,30 @@ export default {
 
 
 <style>
+.estadistica{
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nombreStat{
+  color: rgb(207, 207, 207);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 70%;
+}
+
+.valorStat{
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 20%;
+  text-align: center;
+}
+
 .customTab {
   height: 200px;
   width: 100%;

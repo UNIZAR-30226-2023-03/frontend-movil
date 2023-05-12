@@ -131,7 +131,7 @@ export default {
     },
 
     cambiarTab(tab) {
-      //this.cargarDatos();
+      this.cargarDatos();
       this.tabSelected = tab;
     },
 
@@ -247,11 +247,11 @@ export default {
         </a>
 
         <!-- Cabecera tabs -->
-        <ion-segment value="default">
+        <ion-segment :value="tabSelected=='amigos' ? 'default':'segment'">
           <ion-segment-button value="default" @click="cambiarTab('amigos')">
             <ion-label style="font-size: smaller;">Amigos</ion-label>
           </ion-segment-button>
-          <ion-segment-button value="segment" @click="cambiarTab('solicitudes')">
+          <ion-segment-button :value="tabSelected=='top' ? 'solicitudes':'segment'" @click="cambiarTab('solicitudes')">
             <ion-label style="font-size: smaller;">Solicitudes</ion-label>
           </ion-segment-button>
         </ion-segment>
