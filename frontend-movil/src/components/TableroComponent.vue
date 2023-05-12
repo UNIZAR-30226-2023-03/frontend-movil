@@ -170,9 +170,9 @@ export default {
         }
     },
     methods: {
-        ponerSkinDeLosJugadores(jugadores) {
+        ponerSkinDeLosJugadores(jugadores = null) {
             console.log('viendo las skins de los jugadores');
-            this.$set(this.jugadores, jugadores)
+           //this.$set(this.jugadores, jugadores)
         },
         actualizarPosiciones() {
             console.log('prop de jugadores 0 : ',this.jugadores[0]);
@@ -209,6 +209,7 @@ export default {
 
                 this.jugadores.forEach(j => {
                     if (((j.idJugador != -1) && (j.idJugador != -2)) && j.color == ficha.color) { // comprobar que esa posicion no está vacía o es el jugador local
+                        console.log('jugador en el forecha j: ', j);
                         // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
                         //     .then(response => {
                         //         console.log('fihaActiva de un jugador= ', response.data.id);
