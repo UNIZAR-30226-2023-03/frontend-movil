@@ -2,7 +2,8 @@
     <div class="pantalla">
         <div style="margin-bottom: 20px;">
             <ion-button class="ion-float-left boton" @click="showModalConfirmacion = true">Salir</ion-button>
-            <ion-button id="chatbutton" class="ion-float-right boton" :class="{ 'animado': msgsNuevos }" name="chatbox"  @click="showModalChat = true; msgsNuevos = false"  >CHAT</ion-button>
+            <ion-button id="chatbutton" class="ion-float-right boton" :class="{ 'animado': msgsNuevos }" name="chatbox"
+                @click="showModalChat = true; msgsNuevos = false">CHAT</ion-button>
         </div>
         <div style="text-align: center;">
             <TimerComponent ref="timer" />
@@ -15,7 +16,7 @@
         </div>
         <div style="width: 95%; margin: auto;">
 
-            <TableroComponent ref="tablero" @fichaPulsada="realizarMovimiento" />
+            <TableroComponent  :jugadores="jugadores" ref="tablero" @fichaPulsada="realizarMovimiento" />
         </div>
         <div style="margin-bottom: 20px; overflow: hidden;">
             <IconoJugador :nombreUsuario="jugadores[2].nombre" izquierda="true" :seleccionado="turno === 'ROJO'"
@@ -31,44 +32,37 @@
             COMENZAR PARTIDA
         </ion-button>
 
-        
 
-        
+
+
     </div>
 
     <Teleport to="body">
-  <Chat 
-    ref="chatHijo" 
-    :show="showModalChat" 
-    @close="showModalChat = false"
-    :nombreUsuario="nombreUsuario"
-    :idPartida="idPartida"
-  />
-  <Confirmacion  
-    :show="showModalConfirmacion" 
-    @close="showModalConfirmacion = false"
-  />
-</Teleport>
-
+        <Chat ref="chatHijo" :show="showModalChat" @close="showModalChat = false" :nombreUsuario="nombreUsuario"
+            :idPartida="idPartida" />
+        <Confirmacion :show="showModalConfirmacion" @close="showModalConfirmacion = false" />
+    </Teleport>
 </template>
 
 <style>
 @import '../theme/estilos.css';
 
-.animado{
+.animado {
     animation: color-animation 2s infinite ease-in-out;
 }
 
 @keyframes color-animation {
-  0% {
-    --background: rgba(39, 155, 184, 0.432);
-  }
-  50% {
-    --background: rgb(180, 65, 65);
-  }
-  100% {
-    --background: rgba(39, 155, 184, 0.432);
-  }
+    0% {
+        --background: rgba(39, 155, 184, 0.432);
+    }
+
+    50% {
+        --background: rgb(180, 65, 65);
+    }
+
+    100% {
+        --background: rgba(39, 155, 184, 0.432);
+    }
 }
 </style>
 
@@ -108,10 +102,10 @@ export default {
             showModalChat: false,
             tiempoRestante: 60,
             jugadores: [
-                { id: 1, nombre: 'ESPERANDO JUGADOR', ocupado: false },
-                { id: 2, nombre: 'ESPERANDO JUGADOR', ocupado: false },
-                { id: 3, nombre: 'ESPERANDO JUGADOR', ocupado: false },
-                { id: 4, nombre: 'ESPERANDO JUGADOR', ocupado: false }
+                { id: 1, nombre: 'ESPERANDO JUGADOR', idJugador: -1, ocupado: false, color: 'AMARILLO' }, //amarillo 0
+                { id: 2, nombre: 'ESPERANDO JUGADOR', idJugador: -1, ocupado: false, color: 'AZUL' }, // azul 1
+                { id: 3, nombre: 'ESPERANDO JUGADOR', idJugador: -1, ocupado: false, color: 'ROJO' }, //rojo 2
+                { id: 4, nombre: 'ESPERANDO JUGADOR', idJugador: -1, ocupado: false, color: 'VERDE' } // verde 3
             ],
             nJugadores: 0,
             turno: "",
@@ -128,9 +122,25 @@ export default {
     methods: {
         logout() {
             Cookies.remove('sessionId');
-      // redirigir al usuario a la página de inicio de sesión
-      this.$router.push('/');
-    },
+            // redirigir al usuario a la página de inicio de sesión
+            this.$router.push('/');
+        },
+        obtenerId(username) {
+            return axios.get('https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=' + username, {})
+                .then((response) => {
+                    const success = response.status === 200;
+
+                    if (success) {
+                        console.log("Id de usuario consultado:" + response.data);
+                        return response.data; // devuelve el id del usuario
+                    }
+                })
+                .catch((error) => {
+                    this.mostrarError("Usuario no encontrado", "red");
+                    console.log(error);
+                });
+        }
+        ,
         offsetColor(colorFicha) {
             let offset = 0;
             if (colorFicha == "AZUL") {
@@ -178,10 +188,12 @@ export default {
             stompClient.connect({}, (frame) => {
                 console.log("connected to the frame: " + frame);
                 stompClient.subscribe("/topic/nuevo-jugador/" + idPartida, (response) => {
+
                     //Un jugador se ha unido a la partida (cuando aún no ha empezado)
                     const data = JSON.parse(response.body);
-                    console.log(data);
+                    console.log('Nuevo jugador response: ', data);
                     this.ocuparJugador(data);
+
                 })
                 stompClient.subscribe("/topic/dado/" + idPartida, (response) => {
                     //Un jugador ha sacado ficha de casa -> Actualizar tablero
@@ -220,7 +232,7 @@ export default {
                 stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
                     //Mensaje de chat recibido
                     this.msgsNuevos = true;
-                    
+
                     const data = JSON.parse(response.body);
                     console.log(data);
                 })
@@ -256,10 +268,10 @@ export default {
         actualizarTurno(color, fichaComida, movimientoRealizado) {
             let fichasFuera = 0;
             const oc = this.offsetColor(color);
-            fichasFuera = this.$refs.tablero.fichas[oc + 0].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 1].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 0].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 1].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
 
             console.log("Actualizando turno. Fichas fuera: ", fichasFuera);
             console.log("Actualizando turno. fichaComida: ", fichaComida);
@@ -268,7 +280,7 @@ export default {
 
 
 
-            
+
             if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6 && movimientoRealizado) || fichaComida) {
                 //Encender timer
                 this.$refs.timer.resetTimer();
@@ -358,7 +370,7 @@ export default {
                     if (success) {
                         //Mover ficha a donde corresponde
                         return  //Se encarga el socket
-                    }else{
+                    } else {
                         console.log("Error al mandar movimiento. Estado ", response.status);
                     }
                 })
@@ -367,29 +379,56 @@ export default {
                 });
         },
         ocuparJugador(jugador) {
+            let idJugador;
+
+            if (jugador.username == 'YO') { // si eres el jugador local ya pones tus skins con la variable que se le pasa a tableroComponent
+                idJugador = -2;
+                console.log('soy yo en el ocupar');
+            } else {
+
+                  //poblamos el vector con la id del usuario (habrá que comprobar a la hora de poner las skins que no sea -1 o -2)
+
+                this.obtenerId(jugador.username)
+                    .then((id) => {
+                        idJugador = id;
+                        console.log('otro jugador en el ocupar con id: ', idJugador);
+                        // Use the user ID here
+                    })
+                    .catch((error) => {
+                        console.log('Error:', error);
+                    });
+
+            }
+
             if (jugador.color == "AZUL") {
                 this.jugadores[0].nombre = jugador.username;
                 this.jugadores[0].ocupado = true;
+                this.jugadores[0].idJugador = idJugador;
             }
             if (jugador.color == "AMARILLO") {
                 this.jugadores[1].nombre = jugador.username;
                 this.jugadores[1].ocupado = true;
+                this.jugadores[1].idJugador = idJugador;
             }
             if (jugador.color == "ROJO") {
                 this.jugadores[2].nombre = jugador.username;
                 this.jugadores[2].ocupado = true;
+                this.jugadores[2].idJugador = idJugador;
             }
             if (jugador.color == "VERDE") {
                 this.jugadores[3].nombre = jugador.username;
                 this.jugadores[3].ocupado = true;
+                this.jugadores[3].idJugador = idJugador;
             }
+
+            this.$refs.tablero.ponerSkinDeLosJugadores(this.jugadores);
         },
         sleep(milliseconds) {
             return new Promise((resolve) => setTimeout(resolve, milliseconds));
         },
-        
-        async esperarTiempo(){
-            if(this.setAlarm(30)){
+
+        async esperarTiempo() {
+            if (this.setAlarm(30)) {
                 const valorDado = await this.$refs.dado.tirarDado();
                 await this.verMovimientos(valorDado);
                 // Seleccionar movimiento aleatorio
@@ -397,33 +436,33 @@ export default {
             }
         },
 
-        async setAlarm(t){
+        async setAlarm(t) {
             this.sleep(1000);
-            if(this.miTurno){
-                if(t <= 0){
+            if (this.miTurno) {
+                if (t <= 0) {
                     return true;
-                }else{
-                    return this.setAlarm(t-1)
+                } else {
+                    return this.setAlarm(t - 1)
                 }
-            }else{
+            } else {
                 return false;
             }
         }
 
     },
-    beforeMount(){
-        Cookies.set('miColor',this.color);
+    beforeMount() {
+        Cookies.set('miColor', this.color);
     }
     ,
     mounted() {
         const jugadores = JSON.parse(this.$route.query.jugadores);
         this.ocuparJugador({ color: this.color, username: 'YO' });
-        
-        
+
+
         console.log('Jugadores:', jugadores);
-      
+
         jugadores.forEach(j => {
-            this.ocuparJugador({ color: j.color, username: j.username});
+            this.ocuparJugador({ color: j.color, username: j.username });
             console.log('cookies get');
         });
 

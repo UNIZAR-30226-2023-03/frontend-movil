@@ -7,6 +7,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+import axios from 'axios';
 import { IonButton } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
@@ -17,22 +18,22 @@ export default {
             fichaActiva: '',
             tableroActivo: '',
             fichas: [
-                { idFicha: 'y1', id: 1, color: 'AMARILLO', casilla: 76, casa: 76 , colorEstilo: 'yellow', activada: false },
-                { idFicha: 'y2', id: 2, color: 'AMARILLO', casilla: 77, casa: 77 , colorEstilo: 'yellow', activada: false },
-                { idFicha: 'y3', id: 3, color: 'AMARILLO', casilla: 78, casa: 78 , colorEstilo: 'yellow', activada: false },
-                { idFicha: 'y4', id: 4, color: 'AMARILLO', casilla: 79, casa: 79 , colorEstilo: 'yellow', activada: false },
-                { idFicha: 'b1', id: 1, color: 'AZUL', casilla: 80, casa: 80 , colorEstilo: 'blue', activada: false },
-                { idFicha: 'b2', id: 2, color: 'AZUL', casilla: 81, casa: 81 , colorEstilo: 'blue', activada: false },
-                { idFicha: 'b3', id: 3, color: 'AZUL', casilla: 82, casa: 82 , colorEstilo: 'blue', activada: false },
-                { idFicha: 'b4', id: 4, color: 'AZUL', casilla: 83, casa: 83 , colorEstilo: 'blue', activada: false },
-                { idFicha: 'r1', id: 1, color: 'ROJO', casilla: 84, casa: 84 , colorEstilo: 'red', activada: false },
-                { idFicha: 'r2', id: 2, color: 'ROJO', casilla: 85, casa: 85 , colorEstilo: 'red', activada: false },
-                { idFicha: 'r3', id: 3, color: 'ROJO', casilla: 86, casa: 86 , colorEstilo: 'red', activada: false },
-                { idFicha: 'r4', id: 4, color: 'ROJO', casilla: 87, casa: 87 , colorEstilo: 'red', activada: false },
-                { idFicha: 'g1', id: 1, color: 'VERDE', casilla: 88, casa: 88 , colorEstilo: 'green', activada: false },
-                { idFicha: 'g2', id: 2, color: 'VERDE', casilla: 89, casa: 89 , colorEstilo: 'green', activada: false },
-                { idFicha: 'g3', id: 3, color: 'VERDE', casilla: 90, casa: 90 , colorEstilo: 'green', activada: false },
-                { idFicha: 'g4', id: 4, color: 'VERDE', casilla: 91, casa: 91 , colorEstilo: 'green', activada: false }
+                { idFicha: 'y1', id: 1, color: 'AMARILLO', casilla: 76, casa: 76, colorEstilo: 'yellow', activada: false },
+                { idFicha: 'y2', id: 2, color: 'AMARILLO', casilla: 77, casa: 77, colorEstilo: 'yellow', activada: false },
+                { idFicha: 'y3', id: 3, color: 'AMARILLO', casilla: 78, casa: 78, colorEstilo: 'yellow', activada: false },
+                { idFicha: 'y4', id: 4, color: 'AMARILLO', casilla: 79, casa: 79, colorEstilo: 'yellow', activada: false },
+                { idFicha: 'b1', id: 1, color: 'AZUL', casilla: 80, casa: 80, colorEstilo: 'blue', activada: false },
+                { idFicha: 'b2', id: 2, color: 'AZUL', casilla: 81, casa: 81, colorEstilo: 'blue', activada: false },
+                { idFicha: 'b3', id: 3, color: 'AZUL', casilla: 82, casa: 82, colorEstilo: 'blue', activada: false },
+                { idFicha: 'b4', id: 4, color: 'AZUL', casilla: 83, casa: 83, colorEstilo: 'blue', activada: false },
+                { idFicha: 'r1', id: 1, color: 'ROJO', casilla: 84, casa: 84, colorEstilo: 'red', activada: false },
+                { idFicha: 'r2', id: 2, color: 'ROJO', casilla: 85, casa: 85, colorEstilo: 'red', activada: false },
+                { idFicha: 'r3', id: 3, color: 'ROJO', casilla: 86, casa: 86, colorEstilo: 'red', activada: false },
+                { idFicha: 'r4', id: 4, color: 'ROJO', casilla: 87, casa: 87, colorEstilo: 'red', activada: false },
+                { idFicha: 'g1', id: 1, color: 'VERDE', casilla: 88, casa: 88, colorEstilo: 'green', activada: false },
+                { idFicha: 'g2', id: 2, color: 'VERDE', casilla: 89, casa: 89, colorEstilo: 'green', activada: false },
+                { idFicha: 'g3', id: 3, color: 'VERDE', casilla: 90, casa: 90, colorEstilo: 'green', activada: false },
+                { idFicha: 'g4', id: 4, color: 'VERDE', casilla: 91, casa: 91, colorEstilo: 'green', activada: false }
             ],
             casillas: [
                 { idCasilla: 0, numCasilla: 1, x: 0.9477911647, y: 0.3949468085, numFichas: 0, esVertical: true },
@@ -162,8 +163,20 @@ export default {
             ]
         }
     },
+    props: {
+        jugadores: {
+            type: Array,
+            required: true,
+        }
+    },
     methods: {
+        ponerSkinDeLosJugadores(jugadores) {
+            console.log('viendo las skins de los jugadores');
+            this.$set(this.jugadores, jugadores)
+        },
         actualizarPosiciones() {
+            console.log('prop de jugadores 0 : ',this.jugadores[0]);
+            console.log('prop de jugadores 1 : ',this.jugadores[1]);
             const canvas = document.getElementById('parchisBoard');
             const rect = canvas.getBoundingClientRect();
             const xTablero = rect.left;
@@ -181,7 +194,7 @@ export default {
                 const tablero = this.$refs.tablero;
                 console.log('ficha.color: ', ficha.color);
                 console.log('this.miColor:', this.miColor);
-                if (ficha.color == this.miColor) {
+                if (ficha.color == this.miColor) {  // pongo mis skins de la fichas, pero solo las mias
                     import(`../../public/assets/FICHA${this.fichaActiva}.png`).then(imageUrl => {
                         boton.style.backgroundImage = `url(${imageUrl.default})`;
 
@@ -194,6 +207,43 @@ export default {
                     boton.style.backgroundRepeat = "no-repeat";
                 }
 
+                this.jugadores.forEach(j => {
+                    if (((j.idJugador != -1) && (j.idJugador != -2)) && j.color == ficha.color) { // comprobar que esa posicion no está vacía o es el jugador local
+                        // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
+                        //     .then(response => {
+                        //         console.log('fihaActiva de un jugador= ', response.data.id);
+                        //         const skinActiva = response.data.id;
+                        //         import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
+                        //             boton.style.backgroundImage = `url(${imageUrl.default})`;
+
+                        //         });
+                        //         /* Set the background size */
+                        //         boton.style.backgroundSize = "cover";
+                        //         /* Set the background position */
+                        //         boton.style.backgroundPosition = "center center";
+                        //         /* Set the background repeat */
+                        //         boton.style.backgroundRepeat = "no-repeat";
+
+                        //     })
+                            // .catch(error => {
+                            //     console.log(error);
+                            // });
+
+                            import(`../../public/assets/FICHA4.png`).then(imageUrl => { //Demomento para probar que funcionan las skins multijugador
+                                    boton.style.backgroundImage = `url(${imageUrl.default})`;
+
+                                });
+                                /* Set the background size */
+                                boton.style.backgroundSize = "cover";
+                                /* Set the background position */
+                                boton.style.backgroundPosition = "center center";
+                                /* Set the background repeat */
+                                boton.style.backgroundRepeat = "no-repeat";
+                    }
+                });
+
+
+
 
                 boton.style.backgroundColor = ficha.colorEstilo;
 
@@ -205,31 +255,31 @@ export default {
                 let pixelesx = 0;
                 let pixelesy = 0;
 
-                if(this.casillas[ficha.casilla].numFichas == 2){
-                    
+                if (this.casillas[ficha.casilla].numFichas == 2) {
+
                     this.fichas.forEach(fichaComp => {
-                        if(fichaComp == ficha){
+                        if (fichaComp == ficha) {
                             return;
                         }
 
-                        if(fichaComp.casilla == ficha.casilla){
+                        if (fichaComp.casilla == ficha.casilla) {
                             // Una para un lado otra para otro
-                            if(this.casillas[ficha.casilla].esVertical){
-                                if(ficha.idFicha < fichaComp.idFicha){
+                            if (this.casillas[ficha.casilla].esVertical) {
+                                if (ficha.idFicha < fichaComp.idFicha) {
                                     //Abajo MAS ARRIBA
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
                                     pixelesy = (yTablero + casilla.y * heightTablero) + boton.getBoundingClientRect().height / 2.5;
-                                }else{
+                                } else {
                                     //Arriba MAS ARRIBA
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
                                     pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 2.5;
                                 }
-                            }else{
-                                if(ficha.idFicha < fichaComp.idFicha){
+                            } else {
+                                if (ficha.idFicha < fichaComp.idFicha) {
                                     //Izquierda
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width;
                                     pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 3;
-                                }else{
+                                } else {
                                     //Derecha MAS A LA IZQUIERDA
                                     pixelesx = xTablero + casilla.x * widthTablero;
                                     pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 2;
@@ -238,7 +288,7 @@ export default {
                         }
                     });
                 }
-                else{
+                else {
                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
                     pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 3;
                 }
