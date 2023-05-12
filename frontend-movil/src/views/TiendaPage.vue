@@ -25,7 +25,7 @@
           <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
           <h2>{{ producto.nombre }}</h2>
           <!-- <p>{{ producto.descripcion }}</p> -->
-          <ion-button @click="comprarProducto(producto.id)">Comprar</ion-button>
+          <ion-button id="ion-buttonInv2" @click="comprarProducto(producto.id)">Comprar</ion-button>
 
         </div>
 
@@ -48,7 +48,7 @@ export default {
   data() {
     return {
       idUsuario: '',
-      monedas: '45',
+      monedas: '',
       loadedProducts: 0,
       sinMonedas: false,
       productos: [
@@ -105,14 +105,14 @@ export default {
     this.idUsuario = Cookies.get('sessionId');
 
     // this.cargarProductos();
-    // axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/'+this.idUsuario)
-    //     .then(response => {
-    //       this.monedas = response.data;
-    //     })
-    //     .catch(error => {
-    //       console.log(error);
-    //     });
-  },
+    axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/'+this.idUsuario)
+        .then(response => {
+          this.monedas = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+   },
 }
 </script>
 
@@ -220,7 +220,7 @@ video {
 
 
 
-ion-button {
+#ion-buttonInv2 {
   margin-top: 10px;
   --background: #457341;
   --color: #fff;

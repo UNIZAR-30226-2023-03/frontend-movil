@@ -34,7 +34,7 @@
       
     
     <Teleport to="body">
-      <Amigos :show="showModalNoti" @close="showModalNoti = false">
+      <Amigos :nombreUsuario="nombreUsuario" :show="showModalNoti" @close="showModalNoti = false">
       </Amigos>
       <Victorias :show="showModalVict" @close="showModalVict = false">
       </Victorias>

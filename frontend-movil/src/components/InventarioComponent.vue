@@ -184,7 +184,7 @@ export default {
             <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
             <h2>{{ producto.nombre }}</h2>
             <!-- <p>{{ producto.descripcion }}</p> -->
-            <ion-button v-if="!(producto.id == tableroActivo || producto.id == fichaActiva)"
+            <ion-button id="ion-buttonInv" v-if="!(producto.id == tableroActivo || producto.id == fichaActiva)"
               @click="activarProducto(producto.id, producto.tipoProducto)">Activar</ion-button>
 
           </div>
@@ -389,7 +389,7 @@ video {
 
 
 
-ion-button {
+#ion-buttonInv {
   margin-top: 10px;
   --background: #457341;
   --color: #fff;

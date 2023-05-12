@@ -1,8 +1,8 @@
 <template>
     <div class="pantalla">
         <div style="margin-bottom: 20px;">
-            <ion-button class="ion-float-left boton" @click="logout">Salir</ion-button>
-            <ion-button class="ion-float-right boton">Amigos</ion-button>
+            <ion-button class="ion-float-left boton" @click="showModalConfirmacion = true">Salir</ion-button>
+            <ion-button id="chatbutton" class="ion-float-right boton" :class="{ 'animado': msgsNuevos }" name="chatbox"  @click="showModalChat = true; msgsNuevos = false"  >CHAT</ion-button>
         </div>
         <div style="text-align: center;">
             <TimerComponent ref="timer" />
@@ -31,7 +31,7 @@
             COMENZAR PARTIDA
         </ion-button>
 
-        <ion-button name="chatbox"  @click="showModalChat = true">CHAT</ion-button>
+        
 
         
     </div>
@@ -44,12 +44,32 @@
     :nombreUsuario="nombreUsuario"
     :idPartida="idPartida"
   />
+  <Confirmacion  
+    :show="showModalConfirmacion" 
+    @close="showModalConfirmacion = false"
+  />
 </Teleport>
 
 </template>
 
 <style>
 @import '../theme/estilos.css';
+
+.animado{
+    animation: color-animation 2s infinite ease-in-out;
+}
+
+@keyframes color-animation {
+  0% {
+    --background: rgba(39, 155, 184, 0.432);
+  }
+  50% {
+    --background: rgb(180, 65, 65);
+  }
+  100% {
+    --background: rgba(39, 155, 184, 0.432);
+  }
+}
 </style>
 
 <script>
@@ -65,6 +85,7 @@ import { defineComponent } from 'vue';
 import { IonIcon } from '@ionic/vue';
 import { send } from 'ionicons/icons';
 import Chat from "@/components/ChatComponent.vue"
+import Confirmacion from "@/components/ConfirmacionSalirComponent.vue"
 import Cookies from 'js-cookie';
 import { IonButton } from '@ionic/vue'
 
@@ -77,10 +98,13 @@ export default {
         TableroComponent,
         TimerComponent,
         Chat,
-        IonButton
+        IonButton,
+        Confirmacion
     },
     data() {
         return {
+            msgsNuevos: false,
+            showModalConfirmacion: false,
             showModalChat: false,
             tiempoRestante: 60,
             jugadores: [
@@ -120,18 +144,27 @@ export default {
         },
         casaFicha(id, color) {
             //Devuelve la casilla de casa de la ficha en funcion de su id y color
-            return 33;
+            const offset = this.offsetColor(color);
+            return this.$refs.tablero.fichas[offset + id - 1].casa;
         },
         movimiento(idFicha, colorFicha, nuevaCasilla, idComida = 0, colorComida = 0) {
             //Mover ficha
             const offset = this.offsetColor(colorFicha);
+            const casillaActual = this.$refs.tablero.fichas[offset + idFicha - 1].casilla;
+            this.$refs.tablero.casillas[casillaActual].numFichas--; // se va ficha de la antigua casilla
             this.$refs.tablero.fichas[offset + idFicha - 1].casilla = nuevaCasilla;
+            this.$refs.tablero.casillas[nuevaCasilla].numFichas++; // lega ficha a la nueva casilla
 
             //Si hay comida
             if (idComida != 0) {
                 const offsetComida = this.offsetColor(colorComida);
                 const casillaCasa = this.casaFicha(idComida, colorComida);
-                this.$refs.tablero.fichas[offsetComida + idComida - 1].casilla = casillaCasa;
+
+                const casillaComida = this.$refs.tablero.fichas[offsetComida + idComida - 1].casilla;
+                this.$refs.tablero.casillas[casillaComida].numFichas--;
+
+                const casillaActual = this.$refs.tablero.fichas[offset + idFicha - 1].casilla;
+                this.$refs.tablero.fichas[offsetComida + idComida - 1].casilla = casillaCasa; // pon la ficha que ha sido comida en su casa y no en 33
             }
 
             //Actualizar el tablero
@@ -164,7 +197,7 @@ export default {
                         const casillaDestino = data.casilla.posicion;
                         this.movimiento(numeroFicha, colorFicha, casillaDestino);
                     }
-                    this.actualizarTurno(data.turno);
+                    this.actualizarTurno(data.turno, false, false);
                 })
                 stompClient.subscribe("/topic/movimiento/" + idPartida, (response) => {
                     //Un jugador ha hecho un movimiento -> Actualizar tablero
@@ -173,22 +206,23 @@ export default {
                     console.log(data);
                     const casillaDestino = data.destino.posicion;
                     const ficha = data.ficha;
-                    let fichaMovida = false;
+                    let fichaComida = false;
                     if (data.comida == null) {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino);
                     } else {
                         this.movimiento(ficha.numero, ficha.color, casillaDestino, data.comida.numero, data.comida.color);
-                        fichaMovida = true;
+                        fichaComida = true;
                     }
                     this.activarFichas(false);
                     this.$refs.tablero.actualizarPosiciones();
-                    this.actualizarTurno(data.turno, fichaMovida);
+                    this.actualizarTurno(data.turno, fichaComida, true);
                 })
                 stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
                     //Mensaje de chat recibido
+                    this.msgsNuevos = true;
+                    
                     const data = JSON.parse(response.body);
                     console.log(data);
-                    this.actualizarChatHijo(data) // actualizamos el chat
                 })
                 stompClient.subscribe("/topic/turno/" + idPartida, (response) => {
                     //Empezar partida
@@ -212,23 +246,30 @@ export default {
         },
         comenzarPartida(color) {
             this.partidaComenzada = true;
-            this.actualizarTurno(color);
+            this.actualizarTurno(color, false, false);
         },
         realizarTurno() {
             //Realizar jugada
             this.miTurno = true;
             this.$refs.dado.activarDado();
         },
-        actualizarTurno(color, fichaComida) {
+        actualizarTurno(color, fichaComida, movimientoRealizado) {
             let fichasFuera = 0;
             const oc = this.offsetColor(color);
-            console.log("Actualizando turno. Fichas fuera: ", this.fichasFuera);
-            fichasFuera = this.$refs.tablero.fichas[oc + 0].activada ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 1].activada ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 2].activada ? fichasFuera + 1 : fichasFuera;
-            fichasFuera = this.$refs.tablero.fichas[oc + 3].activada ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 0].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 1].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
+            fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa  ? fichasFuera + 1 : fichasFuera;
 
-            if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6) || fichaComida) {
+            console.log("Actualizando turno. Fichas fuera: ", fichasFuera);
+            console.log("Actualizando turno. fichaComida: ", fichaComida);
+            console.log("Actualizando turno. movimientoRealizado:: ", movimientoRealizado);
+            console.log("Actualizando turno. valorDado:: ", this.valorDado);
+
+
+
+            
+            if (color != this.turno || (color == this.turno && fichasFuera > 0 && this.valorDado == 6 && movimientoRealizado) || fichaComida) {
                 //Encender timer
                 this.$refs.timer.resetTimer();
                 this.$refs.timer.encenderTimer();
@@ -287,7 +328,7 @@ export default {
                             this.valorDado = valorDado;
                         }
                         //Cambiar de turno si corresponde
-                        this.actualizarTurno(response.data.turno);
+                        this.actualizarTurno(response.data.turno, false, false);
 
 
                     }
@@ -342,7 +383,33 @@ export default {
                 this.jugadores[3].nombre = jugador.username;
                 this.jugadores[3].ocupado = true;
             }
+        },
+        sleep(milliseconds) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds));
+        },
+        
+        async esperarTiempo(){
+            if(this.setAlarm(30)){
+                const valorDado = await this.$refs.dado.tirarDado();
+                await this.verMovimientos(valorDado);
+                // Seleccionar movimiento aleatorio
+                // Realizar movimiento
+            }
+        },
+
+        async setAlarm(t){
+            this.sleep(1000);
+            if(this.miTurno){
+                if(t <= 0){
+                    return true;
+                }else{
+                    return this.setAlarm(t-1)
+                }
+            }else{
+                return false;
+            }
         }
+
     },
     beforeMount(){
         Cookies.set('miColor',this.color);
@@ -361,9 +428,6 @@ export default {
         });
 
         this.connectToSocket(this.idPartida);
-    },
-    actualizarChatHijo(data) {
-        this.$refs.chatHijo.actualizarChat(data);
     }
 }
 </script>

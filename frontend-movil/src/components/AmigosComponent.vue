@@ -5,6 +5,7 @@ import axios from 'axios';
 import router from "@/router";
 
 export default {
+
   components: {
     IonLabel,
     IonSegment,
@@ -17,6 +18,10 @@ export default {
   },
   props: {
     show: Boolean,
+    nombreUsuario: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -174,6 +179,7 @@ export default {
         .then((response) => {
           const success = response.status === 200;
           if (success) {
+
             Cookies.set('jugadores', response.data.jugadores);
             router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, idJugador: this.idJugador, jugadores: JSON.stringify(response.data.jugadores), id: response.data.id, color: response.data.color, hostPrivada: false } });
           }
