@@ -1,5 +1,5 @@
 <script>
-import { IonLabel, IonSegment, IonSegmentButton, IonCheckbox, IonItem } from '@ionic/vue';
+import { IonLabel, IonSegment, IonSegmentButton, IonCheckbox, IonItem, IonCard } from '@ionic/vue';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import router from "@/router";
@@ -11,14 +11,11 @@ export default {
     IonSegment,
     IonSegmentButton,
     IonCheckbox,
-    IonItem
+    IonItem,
+    IonCard
   },
   props: {
     show: Boolean,
-    nombreUsuario: {
-      type: String,
-      required: true
-    }
   },
   data() {
     return {
@@ -50,39 +47,88 @@ export default {
     },
 
     cargarRanking() {
+      if (this.filtrarAmigos) {
+        this.cargarRankingAmigos()
+      } else {
+        this.cargarRankingGlobal();
+      }
+    },
+
+    cargarRankingAmigos() {
       console.log('Cargar ranking');
+      const sessionId = Cookies.get('sessionId');
+
+      let amigos = [];
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/amigos/' + sessionId, {})
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            amigos = response.data;
+
+            this.listaRanking = [];
+            axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected, {})
+              .then((response) => {
+                const success = response.status === 200;
+                if (success) {
+
+                  const nombresAmigos = amigos.map(function (a) {
+                    return a.username;
+                  });
+                  console.log('Amigos');
+                  console.log(nombresAmigos);
+
+                  const datosTop = response.data;
+                  datosTop.forEach(dato => {
+                    console.log('dato', dato.username);
+                    if (nombresAmigos.includes(dato.username)) {
+                      console.log(dato);
+                      this.listaRanking.push(dato);
+                    }
+                  });
+
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+    },
+
+    cargarRankingGlobal() {
+      console.log('Cargar global');
+      this.listaRanking = [];
       axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected, {})
         .then((response) => {
           const success = response.status === 200;
           if (success) {
             console.log(response.data);
             this.listaRanking = response.data;
-          } else {
-            this.listaRanking = [];
           }
         })
         .catch((error) => {
           console.log(error);
-          this.listaRanking = [];
         });
     },
 
     cargarEstadisitcas() {
       console.log('Cargar estadísticas');
       const sessionId = Cookies.get('sessionId');
+
+      this.stats = [];
       axios.get('https://lamesa-backend.azurewebsites.net/usuario/estadisticas/' + sessionId, {})
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-            console.log(response.data);
             this.stats = response.data;
-          } else {
-            this.stats = [];
           }
         })
         .catch((error) => {
           console.log(error);
-          this.stats = [];
         });
     }
 
@@ -91,7 +137,6 @@ export default {
 
   mounted() {
     this.cambiarTab("top");
-    this.cargarEstadisitcas();
   }
 }
 </script>
@@ -137,10 +182,10 @@ export default {
 
         <!-- Cabecera tabs -->
         <ion-segment value="default">
-          <ion-segment-button :value="tabSelected=='top' ? 'default':'segment'" @click="cambiarTab('top')">
+          <ion-segment-button :value="tabSelected == 'top' ? 'default' : 'segment'" @click="cambiarTab('top')">
             <ion-label style="font-size: 9px;">Mejores jugadores</ion-label>
           </ion-segment-button>
-          <ion-segment-button :value="tabSelected=='misStats' ? 'default':'segment'" @click="cambiarTab('misStats')">
+          <ion-segment-button :value="tabSelected == 'misStats' ? 'default' : 'segment'" @click="cambiarTab('misStats')">
             <ion-label style="font-size: 9px;">Mis estadísticas</ion-label>
           </ion-segment-button>
         </ion-segment>
@@ -149,7 +194,7 @@ export default {
         <div class="customTab" v-show="tabSelected == 'top'" style="overflow: scroll; -webkit-overflow-scrolling: touch;">
           <ion-item style="margin-top: 10px;">
             <ion-label class="margin0">Filtrar amigos</ion-label>
-            <ion-checkbox class="margin0" v-model="filtrarAmigos"></ion-checkbox>
+            <ion-checkbox class="margin0" v-model="filtrarAmigos" @ionChange="cargarRanking();"></ion-checkbox>
           </ion-item>
 
           <ion-item>
@@ -181,11 +226,11 @@ export default {
               </div>
             </div>
 
-            <ion-card v-for="(r, index) in listaRanking" :key="index">
+            <ion-card v-for="(r, index) in listaRanking" :key="index" class="margin0">
               <div style="display: flex;">
 
                 <div style="width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
-                  {{ index + 1}}
+                  {{ index + 1 }}
                 </div>
 
                 <div style="width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
@@ -194,7 +239,7 @@ export default {
 
                 <div
                   style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-                  {{ r.selected }}
+                  {{ r[selected] }}
                 </div>
 
               </div>
@@ -202,7 +247,6 @@ export default {
           </div>
           <div v-else>
             <p style="font-size: smaller;"> No se han encontrado jugadores</p>
-
           </div>
         </div>
 
@@ -211,22 +255,28 @@ export default {
           style="overflow: scroll; -webkit-overflow-scrolling: touch;">
           <h2> Mis estadísticas: </h2>
           <div class="estadistica">
-            <div class="nombreStat"> Partidas jugadas </div> <div class="valorStat"> {{ stats.pjugadas }} </div>
+            <div class="nombreStat"> Partidas jugadas </div>
+            <div class="valorStat"> {{ stats.pjugadas }} </div>
           </div>
           <div class="estadistica">
-            <div class="nombreStat"> Partidas ganadas </div> <div class="valorStat"> {{ stats.pganadas }} </div>
+            <div class="nombreStat"> Partidas ganadas </div>
+            <div class="valorStat"> {{ stats.pganadas }} </div>
           </div>
           <div class="estadistica">
-            <div class="nombreStat"> Torneos jugados </div> <div class="valorStat"> {{ stats.tjugados }} </div>
+            <div class="nombreStat"> Torneos jugados </div>
+            <div class="valorStat"> {{ stats.tjugados }} </div>
           </div>
           <div class="estadistica">
-            <div class="nombreStat"> Torneos ganados </div> <div class="valorStat"> {{ stats.tganados }} </div>
+            <div class="nombreStat"> Torneos ganados </div>
+            <div class="valorStat"> {{ stats.tganados }} </div>
           </div>
           <div class="estadistica">
-            <div class="nombreStat"> Media comidas </div> <div class="valorStat"> {{ stats.mediaComidas }} </div>
+            <div class="nombreStat"> Media comidas </div>
+            <div class="valorStat"> {{ stats.mediaComidas }} </div>
           </div>
           <div class="estadistica">
-            <div class="nombreStat"> Media en meta </div> <div class="valorStat"> {{ stats.mediaEnMeta }} </div>
+            <div class="nombreStat"> Media en meta </div>
+            <div class="valorStat"> {{ stats.mediaEnMeta }} </div>
           </div>
 
         </div>
@@ -237,13 +287,13 @@ export default {
 
 
 <style>
-.estadistica{
+.estadistica {
   margin: 10px;
   display: flex;
   justify-content: space-between;
 }
 
-.nombreStat{
+.nombreStat {
   color: rgb(207, 207, 207);
   white-space: nowrap;
   overflow: hidden;
@@ -251,7 +301,7 @@ export default {
   width: 70%;
 }
 
-.valorStat{
+.valorStat {
   color: white;
   font-weight: bold;
   white-space: nowrap;
@@ -262,13 +312,13 @@ export default {
 }
 
 .customTab {
-  height: 200px;
+  height: 80%;
   width: 100%;
 }
 
 .modal-mask {
   position: fixed;
-  z-index: 1;
+  z-index: 9998;
   top: 0;
   left: 0;
   width: 100%;
@@ -279,9 +329,8 @@ export default {
 }
 
 .modal-container {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   width: 300px;
+  height: 700px;
   margin: auto;
   padding: 20px 30px;
   border: 5px solid rgb(34, 34, 34);

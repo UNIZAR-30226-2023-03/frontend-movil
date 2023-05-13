@@ -328,7 +328,7 @@ export default {
 
 <style>
 .customTab {
-  height: 200px;
+  height: 80%;
   width: 100%;
 }
 
@@ -345,9 +345,8 @@ export default {
 }
 
 .modal-container {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   width: 300px;
+  height: 700px;
   margin: auto;
   padding: 20px 30px;
   border: 5px solid rgb(34, 34, 34);
