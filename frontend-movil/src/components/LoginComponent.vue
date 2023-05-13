@@ -39,70 +39,73 @@ export default defineComponent({
     },
   data() {
     return {
+      idUsuario: '',
       userLogin: '',
       password: '',
       showErrorPass: false,
       loading: false,
       showModalPass: false,
-      fichaActiva: '3',
-      tableroActivo: '0'
+      fichaActiva: '',
+      tableroActivo: ''
     };
   },
   methods: {
-    verSkinsActivas(){
-      // console.log('cargando skins activas');
-      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+this.IdUsuario)
-      //   .then(response => {
-      //     console.log('TableroAvtivo= ',response.data.id);
-      //     this.tableroActivo = response.data.id;
-      //     Cookies.set('tableroActivo', this.tableroActivo);
-      //   })
-      //   .catch(error => {
-      //     console.log(error); 
-      //   });
+    verSkinsActivas(id){
+       console.log('cargando skins activas');
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+id)
+         .then(response => {
+           console.log('responseo= ',response);
+           this.tableroActivo = response.data.id;
+           Cookies.set('tableroActivo', this.tableroActivo);
+         })
+         .catch(error => {
+           console.log(error); 
+         });
 
-      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+this.IdUsuario)
-      //   .then(response => {
-      //     console.log('TableroAvtivo= ',response.data.id);
-      //     this.fichaActiva = response.data.id;
-      //     Cookies.set('fichaActiva', this.fichaActiva);
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+id)
+         .then(response => {
+           console.log('TableroAvtivo= ',response.data.id);
+           this.fichaActiva = response.data.id;
+           Cookies.set('fichaActiva', this.fichaActiva);
+         })
+         .catch(error => {
+           console.log(error);
+         });
 
         Cookies.set('tableroActivo', this.tableroActivo);
         Cookies.set('fichaActiva', this.fichaActiva);
     },
     login() {
-      this.showErrorPass = false;
-      this.loading = true;
-      axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
-        login: this.userLogin,
-        password: this.password
-      })
-        .then((response) => {
-          const success = response.status === 200;
-          console.log(response.data.username)
-          if (success) {
-            this.verSkinsActivas(); // cambiar funcion cuando funcione el backend
-            Cookies.set('sessionId', response.data.id);
-            Cookies.set('email', response.data.email);
-            Cookies.set('username', response.data.username);
+  this.showErrorPass = false;
+  this.loading = true;
+  axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
+    login: this.userLogin,
+    password: this.password
+  })
+    .then(async (response) => {
+      const success = response.status === 200;
+      console.log(response.data.username)
+      if (success) {
+        Cookies.set('sessionId', response.data.id);
+      
+       await this.verSkinsActivas(response.data.id); // cambiar funcion cuando funcione el backend
+        
+        router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      if (error.response && error.response.status === 400) {
+        this.showErrorPass = true;
 
-            router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.response && error.response.status === 400) {
-            this.showErrorPass = true;
-
-          }
-        }).finally(() => {
-          this.loading = false;
-        });
-    },
+      }
+    }).finally((response) => {
+      this.loading = false;
+      
+      
+    });
+}
+,
     moveToRegister() {
       router.push('/registrarse'); // navigate to /registrarse route
     }

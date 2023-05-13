@@ -170,7 +170,7 @@ export default {
         }
     },
     methods: {
-        ponerSkinDeLosJugadores(jugadores = null) {
+        ponerSkinDeLosJugadores(jugadores) {
             console.log('viendo las skins de los jugadores');
            //this.$set(this.jugadores, jugadores)
         },
@@ -256,7 +256,7 @@ export default {
                 let pixelesx = 0;
                 let pixelesy = 0;
 
-                if (this.casillas[ficha.casilla].numFichas == 2) {
+                if (this.casillas[ficha.casilla].numFichas == 2) { //barreras
 
                     this.fichas.forEach(fichaComp => {
                         if (fichaComp == ficha) {

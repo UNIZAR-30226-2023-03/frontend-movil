@@ -13,43 +13,7 @@ export default {
     return {
       tabSelected: "amigos",
       IdUsuario: '',
-      productos: [
-        {
-          "id": 0,
-          "nombre": "Tablero Default",
-          "descripcion": "Tablero de ajedrez clásico hecho de madera de alta calidad",
-          "precio": 29.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 1,
-          "nombre": "Tablero de HALLOWEEN",
-          "descripcion": "Tablero de ajedrez clásico hecho de madera de alta calidad",
-          "precio": 29.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 2,
-          "nombre": "Tablero de NAVIDAD",
-          "descripcion": "Set de 32 fichas de ajedrez hechas de plástico resistente",
-          "precio": 12.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 3,
-          "nombre": "Fichas de NAVIDAD",
-          "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
-          "precio": 59.99,
-          "tipoProducto": "FICHA"
-        },
-        {
-          "id": 4,
-          "nombre": "Fichas de HALLOWEEN",
-          "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
-          "precio": 59.99,
-          "tipoProducto": "FICHA"
-        }
-      ],
+      productos: [],
       fichaActiva: '',
       tableroActivo: ''
     }
@@ -59,33 +23,33 @@ export default {
       console.log('cargando skins ');
 
       //peticion a azzure backend thisProductos = response.data
-      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/productos/'+this.IdUsuario)
-      //   .then(response => {
-      //     this.productos = response.data;
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/productos/'+this.IdUsuario)
+         .then(response => {
+           this.productos = response.data;
+         })
+         .catch(error => {
+           console.log(error);
+         });
     },
     verSkinsActivas() {
-      console.log('cargando skins activas');
-      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+this.IdUsuario)
-      //   .then(response => {
-      //     console.log('TableroAvtivo= ',response.data.id);
-      //     this.tableroActivo = response.data.id;
-      //   })
-      //   .catch(error => {
-      //     console.log(error); 
-      //   });
+      console.log('cargando skins activas edel user : ',this.IdUsuario );
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+this.IdUsuario)
+         .then(response => {
+           console.log('TableroAvtivo= ',response.data.id);
+           this.tableroActivo = response.data.id;
+         })
+         .catch(error => {
+           console.log(error); 
+         });
 
-      // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+this.IdUsuario)
-      //   .then(response => {
-      //     console.log('TableroAvtivo= ',response.data.id);
-      //     this.fichaActiva = response.data.id;
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+this.IdUsuario)
+         .then(response => {
+           console.log('FichaAvtivo= ',response.data.id);
+           this.fichaActiva = response.data.id;
+         })
+         .catch(error => {
+           console.log(error);
+         });
       this.tableroActivo = Cookies.get('tableroActivo');
       this.fichaActiva = Cookies.get('fichaActiva')
     },
@@ -95,47 +59,51 @@ export default {
     },
     activarProducto(productoId, tipo) {
 
-      // axios.post('https://lamesa-backend.azurewebsites.net/usuario/activar/',{
-      //   usuario: this.IdUsuario,
-      //   producto: productoId
-      // })
-      //   .then(response => {
-      //     console.log('Skin Activada= ',response.data.id);
-      //     if (response.status == 200) {
-      //       if (tipo == "TABLERO") {
-      //         this.tableroActivo = productoId;
-      //       }else{
-      //         this.fichaActiva = productoId;
-      //       }
-      //     }
+       axios.post('https://lamesa-backend.azurewebsites.net/usuario/activar',{
+         usuario: this.IdUsuario,
+         producto: productoId
+       })
+         .then(response => {
+           console.log('Skin Activada= ',response.data.id);
+           if (response.status == 200) {
+             if (tipo == "TABLERO") {
+               this.tableroActivo = productoId;
+               Cookies.set('tableroActivo', this.tableroActivo);
+             }else{
+               this.fichaActiva = productoId;
+               Cookies.set('fichaActiva', this.fichaActiva);
+             }
+           }
 
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+         })
+         .catch(error => {
+           console.log(error);
+         });
 
-      if (tipo == "TABLERO") { //paara probar mientras no va el backend
-        this.tableroActivo = productoId;
-        console.log('tablero activado');
-        Cookies.set('tableroActivo', this.tableroActivo);
-      } else {
-        this.fichaActiva = productoId;
-        console.log('ficha activada');
-        Cookies.set('fichaActiva', this.fichaActiva);
-      }
+      // if (tipo == "TABLERO") { //paara probar mientras no va el backend
+      //   this.tableroActivo = productoId;
+      //   console.log('tablero activado');
+      //   Cookies.set('tableroActivo', this.tableroActivo);
+      // } else {
+      //   this.fichaActiva = productoId;
+      //   console.log('ficha activada');
+      //   Cookies.set('fichaActiva', this.fichaActiva);
+      // }
       this.callParentMethodImage();
+
 
     }
   },
   beforeMount() {
+    const sessionId = Cookies.get('sessionId');
+    console.log('sessionId: ', sessionId);
+    this.IdUsuario = sessionId;
     //ver que tablero tiene activo el user para cambiar el tablero activo
     this.verSkinsActivas();
   },
 
   mounted() {
-    const sessionId = Cookies.get('sessionId');
-    console.log('sessionId: ', sessionId);
-    this.IdUsuario = sessionId;
+    
 
     // cargar los productos que tiene el user
     this.cargarProductos();

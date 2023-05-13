@@ -6,15 +6,17 @@
     </video>
   </div>
   <div id="pantallaTienda" class="pantalla-menu">
-    <div id="saldo" class="image-container" style="border-color:rgb(28, 212, 74) ; border-radius: 5%; border: 10px; background-color: rgb(58, 47, 35); z-index: 1;">
-            <span id="precio">{{ monedas }}</span>
-            <img src="../../public/assets/moneda.png">
-          </div>
-          <h2></h2>
+    <div id="saldo" class="image-container"
+      style="border-color:rgb(28, 212, 74) ; border-radius: 5%; border: 10px; background-color: rgb(58, 47, 35); z-index: 1;">
+      <span id="precio">{{ monedas }}</span>
+      <img src="../../public/assets/moneda.png">
+    </div>
+    <h2></h2>
     <div class="tienda">
       <div class="productos" v-if="productos.length > 0">
 
-        <div v-for="producto in productos" :key="producto.id" class="producto">
+        <div v-for="producto in  productos " :key="producto.id" :ref="`${producto.tipoProducto}${producto.id}`"
+          class="producto" :class="{ 'producto-comprado': productosComprados.some((p) => p.id === producto.id) }">
 
           <!-- <div class="producto" v-for="producto in productos" :key="producto.id"> -->
           <!-- LAS IMAGENES SE TIENEN QUE LLAMAR COMO ESPECIFICA EN LA SIGUIENTE LINEA -->
@@ -25,7 +27,8 @@
           <!-- <img :src="'../../public/assets/'+producto.tipoProducto+producto.id+'.png'" />  -->
           <h2>{{ producto.nombre }}</h2>
           <!-- <p>{{ producto.descripcion }}</p> -->
-          <ion-button id="ion-buttonInv2" @click="comprarProducto(producto.id)">Comprar</ion-button>
+          <ion-button v-if="!productosComprados.some((p) => p.id === producto.id)" id="ion-buttonInv2"
+            @click="comprarProducto(producto.id)">Comprar</ion-button>
 
         </div>
 
@@ -36,7 +39,7 @@
 </template>
   
 <script>
-import {IonButton} from '@ionic/vue'
+import { IonButton } from '@ionic/vue'
 import axios from 'axios';
 import router from "@/router";
 import Cookies from 'js-cookie';
@@ -44,75 +47,94 @@ import Cookies from 'js-cookie';
 export default {
   components: {
     IonButton
-    },
+  },
   data() {
     return {
       idUsuario: '',
       monedas: '',
       loadedProducts: 0,
       sinMonedas: false,
-      productos: [
-        {
-          "id": 1,
-          "nombre": "Tablero de HALLOWEEN",
-          "descripcion": "Tablero de ajedrez clásico hecho de madera de alta calidad",
-          "precio": 29.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 2,
-          "nombre": "Fichas de plástico",
-          "descripcion": "Set de 32 fichas de ajedrez hechas de plástico resistente",
-          "precio": 12.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 3,
-          "nombre": "Tablero de NAVIDAD",
-          "descripcion": "Tablero de ajedrez moderno hecho de cristal templado",
-          "precio": 59.99,
-          "tipoProducto": "TABLERO"
-        },
-        {
-          "id": 4,
-          "nombre": "Fichas de madera",
-          "descripcion": "Set de 32 fichas de ajedrez hechas de madera de diferentes tonalidades",
-          "precio": 24.99,
-          "tipoProducto": "TABLERO"
-        }
-      ]
+      productos: [],
+      productosComprados: []
     }
   },
   methods: {
-    // cargarProductos() {
-    //   // Aquí iría el código para cargar los productos desde el backend
-    //   axios.get('https://lamesa-backend.azurewebsites.net/tienda')
-    //     .then(response => {
-    //       this.productos = response.data;
-    //     })
-    //     .catch(error => {
-    //       console.log(error);
-    //     });
-    // },
-    comprarProducto(id) {
-      this.sinMonedas = false;
-      console.log('comprando:' + id);
-      // Aquí iría el código para comprar un producto con el ID especificado
-    },
-  },
-  mounted() {
-    this.loadedProducts = this.productos.length;
-    this.idUsuario = Cookies.get('sessionId');
+    changeBackgroundImage() {
+      console.log('changeBackgroundImage(): ', this.productos);
+      this.productos.forEach((producto) => {
+        console.log('changeBackgroundImage() en foreach');
+        const refName = `${producto.tipoProducto}${producto.id}`;
+        console.log('refname = ', refName);
+        const productoDiv = this.$refs[refName][0];
+        productoDiv.style.backgroundImage = `url(../../public/assets/${producto.tipoProducto}${producto.id}.png)`;
+      });
+    }
+    ,
+    cargarProductosComprados() {
 
-    // this.cargarProductos();
-    axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/'+this.idUsuario)
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/productos/' + this.idUsuario)
         .then(response => {
-          this.monedas = response.data;
+          console.log('PRODUCTOS DE LA TIENDA: ', response.data);
+          this.productosComprados = response.data;
         })
         .catch(error => {
           console.log(error);
         });
-   },
+    },
+    cargarProductos() {
+      // Aquí  el código para cargar los productos desde el backend
+      axios.get('https://lamesa-backend.azurewebsites.net/tienda')
+        .then(response => {
+          console.log('PRODUCTOS DE LA TIENDA: ', response.data);
+          this.productos = response.data;
+          console.log('cargarProductos(): ', this.productos);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    comprarProducto(id) {
+      this.sinMonedas = false;
+      console.log('comprando:' + id);
+      // Aquí iría el código para comprar un producto con el ID especificado
+
+      //ACTIVAR SKIN DE COMPRADO SI LA COMPRA TIENE EXITO
+
+      axios.post('https://lamesa-backend.azurewebsites.net/tienda/comprar', {
+        usuario: this.IdUsuario,
+        producto: id
+      })
+        .then((response) => {
+          const success = response.status === 200;
+          console.log(response.data)
+          if (success) {
+            this.cargarProductosComprados(); 
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+  },
+  beforeMount() {
+
+    this.idUsuario = Cookies.get('sessionId');
+    this.cargarProductosComprados();
+  },
+  mounted() {
+    this.loadedProducts = this.productos.length;
+
+
+    this.cargarProductos();
+    this.changeBackgroundImage();
+    axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/' + this.idUsuario)
+      .then(response => {
+        this.monedas = response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },
 }
 </script>
 
@@ -145,7 +167,7 @@ export default {
   z-index: 1;
   position: relative;
   /* Set the background image */
-  background-image: url("../../public/assets/TABLERO1.png"); 
+  background-image: url("../../public/assets/TABLERO1.png");
   /* Set the background size */
   background-size: cover;
   /* Set the background position */
@@ -162,7 +184,26 @@ export default {
   right: 0;
   bottom: 0;
   z-index: -1;
-  background-color: rgba(0, 0, 0, 0.8); 
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10%;
+}
+
+
+.producto-comprado::before {
+  content: "COMPRADO";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  background-color: rgba(28, 24, 24, 0.809);
   border-radius: 10%;
 }
 

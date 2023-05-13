@@ -116,7 +116,7 @@
   
       },
       changeImageSrc() {
-        this.tableroActivo = Cookies.get('tableroActivo');
+        
       const tablero = this.$refs.tablero;
       import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
       tablero.src = imageUrl.default;
@@ -124,6 +124,10 @@
   }
      
       
+      },
+      beforeMount(){
+        this.tableroActivo = Cookies.get('tableroActivo');
+        console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
       },
   
       mounted() {
