@@ -72,7 +72,7 @@
       },
       data() {
         return {
-          tableroActivo: 1,
+          tableroActivo: this.$route.query.tablero,
           idUsuario: this.$route.query.userId,
           nombreUsuario: this.$route.query.username,
           showModalNoti: false,
@@ -119,6 +119,9 @@
         
       const tablero = this.$refs.tablero;
       this.tableroActivo = Cookies.get('tableroActivo');
+      if(!this.tableroActivo){
+        this.tableroActivo = 1;
+      }
       import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
       tablero.src = imageUrl.default;
     });
@@ -128,13 +131,15 @@
       },
       beforeMount(){
         this.tableroActivo = Cookies.get('tableroActivo');
-        console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
+        
       },
   
       mounted() {
         //ver que tablero tiene activo el user para cambiar el tablero activo
         
+        console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
         this.changeImageSrc();
+        this.tableroActivo = Cookies.get('tableroActivo');
         console.log('IdUsuario: ',this.idUsuario)
         console.log('NombreUsuario: ', this.nombreUsuario)
       }

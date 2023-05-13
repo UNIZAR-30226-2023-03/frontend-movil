@@ -39,7 +39,7 @@ export default defineComponent({
     },
   data() {
     return {
-      idUsuario: '',
+      idUsuario: 0,
       userLogin: '',
       password: '',
       showErrorPass: false,
@@ -51,8 +51,8 @@ export default defineComponent({
   },
   methods: {
     verSkinsActivas(id){
-       console.log('cargando skins activas');
-       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+id)
+       console.log('cargando skins activas de ',id);
+       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+ parseInt(id))
          .then(response => {
            console.log('responseo= ',response);
            this.tableroActivo = response.data.id;
@@ -90,7 +90,7 @@ export default defineComponent({
       
        await this.verSkinsActivas(response.data.id); // cambiar funcion cuando funcione el backend
         
-        router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
+        router.push({ path: '/menu', query: { userId: response.data.id, tablero: this.tableroActivo , username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
       }
     })
     .catch((error) => {

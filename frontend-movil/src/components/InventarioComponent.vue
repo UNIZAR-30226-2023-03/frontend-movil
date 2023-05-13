@@ -65,7 +65,7 @@ export default {
        })
          .then(response => {
           console.log('Skin activation: ',response);
-           console.log('Skin Activada= ',response.data.id);
+           
            if (response.status == 200) {
              if (tipo == "TABLERO") {
                this.tableroActivo = productoId;
@@ -82,15 +82,15 @@ export default {
            console.log(error);
          });
 
-      if (tipo == "TABLERO") { //paara probar mientras no va el backend
-        this.tableroActivo = productoId;
-        console.log('tablero activado');
-        Cookies.set('tableroActivo', this.tableroActivo);
-      } else {
-        this.fichaActiva = productoId;
-        console.log('ficha activada');
-        Cookies.set('fichaActiva', this.fichaActiva);
-      }
+      // if (tipo == "TABLERO") { //paara probar mientras no va el backend
+      //   this.tableroActivo = productoId;
+      //   console.log('tablero activado');
+      //   Cookies.set('tableroActivo', this.tableroActivo);
+      // } else {
+      //   this.fichaActiva = productoId;
+      //   console.log('ficha activada');
+      //   Cookies.set('fichaActiva', this.fichaActiva);
+      // }
       
 
 
