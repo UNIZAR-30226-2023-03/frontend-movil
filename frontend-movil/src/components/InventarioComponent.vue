@@ -207,7 +207,7 @@ export default {
 
 <style>
 .customTab {
-  height: 200px;
+  height: 80%;
   width: 100%;
 }
 

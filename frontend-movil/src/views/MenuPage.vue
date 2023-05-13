@@ -2,7 +2,7 @@
   <div class="pantalla-menu">
       <div class="containerMenu1">
           
-          <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalVict = true">
+          <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalUsuario = true">
             {{ this.$route.query.username }} 
           </a>
           <a class="boton1 boton-menu-notis boton-menu"  @click="goShop">
@@ -44,6 +44,8 @@
       </Privada>
       <Inventario :show="showModalInventario"  @close="showModalInventario = false">
       </Inventario>
+      <Usuario :show="showModalUsuario"  @close="showModalUsuario = false">
+      </Usuario>
     </Teleport>
   </div>
     </template>
@@ -57,13 +59,16 @@
     import Jugar from "@/components/JugarComponent.vue"
     import Privada from "@/components/PrivadaComponent.vue"
     import Inventario from "@/components/InventarioComponent.vue"
+    import Usuario from "@/components/UsuarioComponent.vue"
+
     export default {
       components: {
         Amigos,
         Ranking,
         Jugar,
         Inventario,
-        Privada
+        Privada,
+        Usuario
       },
       data() {
         return {
@@ -75,7 +80,8 @@
           showModalPrivada: false,
           showModalInventario: false,
           showModalAmigos: false,
-          showModalRanking: false
+          showModalRanking: false,
+          showModalUsuario : false
         }
       },
     //   watch: {
