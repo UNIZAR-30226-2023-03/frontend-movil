@@ -87,6 +87,9 @@ export default defineComponent({
           if (success) {
             this.verSkinsActivas(); // cambiar funcion cuando funcione el backend
             Cookies.set('sessionId', response.data.id);
+            Cookies.set('email', response.data.email);
+            Cookies.set('username', response.data.username);
+
             router.push({ path: '/menu', query: { userId: response.data.id, username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
           }
         })

@@ -1,4 +1,5 @@
 <script>
+import Cookies from 'js-cookie';
 import { IonButton } from '@ionic/vue';
 
 export default {
@@ -11,20 +12,27 @@ export default {
     },
     data() {
         return {
-            tabSelected: "amigos",
-            listaAmigos: [],
-            listaSolicitudes: [],
-            usuarioEnviar: "",
-            msgError: "",
-            colorError: ""
+            username: '',
+            email: '',
+            editandoUsername: false,
+            editandoEmail:  false,
+            editandoPassword: false
         }
     },
     methods: {
+
+        cargarDatosUsuario(){
+            this.username = Cookies.get('username');
+            this.email = Cookies.get('email');
+        },
 
         cerrar() {
             this.$emit('close');
         },
 
+    },
+    mounted(){
+        this.cargarDatosUsuario();
     }
 }
 
@@ -39,16 +47,22 @@ export default {
                     <img src="../../public/assets/close.png" alt="cerrar popup">
                 </a>
                 <h1>Configuración de usuario</h1>
+
                 <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
+                
+
                 <div class="nombreStat2"> Nombre de usuario: </div>
-                <div class="estadistica2 margin0">
-                    <div class="valorStat2"> jutjuan </div>
+                <div class="estadistica2 margin0" v-if="!editandoUsername">
+                    <div class="valorStat2"> {{ username }} </div>
                     <a>[editar]</a>
+                </div>
+                <div v-else>
+                    Editando usuario
                 </div>
 
                 <div class="nombreStat2"> Correo electrónico: </div>
                 <div class="estadistica2 margin0">
-                    <div class="valorStat2"> jutjuan@gmail.com </div>
+                    <div class="valorStat2"> {{ email }} </div>
                     <a>[editar]</a>
                 </div>
 
