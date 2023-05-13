@@ -9,14 +9,14 @@
             <TimerComponent ref="timer" />
         </div>
         <div style="margin-bottom: 20px; overflow: hidden;">
-            <IconoJugador :nombreUsuario="jugadores[0].nombre" izquierda="true" :seleccionado="turno === 'AZUL'"
+            <IconoJugador :nombreUsuario="jugadores[1].nombre" izquierda="true" :seleccionado="turno === 'AZUL'"
                 class="ion-float-left" style="width: 45%;" />
-            <IconoJugador :nombreUsuario="jugadores[1].nombre" izquierda="false" :seleccionado="turno === 'AMARILLO'"
+            <IconoJugador :nombreUsuario="jugadores[0].nombre" izquierda="false" :seleccionado="turno === 'AMARILLO'"
                 class="ion-float-right" style="width: 45%;" />
         </div>
         <div style="width: 95%; margin: auto;">
 
-            <TableroComponent  :jugadores="jugadores" ref="tablero" @fichaPulsada="realizarMovimiento" />
+            <TableroComponent :jugadores="jugadores" ref="tablero" @fichaPulsada="realizarMovimiento" />
         </div>
         <div style="margin-bottom: 20px; overflow: hidden;">
             <IconoJugador :nombreUsuario="jugadores[2].nombre" izquierda="true" :seleccionado="turno === 'ROJO'"
@@ -381,47 +381,74 @@ export default {
         ocuparJugador(jugador) {
             let idJugador;
 
+
+
+            //poblamos el vector con la id del usuario (habrá que comprobar a la hora de poner las skins que no sea -1 o -2)
             if (jugador.username == 'YO') { // si eres el jugador local ya pones tus skins con la variable que se le pasa a tableroComponent
-                idJugador = -2;
-                console.log('soy yo en el ocupar');
-            } else {
+                        idJugador = -2;
+                        console.log('soy yo en el ocupar');
+                        if (jugador.color == 'AMARILLO') {
+                        this.jugadores[0].nombre = jugador.username;
+                        this.jugadores[0].ocupado = true;
+                        this.jugadores[0].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'AZUL') {
+                        this.jugadores[1].nombre = jugador.username;
+                        this.jugadores[1].ocupado = true;
+                        this.jugadores[1].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'ROJO') {
+                        this.jugadores[2].nombre = jugador.username;
+                        this.jugadores[2].ocupado = true;
+                        this.jugadores[2].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'VERDE') {
+                        this.jugadores[3].nombre = jugador.username;
+                        this.jugadores[3].ocupado = true;
+                        this.jugadores[3].idJugador = idJugador;
+                    }
+                    console.log('jugadores en ocupar 0 ', this.jugadores[0]);
+                    console.log('jugadores en ocupar 1 ', this.jugadores[1]);
 
-                  //poblamos el vector con la id del usuario (habrá que comprobar a la hora de poner las skins que no sea -1 o -2)
-
+            }else{
                 this.obtenerId(jugador.username)
-                    .then((id) => {
-                        idJugador = id;
-                        console.log('otro jugador en el ocupar con id: ', idJugador);
-                        // Use the user ID here
-                    })
-                    .catch((error) => {
-                        console.log('Error:', error);
-                    });
+                .then((idJugador) => {
+                    console.log('otro jugador en el ocupar con id: ', idJugador);
+                    console.log('jugador.color antes del if: ', jugador.color);
 
-            }
+                    
 
-            if (jugador.color == "AZUL") {
-                this.jugadores[0].nombre = jugador.username;
-                this.jugadores[0].ocupado = true;
-                this.jugadores[0].idJugador = idJugador;
+                    if (jugador.color == 'AMARILLO') {
+                        this.jugadores[0].nombre = jugador.username;
+                        this.jugadores[0].ocupado = true;
+                        this.jugadores[0].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'AZUL') {
+                        this.jugadores[1].nombre = jugador.username;
+                        this.jugadores[1].ocupado = true;
+                        this.jugadores[1].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'ROJO') {
+                        this.jugadores[2].nombre = jugador.username;
+                        this.jugadores[2].ocupado = true;
+                        this.jugadores[2].idJugador = idJugador;
+                    }
+                    if (jugador.color == 'VERDE') {
+                        this.jugadores[3].nombre = jugador.username;
+                        this.jugadores[3].ocupado = true;
+                        this.jugadores[3].idJugador = idJugador;
+                    }
+                    console.log('jugadores en ocupar 0 ', this.jugadores[0]);
+                    console.log('jugadores en ocupar 1 ', this.jugadores[1]);
+                    //this.$refs.tablero.ponerSkinDeLosJugadores(this.jugadores);
+                    this.$refs.tablero.actualizarPosiciones();
+                })
+                .catch((error) => {
+                    console.log('Error:', error);
+                });
             }
-            if (jugador.color == "AMARILLO") {
-                this.jugadores[1].nombre = jugador.username;
-                this.jugadores[1].ocupado = true;
-                this.jugadores[1].idJugador = idJugador;
-            }
-            if (jugador.color == "ROJO") {
-                this.jugadores[2].nombre = jugador.username;
-                this.jugadores[2].ocupado = true;
-                this.jugadores[2].idJugador = idJugador;
-            }
-            if (jugador.color == "VERDE") {
-                this.jugadores[3].nombre = jugador.username;
-                this.jugadores[3].ocupado = true;
-                this.jugadores[3].idJugador = idJugador;
-            }
+            
 
-            this.$refs.tablero.ponerSkinDeLosJugadores(this.jugadores);
         },
         sleep(milliseconds) {
             return new Promise((resolve) => setTimeout(resolve, milliseconds));
