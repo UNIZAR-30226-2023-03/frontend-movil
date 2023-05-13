@@ -118,6 +118,7 @@
       changeImageSrc() {
         
       const tablero = this.$refs.tablero;
+      this.tableroActivo = Cookies.get('tableroActivo');
       import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
       tablero.src = imageUrl.default;
     });

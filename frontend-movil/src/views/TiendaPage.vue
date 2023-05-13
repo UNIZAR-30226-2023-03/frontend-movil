@@ -95,14 +95,14 @@ export default {
     },
     comprarProducto(id) {
       this.sinMonedas = false;
-      console.log('comprando:' + id);
+      console.log('comprando:' + id,' User: ',this.idUsuario);
       // Aquí iría el código para comprar un producto con el ID especificado
-
+      const useer = parseInt(this.idUsuario);
       //ACTIVAR SKIN DE COMPRADO SI LA COMPRA TIENE EXITO
 
       axios.post('https://lamesa-backend.azurewebsites.net/tienda/comprar', {
-        usuario: this.IdUsuario,
-        producto: id
+        "usuario": useer,
+        "producto": id
       })
         .then((response) => {
           const success = response.status === 200;

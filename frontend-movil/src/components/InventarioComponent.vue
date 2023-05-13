@@ -64,6 +64,7 @@ export default {
          producto: productoId
        })
          .then(response => {
+          console.log('Skin activation: ',response);
            console.log('Skin Activada= ',response.data.id);
            if (response.status == 200) {
              if (tipo == "TABLERO") {
@@ -73,6 +74,7 @@ export default {
                this.fichaActiva = productoId;
                Cookies.set('fichaActiva', this.fichaActiva);
              }
+             this.callParentMethodImage();
            }
 
          })
@@ -80,16 +82,16 @@ export default {
            console.log(error);
          });
 
-      // if (tipo == "TABLERO") { //paara probar mientras no va el backend
-      //   this.tableroActivo = productoId;
-      //   console.log('tablero activado');
-      //   Cookies.set('tableroActivo', this.tableroActivo);
-      // } else {
-      //   this.fichaActiva = productoId;
-      //   console.log('ficha activada');
-      //   Cookies.set('fichaActiva', this.fichaActiva);
-      // }
-      this.callParentMethodImage();
+      if (tipo == "TABLERO") { //paara probar mientras no va el backend
+        this.tableroActivo = productoId;
+        console.log('tablero activado');
+        Cookies.set('tableroActivo', this.tableroActivo);
+      } else {
+        this.fichaActiva = productoId;
+        console.log('ficha activada');
+        Cookies.set('fichaActiva', this.fichaActiva);
+      }
+      
 
 
     }
@@ -162,11 +164,6 @@ export default {
 
         </div>
 
-
-
-        <div v-show="tabSelected == 'solicitudes'">
-          v
-        </div>
       </div>
     </div>
   </Transition>
