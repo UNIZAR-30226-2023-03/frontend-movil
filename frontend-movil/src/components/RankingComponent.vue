@@ -21,14 +21,16 @@ export default {
     return {
       filtrarAmigos: false,
       tabSelected: "top",
-      selected: 'pganadas',
+      selected: {
+        text: 'Partidas ganadas', value: 'partidasGanadas', valueJson: 'pganadas'
+      },
       options: [
-        { text: 'Partidas ganadas', value: 'partidasGanadas' },
-        { text: 'Partidas jugadas', value: 'partidasJugadas' },
-        { text: 'Torneos jugados', value: 'torneosJugados' },
-        { text: 'Torneos ganados', value: 'torneosGanados' },
-        { text: 'Media comidas', value: 'mediaComidas' },
-        { text: 'Media en meta', value: 'mediaEnMeta' }
+        { text: 'Partidas ganadas', value: 'partidasGanadas', valueJson: 'pganadas' },
+        { text: 'Partidas jugadas', value: 'partidasJugadas', valueJson: 'pjugadas' },
+        { text: 'Torneos ganados', value: 'torneosGanados', valueJson: 'tganados' },
+        { text: 'Torneos jugados', value: 'torneosJugados', valueJson: 'tjugados' },
+        { text: 'Media comidas', value: 'mediaComidas', valueJson: 'mediaComidas' },
+        { text: 'Media en meta', value: 'mediaEnMeta', valueJson: 'mediaEnMeta' }
 
       ],
       listaRanking: [],
@@ -67,7 +69,7 @@ export default {
             amigos = response.data;
 
             this.listaRanking = [];
-            axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected, {})
+            axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected.value, {})
               .then((response) => {
                 const success = response.status === 200;
                 if (success) {
@@ -103,7 +105,7 @@ export default {
     cargarRankingGlobal() {
       console.log('Cargar global');
       this.listaRanking = [];
-      axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected, {})
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/ranking?campo=' + this.selected.value, {})
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -201,7 +203,7 @@ export default {
           <ion-item>
             <ion-label>Ordenar</ion-label>
             <select v-model="selected" style="width: 65%; font-size: small;" @change="cargarRanking()">
-              <option v-for="option in options" :value="option.value" :key="option.value">
+              <option v-for="option in options" :value="option" :key="option.value">
                 {{ option.text }}
               </option>
             </select>
@@ -230,17 +232,17 @@ export default {
             <ion-card v-for="(r, index) in listaRanking" :key="index" class="margin0">
               <div style="display: flex;">
 
-                <div style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                <div style="width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                   {{ index + 1 }}
                 </div>
 
-                <div style="width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                <div style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                   {{ r.username }}
                 </div>
 
                 <div
-                  style="text-align: center; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
-                  {{ r[selected] }}
+                  style="width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+                  {{ r[selected.valueJson] }}
                 </div>
 
               </div>
