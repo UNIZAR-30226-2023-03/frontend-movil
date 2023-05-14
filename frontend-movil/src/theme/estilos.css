@@ -88,7 +88,7 @@ a {
 
 .pantalla{
   padding: 5%;
-  background-color: #ffc957;
+  background: radial-gradient(circle, #343632, #ffc957, #e69d0a);
   width: 100%;
   height: 100%;
 }

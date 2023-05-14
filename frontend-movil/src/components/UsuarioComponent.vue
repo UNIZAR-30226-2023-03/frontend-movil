@@ -48,6 +48,9 @@ export default {
         },
 
         cerrar() {
+            this.editandoUsername = false;
+            this.editandoEmail = false;
+            this.editandoPassword = false;
             this.$emit('close');
         },
 

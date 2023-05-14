@@ -13,21 +13,26 @@
     </div>
     <h2></h2>
     <div id="final-comtainer" class="modal-container-victoria">
-      <div style="" >
+      <div style="">
         <img style="max-height: 30%; width: auto;" src="../../public/assets/copa.png">
       </div>
       <div class="lista-de-ganadores">
         <h1> {{ primero }} ha ganado 50 monedas!!</h1>
-        <h1>#1 {{ primero }}</h1>
-        <h2>#2 {{ segundo }}</h2>
-        <h3>#3 {{ tercero }}</h3>
-        <h4>#4 {{ cuarto }}</h4>
-        <ion-button id="botonVict" color="secondary" @click="goMenu()" >CONTINUAR</ion-button>
+
+        <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
+
+        <h1 v-if="primero != 'ESPERANDO JUGADOR'">#1 {{ primero }}</h1>
+        <h2 v-if="segundo != 'ESPERANDO JUGADOR'">#2 {{ segundo }}</h2>
+        <h3 v-if="tercero != 'ESPERANDO JUGADOR'">#3 {{ tercero }}</h3>
+        <h4 v-if="cuarto != 'ESPERANDO JUGADOR'">#4 {{ cuarto }}</h4>
+        <ion-button id="botonVict" color="secondary" @click="goMenu()">CONTINUAR</ion-button>
       </div>
+  
       
+
     </div>
-    
-    
+
+
   </div>
 </template>
   
@@ -41,14 +46,23 @@ export default {
   components: {
     IonButton
   },
-  props:{
-    primero: String,
-    segundo: String,
-    tercero: String,
-    cuarto: String
-  },
-  methods:{
-    goMenu(){
+  methods: {
+    actualizarNombre(){ 
+      if (this.primero == 'YO') {
+        this.primero = Cookies.get('username');
+      }
+      if (this.segundo == 'YO') {
+        this.segundo = Cookies.get('username');
+      }
+      if (this.tercero == 'YO') {
+        this.tercero = Cookies.get('username');
+      }
+      if (this.cuarto == 'YO') {
+        this.cuarto = Cookies.get('username');
+      }
+      
+    },
+    goMenu() {
 
       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/' + Cookies.get('sessionId'))
         .then(response => {
@@ -68,16 +82,20 @@ export default {
   data() {
     return {
       idUsuario: '',
-      monedas: ''
+      monedas: '',
+      primero: this.$route.query.primero,
+      segundo: this.$route.query.segundo,
+      tercero: this.$route.query.tercero,
+      cuarto: this.$route.query.cuarto
     }
   },
   beforeMount() {
-
+    
     this.idUsuario = Cookies.get('sessionId');
   },
   mounted() {
-    this.loadedProducts = this.productos.length;
 
+    this.actualizarNombre();
     axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/' + this.idUsuario)
       .then(response => {
         this.monedas = response.data;
@@ -93,7 +111,7 @@ export default {
 @import '../theme/estilos.css';
 @import '../theme/estilosInicio.css';
 
-.lista-de-ganadores{
+.lista-de-ganadores {
   text-align: center;
 }
 
@@ -111,8 +129,10 @@ export default {
   transition: all 0.3s ease;
 }
 
-#final-comtainer{
+#final-comtainer {
   min-height: 70%;
+  align-items: center;
+  
 }
 
 
@@ -185,13 +205,15 @@ video {
 }
 
 .lista-de-ganadores h3 {
-  color: #CD7F32; /* bronze color */
+  color: #CD7F32;
+  /* bronze color */
 }
 
-#botonVict{
+#botonVict {
   font-weight: bold;
   width: 80%;
-  margin-top: 10%;
+  position: relative;
+  bottom: 0;
 }
 </style>
   

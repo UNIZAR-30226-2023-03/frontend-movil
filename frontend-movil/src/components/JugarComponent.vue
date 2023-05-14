@@ -16,8 +16,8 @@ export default {
 
 <template>
   <Transition name="jugar">
-    <div v-if="show" class="modal-mask">
-      <div class="modal-container">
+    <div v-if="show" class="modal-mask-small">
+      <div class="modal-container-small">
         <a class="close-icon-img" @click="$emit('close')">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>

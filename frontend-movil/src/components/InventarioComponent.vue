@@ -145,7 +145,6 @@ export default {
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
 
-        <!-- Cabecera tabs -->
         <div class="productos" v-if="productos.length > 0">
 
           <div v-for="producto in productos" :key="producto.id" class="producto"
@@ -189,8 +188,6 @@ export default {
 }
 
 .modal-container {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   width: 300px;
   margin: auto;
   padding: 20px 30px;
@@ -245,9 +242,12 @@ export default {
 }
 
 .productos {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  height: 100%;
 }
 
 .producto {

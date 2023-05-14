@@ -84,6 +84,11 @@ export default defineComponent({
         })
         .catch(error => {
           console.log(error);
+        })
+        .finally((response) => {
+          this.loading = false;
+
+
         });
 
       
@@ -115,11 +120,7 @@ export default defineComponent({
             this.showErrorPass = true;
 
           }
-        }).finally((response) => {
-          this.loading = false;
-
-
-        });
+        })
     }
     ,
     moveToRegister() {

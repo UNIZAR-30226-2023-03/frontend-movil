@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      tableroActivo: this.$route.query.tablero,
+      tableroActivo: '1',
       idUsuario: '',
       nombreUsuario: '',
       showModalNoti: false,

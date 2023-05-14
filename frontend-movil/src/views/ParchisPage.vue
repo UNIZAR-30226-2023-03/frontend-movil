@@ -1,22 +1,13 @@
 <template>
   <div class="pantalla">
     <div style="margin-bottom: 20px">
-      <ion-button
-        class="ion-float-left boton"
-        @click="showModalConfirmacion = true"
-      >
+      <ion-button class="ion-float-left boton" @click="showModalConfirmacion = true">
         <img class="iconoBoton" src="../../public/assets/salir.png" />
       </ion-button>
-      <ion-button
-        id="chatbutton"
-        class="ion-float-right boton"
-        :class="{ animado: msgsNuevos }"
-        name="chatbox"
-        @click="
-          showModalChat = true;
-          msgsNuevos = false;
-        "
-      >
+      <ion-button id="chatbutton" class="ion-float-right boton" :class="{ animado: msgsNuevos }" name="chatbox" @click="
+        showModalChat = true;
+      msgsNuevos = false;
+      ">
         <img class="iconoBoton" src="../../public/assets/chat.png" />
       </ion-button>
     </div>
@@ -24,126 +15,72 @@
       <TimerComponent ref="timer" />
     </div>
     <div style="margin-bottom: 20px; overflow: hidden">
-      <IconoJugador
-        :nombreUsuario="jugadores[1].nombre"
-        izquierda="true"
-        :seleccionado="turno === 'AZUL'"
-        class="ion-float-left"
-        style="width: 45%"
-      />
-      <IconoJugador
-        :nombreUsuario="jugadores[0].nombre"
-        izquierda="false"
-        :seleccionado="turno === 'AMARILLO'"
-        class="ion-float-right"
-        style="width: 45%"
-      />
+      <IconoJugador :nombreUsuario="jugadores[1].nombre" izquierda="true" :seleccionado="turno === 'AZUL'"
+        class="ion-float-left" style="width: 45%" />
+      <IconoJugador :nombreUsuario="jugadores[0].nombre" izquierda="false" :seleccionado="turno === 'AMARILLO'"
+        class="ion-float-right" style="width: 45%" />
     </div>
     <div style="width: 95%; margin: auto">
-      <TableroComponent
-        :jugadores="jugadores"
-        ref="tablero"
-        @fichaPulsada="realizarMovimiento"
-      />
+      <TableroComponent :jugadores="jugadores" ref="tablero" @fichaPulsada="realizarMovimiento" />
     </div>
     <div style="margin-bottom: 20px; overflow: hidden">
-      <IconoJugador
-        :nombreUsuario="jugadores[2].nombre"
-        izquierda="true"
-        :seleccionado="turno === 'ROJO'"
-        class="ion-float-left"
-        style="width: 45%"
-      />
-      <IconoJugador
-        :nombreUsuario="jugadores[3].nombre"
-        izquierda="false"
-        :seleccionado="turno === 'VERDE'"
-        class="ion-float-right"
-        style="width: 45%"
-      />
+      <IconoJugador :nombreUsuario="jugadores[2].nombre" izquierda="true" :seleccionado="turno === 'ROJO'"
+        class="ion-float-left" style="width: 45%" />
+      <IconoJugador :nombreUsuario="jugadores[3].nombre" izquierda="false" :seleccionado="turno === 'VERDE'"
+        class="ion-float-right" style="width: 45%" />
     </div>
     <div style="width: 30%; margin: auto">
       <DadoComponent ref="dado" @click="dadoPulsado" />
     </div>
-    <ion-button
-      v-if="hostPrivada === 'true' && !partidaComenzada"
-      @click="comenzarPartidaHost"
-      style="position: absolute; width: 50%; left: 25%; top: 45%"
-    >
+    <ion-button v-if="hostPrivada === 'true' && !partidaComenzada" @click="comenzarPartidaHost"
+      style="position: absolute; width: 50%; left: 25%; top: 45%">
       COMENZAR PARTIDA
     </ion-button>
   </div>
 
   <div v-if="activarDebug" style="display: flex; justify-content: flex-start">
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(1);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(1);
+    this.$refs.dado.activado = false;
+    ">
       1
     </button>
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(2);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(2);
+    this.$refs.dado.activado = false;
+    ">
       2
     </button>
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(3);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(3);
+    this.$refs.dado.activado = false;
+    ">
       3
     </button>
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(4);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(4);
+    this.$refs.dado.activado = false;
+    ">
       4
     </button>
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(5);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(5);
+    this.$refs.dado.activado = false;
+    ">
       5
     </button>
-    <button
-      style="width: 10%"
-      @click="
-        verMovimientos(6);
-        this.$refs.dado.activado = false;
-      "
-    >
+    <button style="width: 10%" @click="
+      verMovimientos(6);
+    this.$refs.dado.activado = false;
+    ">
       6
     </button>
   </div>
 
   <Teleport to="body">
-    <Chat
-      ref="chatHijo"
-      :show="showModalChat"
-      @close="showModalChat = false"
-      :nombreUsuario="nombreUsuario"
-      :idPartida="idPartida"
-    />
-    <Confirmacion
-      :show="showModalConfirmacion"
-      :partida="idPartida"
-      @close="showModalConfirmacion = false"
-    />
+    <Chat ref="chatHijo" :show="showModalChat" @close="showModalChat = false" :nombreUsuario="nombreUsuario"
+      :idPartida="idPartida" />
+    <Confirmacion :show="showModalConfirmacion" :partida="idPartida" @close="showModalConfirmacion = false" />
   </Teleport>
 </template>
 
@@ -209,6 +146,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "AMARILLO",
+          fichasEnMeta : 0
         }, //amarillo 0
         {
           id: 2,
@@ -216,6 +154,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "AZUL",
+          fichasEnMeta : 0
         }, // azul 1
         {
           id: 3,
@@ -223,6 +162,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "ROJO",
+          fichasEnMeta: 0
         }, //rojo 2
         {
           id: 4,
@@ -230,6 +170,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "VERDE",
+          fichasEnMeta: 0
         }, // verde 3
       ],
       nJugadores: 0,
@@ -243,12 +184,7 @@ export default {
       valorDado: 0,
       tableroActivo: "",
       activarDebug: true,
-      fichasEnMeta: {
-        AMARILLO: 0,
-        AZUL: 0,
-        VERDE: 0,
-        ROJO: 0,
-      },
+      partidaTerminada: false
     };
   },
   methods: {
@@ -261,7 +197,7 @@ export default {
       return axios
         .get(
           "https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=" +
-            username,
+          username,
           {}
         )
         .then((response) => {
@@ -308,8 +244,8 @@ export default {
       console.log("Casilla calculada:", casillaCalculada);
 
       // Comprobar si esta en meta
-      if(nuevaCasilla == 74){
-        this.fichasEnMeta[colorFicha] ++;
+      if (nuevaCasilla == 74) {
+        this.jugadores.find(item => item.color == colorFicha).fichasEnMeta++;
       }
 
       // Mover ficha
@@ -406,6 +342,8 @@ export default {
           }
           this.activarFichas(false);
           this.$refs.tablero.actualizarPosiciones();
+
+          this.partidaTerminada = data.acabada;
           this.actualizarTurno(data.turno, fichaComida, true);
         });
         stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
@@ -425,17 +363,28 @@ export default {
           const data = JSON.parse(response.body);
           this.sacarJugador(data);
         });
+        stompClient.subscribe("/topic/pausa/" + idPartida, (response) => {
+          //Sacar a alguien de la partida
+          const data = JSON.parse(response.body);
+        });
+        stompClient.subscribe("/topic/ultimo/" + idPartida, (response) => {
+          //Sacar a alguien de la partida
+          const data = response.body;
+          console.log(data);
+          this.ganarPorAbandono(this.color);
+        });
+
       });
     },
     comenzarPartidaHost() {
       console.log(
         "https://lamesa-backend.azurewebsites.net/partida/empezar/" +
-          this.idPartida
+        this.idPartida
       );
       axios
         .post(
           "https://lamesa-backend.azurewebsites.net/partida/empezar/" +
-            this.idPartida,
+          this.idPartida,
           {}
         )
         .then((response) => {
@@ -458,26 +407,30 @@ export default {
       this.$refs.dado.activarDado();
     },
     actualizarTurno(color, fichaComida, movimientoRealizado) {
+      if (this.partidaTerminada) {
+        this.terminarPartida();
+      }
+
       let fichasFuera = 0;
       const oc = this.offsetColor(color);
       fichasFuera =
         this.$refs.tablero.fichas[oc + 0].casilla !=
-        this.$refs.tablero.fichas[oc + 0].casa
+          this.$refs.tablero.fichas[oc + 0].casa
           ? fichasFuera + 1
           : fichasFuera;
       fichasFuera =
         this.$refs.tablero.fichas[oc + 1].casilla !=
-        this.$refs.tablero.fichas[oc + 0].casa
+          this.$refs.tablero.fichas[oc + 0].casa
           ? fichasFuera + 1
           : fichasFuera;
       fichasFuera =
         this.$refs.tablero.fichas[oc + 2].casilla !=
-        this.$refs.tablero.fichas[oc + 0].casa
+          this.$refs.tablero.fichas[oc + 0].casa
           ? fichasFuera + 1
           : fichasFuera;
       fichasFuera =
         this.$refs.tablero.fichas[oc + 2].casilla !=
-        this.$refs.tablero.fichas[oc + 0].casa
+          this.$refs.tablero.fichas[oc + 0].casa
           ? fichasFuera + 1
           : fichasFuera;
 
@@ -537,9 +490,9 @@ export default {
       axios
         .post(
           "https://lamesa-backend.azurewebsites.net/partida/dado/" +
-            this.idPartida +
-            "?dado=" +
-            valorDado,
+          this.idPartida +
+          "?dado=" +
+          valorDado,
           {}
         )
         .then((response) => {
@@ -706,6 +659,51 @@ export default {
 
       // Modificar nombre
     },
+    
+    terminarPartida() {
+      console.log("Terminando partida");
+      // Ordenar jugadores por fichas en meta
+      this.jugadores.sort((a,b) => (b.fichasEnMeta - a.fichasEnMeta))
+
+      // Ir a pantalla de fin
+      router.push({
+            path: '/final',
+            query: {
+              primero: this.jugadores[0].nombre,
+              segundo: this.jugadores[1].nombre,
+              tercero: this.jugadores[2].nombre,
+              cuarto: this.jugadores[3].nombre
+            }
+          });
+    },
+
+    ganarPorAbandono(color){
+      console.log("Terminando partida");
+      // Ordenar jugadores por fichas en meta
+      this.jugadores.sort((a,b) => (b.fichasEnMeta - a.fichasEnMeta))
+
+      // Poner el color el primero
+      for (let index = 1; index < 4; index++) {
+        
+        if(this.jugadores[index].color == color){
+          const j = this.jugadores[index];
+          this.jugadores[index] = this.jugadores[index-1];
+          this.jugadores[index] = j;
+        }
+      } 
+
+      // Ir a pantalla de fin
+      router.push({
+            path: '/final',
+            query: {
+              primero: this.jugadores[0].nombre,
+              segundo: this.jugadores[1].nombre,
+              tercero: this.jugadores[2].nombre,
+              cuarto: this.jugadores[3].nombre
+            }
+          });
+    }
+
   },
   beforeMount() {
     Cookies.set("miColor", this.color);

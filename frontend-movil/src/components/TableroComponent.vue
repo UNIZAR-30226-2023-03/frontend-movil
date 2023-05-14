@@ -192,8 +192,8 @@ export default {
 
 
                 const tablero = this.$refs.tablero;
-                console.log('ficha.color: ', ficha.color);
-                console.log('this.miColor:', this.miColor);
+                // console.log('ficha.color: ', ficha.color);
+                // console.log('this.miColor:', this.miColor);
                 if (ficha.color == this.miColor) {  // pongo mis skins de la fichas, pero solo las mias
                     import(`../../public/assets/FICHA${this.fichaActiva}.png`).then(imageUrl => {
                         boton.style.backgroundImage = `url(${imageUrl.default})`;
@@ -209,10 +209,10 @@ export default {
 
                 this.jugadores.forEach(j => {
                     if (((j.idJugador != -1) && (j.idJugador != -2)) && j.color == ficha.color) { // comprobar que esa posicion no está vacía o es el jugador local
-                        console.log('jugador en el forecha j: ', j);
+                        // console.log('jugador en el forecha j: ', j);
                         axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
                             .then(response => {
-                                console.log('fihaActiva de un jugador= ', response.data.id);
+                                // console.log('fihaActiva de un jugador= ', response.data.id);
                                 const skinActiva = response.data.id;
                                 import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
                                     boton.style.backgroundImage = `url(${imageUrl.default})`;
