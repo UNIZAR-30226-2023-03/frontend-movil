@@ -40,11 +40,14 @@
       <Ranking :show="showModalRanking" @close="showModalRanking = false">
       </Ranking>
       <Jugar :show="showModalJugar" @close="showModalJugar = false"
-        @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="jugar">
+        @partidaPrivada="showModalJugar = false; showModalPrivada = true" @partidaPublica="showModalJugar = false; showModalPublica = true">
       </Jugar>
       <Privada :show="showModalPrivada" :nombreUsuario="nombreUsuario" :idJugador="idUsuario"
         @close="showModalPrivada = false">
       </Privada>
+      <Publica :show="showModalPublica" :nombreUsuario="nombreUsuario" :idJugador="idUsuario"
+        @close="showModalPublica = false">
+      </Publica>
       <Inventario :show="showModalInventario" @close="showModalInventario = false">
       </Inventario>
       <Usuario :show="showModalUsuario" @close="showModalUsuario = false" @recargar="cargarDatosUsuario()">
@@ -61,6 +64,7 @@ import Amigos from "@/components/AmigosComponent.vue"
 import Ranking from "@/components/RankingComponent.vue"
 import Jugar from "@/components/JugarComponent.vue"
 import Privada from "@/components/PrivadaComponent.vue"
+import Publica from "@/components/PublicaComponent.vue"
 import Inventario from "@/components/InventarioComponent.vue"
 import Usuario from "@/components/UsuarioComponent.vue"
 
@@ -71,7 +75,8 @@ export default {
     Jugar,
     Inventario,
     Privada,
-    Usuario
+    Usuario,
+    Publica
   },
   data() {
     return {
@@ -81,6 +86,7 @@ export default {
       showModalNoti: false,
       showModalJugar: false,
       showModalPrivada: false,
+      showModalPublica: false,
       showModalInventario: false,
       showModalAmigos: false,
       showModalRanking: false,

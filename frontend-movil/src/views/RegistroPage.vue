@@ -9,6 +9,7 @@
         <div v-if="showErrorCuenta" class="error-message" style="color: red;">Error: {{ errorMessage }}</div>
         <input type="password" class="login-input" placeholder="Contraseña" aria-label="Password" name="password" v-model="password1" required>
         <input type="password" class="login-input" placeholder="Repita contraseña" aria-label="Password" name="password2" v-model="password2" required>
+        <div v-if="loading" class="loading-spinner"></div>
         <div v-if="showErrorPass" class="error-message" style="color: red;">Las contraseñas no coinciden</div>
         <button class="login-button" type="submit">Crear cuenta</button>
         ¿ya tienes cuenta? 
@@ -29,6 +30,7 @@ import router from "@/router";
 export default defineComponent({
   data() {
     return {
+      loading: false,
       userReg: '',
       email: '',
       password1: '',
@@ -46,6 +48,7 @@ export default defineComponent({
         event.preventDefault();
       } else {
         this.showErrorPass = false;
+        this.loading = true;
         axios.post('https://lamesa-backend.azurewebsites.net/usuario/crear', {
           "email": this.email,
           "username": this.userReg,
@@ -54,6 +57,7 @@ export default defineComponent({
         .then(function (response) {
           console.log(response);
           const success = response.status === 200;
+          
           console.log(success);
           if (success) {
             router.push('/')
@@ -61,6 +65,7 @@ export default defineComponent({
           this.showErrorCuenta = false;
         })
         .catch((error) => {
+          this.loading = false;
         console.log(error);
         if (error.response && error.response.status === 400) {
           this.showErrorCuenta = true;

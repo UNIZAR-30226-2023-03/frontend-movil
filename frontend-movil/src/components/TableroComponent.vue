@@ -172,11 +172,11 @@ export default {
     methods: {
         ponerSkinDeLosJugadores(jugadores) {
             console.log('viendo las skins de los jugadores');
-           //this.$set(this.jugadores, jugadores)
+            //this.$set(this.jugadores, jugadores)
         },
         actualizarPosiciones() {
-            console.log('prop de jugadores 0 : ',this.jugadores[0]);
-            console.log('prop de jugadores 1 : ',this.jugadores[1]);
+            // console.log('prop de jugadores 0 : ', this.jugadores[0]);
+            // console.log('prop de jugadores 1 : ', this.jugadores[1]);
             const canvas = document.getElementById('parchisBoard');
             const rect = canvas.getBoundingClientRect();
             const xTablero = rect.left;
@@ -194,7 +194,7 @@ export default {
                 const tablero = this.$refs.tablero;
                 // console.log('ficha.color: ', ficha.color);
                 // console.log('this.miColor:', this.miColor);
-                if (ficha.color == this.miColor) {  // pongo mis skins de la fichas, pero solo las mias
+                if (ficha.color == this.miColor && this.fichaActiva != '4') {  // pongo mis skins de la fichas, pero solo las mias
                     import(`../../public/assets/FICHA${this.fichaActiva}.png`).then(imageUrl => {
                         boton.style.backgroundImage = `url(${imageUrl.default})`;
 
@@ -212,34 +212,39 @@ export default {
                         // console.log('jugador en el forecha j: ', j);
                         axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
                             .then(response => {
-                                // console.log('fihaActiva de un jugador= ', response.data.id);
                                 const skinActiva = response.data.id;
-                                import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
-                                    boton.style.backgroundImage = `url(${imageUrl.default})`;
+                                // console.log('fihaActiva de un jugador= ', response.data.id);
+                                if (skinActiva != '4') {
+                                    import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
+                                        boton.style.backgroundImage = `url(${imageUrl.default})`;
 
-                                });
-                                /* Set the background size */
-                                boton.style.backgroundSize = "cover";
-                                /* Set the background position */
-                                boton.style.backgroundPosition = "center center";
-                                /* Set the background repeat */
-                                boton.style.backgroundRepeat = "no-repeat";
+                                    });
+                                    /* Set the background size */
+                                    boton.style.backgroundSize = "cover";
+                                    /* Set the background position */
+                                    boton.style.backgroundPosition = "center center";
+                                    /* Set the background repeat */
+                                    boton.style.backgroundRepeat = "no-repeat";
+                                }
+
+
+
 
                             })
                             .catch(error => {
                                 console.log(error);
                             });
 
-                            // import(`../../public/assets/FICHA4.png`).then(imageUrl => { //Demomento para probar que funcionan las skins multijugador
-                            //         boton.style.backgroundImage = `url(${imageUrl.default})`;
+                        // import(`../../public/assets/FICHA4.png`).then(imageUrl => { //Demomento para probar que funcionan las skins multijugador
+                        //         boton.style.backgroundImage = `url(${imageUrl.default})`;
 
-                            //     });
-                            //     /* Set the background size */
-                            //     boton.style.backgroundSize = "cover";
-                            //     /* Set the background position */
-                            //     boton.style.backgroundPosition = "center center";
-                            //     /* Set the background repeat */
-                            //     boton.style.backgroundRepeat = "no-repeat";
+                        //     });
+                        //     /* Set the background size */
+                        //     boton.style.backgroundSize = "cover";
+                        //     /* Set the background position */
+                        //     boton.style.backgroundPosition = "center center";
+                        //     /* Set the background repeat */
+                        //     boton.style.backgroundRepeat = "no-repeat";
                     }
                 });
 

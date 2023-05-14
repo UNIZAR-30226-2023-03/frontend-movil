@@ -7,7 +7,7 @@
 export default{
     data(){
         return{
-            tiempo: 60,
+            tiempo: 30,
             encendido:false,
             contando:false
         }
@@ -17,7 +17,7 @@ export default{
             return new Promise((resolve) => setTimeout(resolve, milliseconds));
         },
         resetTimer(){
-            this.tiempo = 60;
+            this.tiempo = 30;
         },
         encenderTimer(){
             this.encendido = true;
