@@ -3,6 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 import Cookies from 'js-cookie';
 
 import LoginPage from '../views/LoginPage.vue';
+import FinalPage from '../views/VictoriaPage.vue';
 import ParchisPage from '../views/ParchisPage.vue';
 import RegistroPage from '../views/RegistroPage.vue';
 import MenuPage from '../views/MenuPage.vue';
@@ -27,16 +28,21 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/menu',
     component: MenuPage,
-    //beforeEnter: comprobarAutenticacion
+    beforeEnter: comprobarAutenticacion
   },
   {
     path: '/tienda',
     component: TiendaPage,
-    //beforeEnter: comprobarAutenticacion
+    beforeEnter: comprobarAutenticacion
   },
   {
     path: '/registrarse',
     component: RegistroPage
+  },
+  {
+    path: '/final',
+    component: FinalPage,
+    beforeEnter: comprobarAutenticacion
   },
   {
     name: 'partida',

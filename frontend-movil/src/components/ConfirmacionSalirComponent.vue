@@ -1,21 +1,24 @@
 <template>
   <Transition name="victorias">
     <div v-if="show" class="modal-mask">
-      <div class="modal-container" style="text-align: center;" >
+      <div class="modal-container" style="text-align: center;">
         <a class="close-icon-img" @click="$emit('close'); mostrarConfirmacion = false">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
-        
+
         <div v-if="!mostrarConfirmacion">
-          <ion-button  @click="pausa()" size="small" style="width: 50%;" >PAUSAR</ion-button>
-        <p></p>
-        <ion-button color="danger" @click="mostrarConfirmacion = true"  size="small" style="width: 50%;" >SALIR</ion-button>
+          <ion-button @click="pausa()" size="small" style="width: 50%;">PAUSAR</ion-button>
+          <p></p>
+          <ion-button color="danger" @click="mostrarConfirmacion = true" size="small"
+            style="width: 50%;">SALIR</ion-button>
         </div>
-        <div v-else> 
+        <div v-else>
           <p>¿Estás seguro de que deseas salir de la partida?</p>
-          <ion-button color="success" @click="$emit('close'); mostrarConfirmacion = false" size="small" style="width: 50%;" >NO</ion-button>
-          <ion-button color="danger"  @click="$emit('close'); salir(); mostrarConfirmacion = false" size="small" style="width: 50%;" >Si</ion-button>
-        
+          <ion-button color="success" @click="$emit('close'); mostrarConfirmacion = false" size="small"
+            style="width: 50%;">NO</ion-button>
+          <ion-button color="danger" @click="$emit('close'); salir(); mostrarConfirmacion = false" size="small"
+            style="width: 50%;">Si</ion-button>
+
         </div>
       </div>
     </div>
@@ -25,17 +28,19 @@
 
 <script>
 import { IonButton } from '@ionic/vue';
-
+import axios from "axios";
+import router from "@/router";
 import Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
+import Cookies from "js-cookie";
 
 export default {
-  components:{
+  components: {
     IonButton
   },
   data() {
     return {
-      message:  null,
+      message: null,
       stompClient: null,
       messages: [],
       mostrarConfirmacion: false
@@ -45,6 +50,10 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    partida: {
+      type: Number,
+      required: true
     }
   },
   mounted() {
@@ -52,20 +61,51 @@ export default {
     this.mostrarConfirmacion = false;
   },
   methods: {
-    pausa(){
+    pausa() {
       console.log('Pausandoo');
+      axios.post(
+        "https://lamesa-backend.azurewebsites.net/partida/pausa/"+this.partida
+      )
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            console.log('PARTIDA PAUSADA');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
-    salir(){
+    salir() {
       console.log('Saliendoo');
       this.mostrarConfirmacion = true;
+      const sessionId = Cookies.get('sessionId');
+      axios.post(
+        "https://lamesa-backend.azurewebsites.net/partida/salir",
+        {
+          "jugador": sessionId,
+          "partida": this.partida
+        }
+      )
+        .then((response) => {
+          const success = response.status === 200;
+          if (success) {
+            router.push({
+            path: '/menu'
+          });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
     },
     Prueba() {
-      console.log('Prueba msg: '+this.message);
+      console.log('Prueba msg: ' + this.message);
+
     }
   }
 }
 </script>
 
-<style>
-@import '../theme/estilos.css';
-</style>
+<style>@import '../theme/estilos.css';</style>

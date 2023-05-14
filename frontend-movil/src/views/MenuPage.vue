@@ -3,7 +3,7 @@
       <div class="containerMenu1">
           
           <a class="boton2 boton-menu-nombre boton-menu" id="show-modalV" @click="showModalUsuario = true">
-            {{ this.$route.query.username }} 
+            {{ nombreUsuario }} 
           </a>
           <a class="boton1 boton-menu-notis boton-menu"  @click="goShop">
               <img  src="../../public/assets/tienda.png" >
@@ -73,8 +73,8 @@
       data() {
         return {
           tableroActivo: this.$route.query.tablero,
-          idUsuario: this.$route.query.userId,
-          nombreUsuario: this.$route.query.username,
+          idUsuario: '',
+          nombreUsuario: '' ,
           showModalNoti: false,
           showModalJugar: false,
           showModalPrivada: false,
@@ -119,9 +119,9 @@
         
       const tablero = this.$refs.tablero;
       this.tableroActivo = Cookies.get('tableroActivo');
-      if(!this.tableroActivo){
-        this.tableroActivo = 1;
-      }
+      // if(!this.tableroActivo){
+      //   this.tableroActivo = 1;
+      // }
       import(`../../public/assets/TABLERO${this.tableroActivo}.png`).then(imageUrl => {
       tablero.src = imageUrl.default;
     });
@@ -130,16 +130,29 @@
       
       },
       beforeMount(){
+        this.idUsuario = Cookies.get('sessionId');
+        this.nombreUsuario = Cookies.get('username');
         this.tableroActivo = Cookies.get('tableroActivo');
+        console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
+        
         
       },
+      beforeResolve(){
+        this.idUsuario = Cookies.get('sessionId');
+        this.nombreUsuario = Cookies.get('username');
+        this.tableroActivo = Cookies.get('tableroActivo');
+        console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
+        this.changeImageSrc();
+      }
+      ,
   
       mounted() {
         //ver que tablero tiene activo el user para cambiar el tablero activo
         
         console.log('MENU| TABLERO DE ENTRADA = ',this.tableroActivo);
-        this.changeImageSrc();
         this.tableroActivo = Cookies.get('tableroActivo');
+        this.changeImageSrc();
+        
         console.log('IdUsuario: ',this.idUsuario)
         console.log('NombreUsuario: ', this.nombreUsuario)
       }

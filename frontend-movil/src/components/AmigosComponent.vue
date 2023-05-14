@@ -1,11 +1,19 @@
 <script>
-import { IonLabel, IonSegment, IonSegmentButton, IonCard, IonButton, IonCardTitle, IonCardContent, IonCardHeader } from '@ionic/vue';
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import {
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
+  IonCard,
+  IonButton,
+  IonCardTitle,
+  IonCardContent,
+  IonCardHeader,
+} from "@ionic/vue";
+import Cookies from "js-cookie";
+import axios from "axios";
 import router from "@/router";
 
 export default {
-
   components: {
     IonLabel,
     IonSegment,
@@ -14,14 +22,14 @@ export default {
     IonButton,
     IonCardTitle,
     IonCardContent,
-    IonCardHeader
+    IonCardHeader,
   },
   props: {
     show: Boolean,
     nombreUsuario: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -30,32 +38,44 @@ export default {
       listaSolicitudes: [],
       usuarioEnviar: "",
       msgError: "",
-      colorError: ""
-    }
+      colorError: "",
+    };
   },
   methods: {
     enviarSolicitud() {
       let idAmigo = 0;
 
-      const sessionId = Cookies.get('sessionId');
-      axios.get('https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=' + this.usuarioEnviar, {})
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .get(
+          "https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=" +
+            this.usuarioEnviar,
+          {}
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
             console.log("Id de usuario:" + response.data);
-            idAmigo = response.data
+            idAmigo = response.data;
 
-            console.log('Enviando solicitud de amistad');
-            axios.post('https://lamesa-backend.azurewebsites.net/usuario/enviar-solicitud', {
-              usuario: sessionId,
-              amigo: idAmigo
-            })
-              .then((response) => {
-                if (idAmigo == sessionId) {
-                  this.mostrarError("No puedes enviarte una solicitud a tí mismo", "red");
-                  return;
+            if (idAmigo == sessionId) {
+              this.mostrarError(
+                "No puedes enviarte una solicitud a tí mismo",
+                "red"
+              );
+              return;
+            }
+
+            console.log("Enviando solicitud de amistad");
+            axios
+              .post(
+                "https://lamesa-backend.azurewebsites.net/usuario/enviar-solicitud",
+                {
+                  usuario: sessionId,
+                  amigo: idAmigo,
                 }
-
+              )
+              .then((response) => {
                 const success = response.status === 200;
                 if (success) {
                   console.log("Solicitud de amistad enviada");
@@ -76,11 +96,15 @@ export default {
     },
 
     aceptarSolicitud(idAmigo) {
-      const sessionId = Cookies.get('sessionId');
-      axios.post('https://lamesa-backend.azurewebsites.net/usuario/aceptar-solicitud', {
-        usuario: sessionId,
-        amigo: idAmigo
-      })
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .post(
+          "https://lamesa-backend.azurewebsites.net/usuario/aceptar-solicitud",
+          {
+            usuario: sessionId,
+            amigo: idAmigo,
+          }
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -93,13 +117,16 @@ export default {
         });
     },
 
-
     rechazarSolicitud(idAmigo) {
-      const sessionId = Cookies.get('sessionId');
-      axios.post('https://lamesa-backend.azurewebsites.net/usuario/denegar-solicitud', {
-        usuario: sessionId,
-        amigo: idAmigo
-      })
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .post(
+          "https://lamesa-backend.azurewebsites.net/usuario/denegar-solicitud",
+          {
+            usuario: sessionId,
+            amigo: idAmigo,
+          }
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -113,16 +140,20 @@ export default {
     },
 
     eliminarAmigo(idAmigo) {
-      const sessionId = Cookies.get('sessionId');
-      axios.post('https://lamesa-backend.azurewebsites.net/usuario/eliminar-amigo', {
-        usuario: sessionId,
-        amigo: idAmigo
-      })
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .post(
+          "https://lamesa-backend.azurewebsites.net/usuario/eliminar-amigo",
+          {
+            usuario: sessionId,
+            amigo: idAmigo,
+          }
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
             console.log("Amigo eliminado");
-            this.cargarDatos()
+            this.cargarDatos();
           }
         })
         .catch((error) => {
@@ -137,8 +168,13 @@ export default {
 
     cargarDatos() {
       // Ver amigos
-      const sessionId = Cookies.get('sessionId');
-      axios.get('https://lamesa-backend.azurewebsites.net/usuario/amigos/' + sessionId, {})
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .get(
+          "https://lamesa-backend.azurewebsites.net/usuario/amigos/" +
+            sessionId,
+          {}
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -151,7 +187,12 @@ export default {
         });
 
       // Ver solicitudes de amistad
-      axios.get('https://lamesa-backend.azurewebsites.net/usuario/solicitudes/' + sessionId, {})
+      axios
+        .get(
+          "https://lamesa-backend.azurewebsites.net/usuario/solicitudes/" +
+            sessionId,
+          {}
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -168,21 +209,34 @@ export default {
     cerrar() {
       this.tabSelected = "amigos";
       this.cargarDatos();
-      this.$emit('close');
+      this.$emit("close");
     },
 
     unirseAmigo(partidaAmigo) {
-      const sessionId = Cookies.get('sessionId');
-      axios.post('https://lamesa-backend.azurewebsites.net/partida/conectar-amigo', {
-        jugador: sessionId,
-        partida: partidaAmigo
-      })
+      const sessionId = Cookies.get("sessionId");
+      axios
+        .post(
+          "https://lamesa-backend.azurewebsites.net/partida/conectar-amigo",
+          {
+            jugador: sessionId,
+            partida: partidaAmigo,
+          }
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
-
-            Cookies.set('jugadores', response.data.jugadores);
-            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, idJugador: this.idJugador, jugadores: JSON.stringify(response.data.jugadores), id: response.data.id, color: response.data.color, hostPrivada: false } });
+            Cookies.set("jugadores", response.data.jugadores);
+            router.push({
+              path: "/partida",
+              query: {
+                nombreUsuario: this.nombreUsuario,
+                idJugador: this.idJugador,
+                jugadores: JSON.stringify(response.data.jugadores),
+                id: response.data.id,
+                color: response.data.color,
+                hostPrivada: false,
+              },
+            });
           }
         })
         .catch((error) => {
@@ -194,22 +248,19 @@ export default {
     mostrarError(mensaje, color) {
       this.msgError = mensaje;
       this.colorError = color;
-    }
-
+    },
   },
   mounted() {
     this.cargarDatos();
-  }
+  },
   // updated(){
   //   this.cargarDatos();
   // }
-}
-
+};
 </script>
 
 <style>
 .modal-container {
-
   justify-content: space-between;
   align-items: center;
   position: relative;
@@ -243,39 +294,70 @@ export default {
     <div v-if="show" class="modal-mask">
       <div class="modal-container">
         <a class="close-icon-img" @click="cerrar()">
-          <img src="../../public/assets/close.png" alt="cerrar popup">
+          <img src="../../public/assets/close.png" alt="cerrar popup" />
         </a>
 
         <!-- Cabecera tabs -->
-        <ion-segment :value="tabSelected=='amigos' ? 'default':'segment'">
+        <ion-segment :value="tabSelected == 'amigos' ? 'default' : 'segment'">
           <ion-segment-button value="default" @click="cambiarTab('amigos')">
-            <ion-label style="font-size: smaller;">Amigos</ion-label>
+            <ion-label style="font-size: smaller">Amigos</ion-label>
           </ion-segment-button>
-          <ion-segment-button :value="tabSelected=='top' ? 'solicitudes':'segment'" @click="cambiarTab('solicitudes')">
-            <ion-label style="font-size: smaller;">Solicitudes</ion-label>
+          <ion-segment-button
+            :value="tabSelected == 'top' ? 'solicitudes' : 'segment'"
+            @click="cambiarTab('solicitudes')"
+          >
+            <ion-label style="font-size: smaller">Solicitudes</ion-label>
           </ion-segment-button>
         </ion-segment>
 
         <!-- Tabs -->
-        <div class="customTab" v-show="tabSelected == 'amigos'"
-          style="overflow: scroll; -webkit-overflow-scrolling: touch;">
-
+        <div
+          class="customTab"
+          v-show="tabSelected == 'amigos'"
+          style="overflow: scroll; -webkit-overflow-scrolling: touch"
+        >
           <div v-if="listaAmigos.length">
             <ion-card v-for="a in listaAmigos" :key="a.id">
-              <ion-card-header style="display: flex;">
-                <ion-card-title class="d-block ml-auto"
-                  style="width: 100%; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <ion-card-header style="display: flex">
+                <ion-card-title
+                  class="d-block ml-auto"
+                  style="
+                    width: 100%;
+                    font-size: medium;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  "
+                >
                   {{ a.username }}
                 </ion-card-title>
-                <button @click="eliminarAmigo(a.id)" class="mr-0"
-                  style="margin: 0px; padding: 0px; background-color: rgb(219, 52, 52); border-radius: 5px; width: 20px; float: right">
-                  <img src="../../public/assets/eliminar.png" style="width:100%; height: 100%;">
+                <button
+                  @click="eliminarAmigo(a.id)"
+                  class="mr-0"
+                  style="
+                    margin: 0px;
+                    padding: 0px;
+                    background-color: rgb(219, 52, 52);
+                    border-radius: 5px;
+                    width: 20px;
+                    float: right;
+                  "
+                >
+                  <img
+                    src="../../public/assets/eliminar.png"
+                    style="width: 100%; height: 100%"
+                  />
                 </button>
               </ion-card-header>
 
-              <ion-card-content v-if="a.estado == 'ESPERANDO_JUGADORES'" style="display: flex; font-size: small;">
+              <ion-card-content
+                v-if="a.estado == 'ESPERANDO_JUGADORES'"
+                style="display: flex; font-size: small"
+              >
                 Esperando jugadores
-                <ion-button size="small" @click="unirseAmigo(a.idPartida)">UNIRSE</ion-button>
+                <ion-button size="small" @click="unirseAmigo(a.idPartida)"
+                  >UNIRSE</ion-button
+                >
               </ion-card-content>
             </ion-card>
           </div>
@@ -284,47 +366,95 @@ export default {
           </div>
         </div>
 
-        <div class="customTab" v-show="tabSelected == 'solicitudes'"
-          style="overflow: scroll; -webkit-overflow-scrolling: touch;">
-          <h2 style="font-size: medium; margin-bottom:0">Enviar solicitud</h2>
-          <div style="display: flex; align-items: center;">
-            <input v-model="usuarioEnviar" placeholder="Nombre de usuario"
-              style="width: 85%; margin-top: 0px; height: 25px; margin-right:5%">
-            <button class="mr-0"
-              style="margin: 0px; padding: 0px; background-color: rgb(50, 180, 55); border-radius: 5px; width: 25px; float: right;"
-              @click="enviarSolicitud">
-              <img src="../../public/assets/check.png" style="width:100%; height: 100%;">
+        <div
+          class="customTab"
+          v-show="tabSelected == 'solicitudes'"
+          style="overflow: scroll; -webkit-overflow-scrolling: touch"
+        >
+          <h2 style="font-size: medium; margin-bottom: 0">Enviar solicitud</h2>
+          <div style="display: flex; align-items: center">
+            <input
+              v-model="usuarioEnviar"
+              placeholder="Nombre de usuario"
+              style="
+                width: 85%;
+                margin-top: 0px;
+                height: 25px;
+                margin-right: 5%;
+              "
+            />
+            <button
+              class="mr-0"
+              style="
+                margin: 0px;
+                padding: 0px;
+                background-color: rgb(50, 180, 55);
+                border-radius: 5px;
+                width: 25px;
+                float: right;
+              "
+              @click="enviarSolicitud"
+            >
+              <img
+                src="../../public/assets/check.png"
+                style="width: 100%; height: 100%"
+              />
             </button>
           </div>
 
-          <p style="font-size: smaller;" :style="{ 'color': colorError }"> {{ msgError }}</p>
+          <p style="font-size: smaller" :style="{ color: colorError }">
+            {{ msgError }}
+          </p>
 
-
-          <hr style="margin-top: 10px; margin-bottom: 10px; border-top: 2px solid white;">
-          <h2 style="font-size: medium; margin-bottom:0; margin-top:0">Solicitudes recibidas</h2>
+          <hr
+            style="
+              margin-top: 10px;
+              margin-bottom: 10px;
+              border-top: 2px solid white;
+            "
+          />
+          <h2 style="font-size: medium; margin-bottom: 0; margin-top: 0">
+            Solicitudes recibidas
+          </h2>
 
           <ion-card v-for="s in listaSolicitudes" :key="s.id">
-            <ion-card-header style="display: flex;">
-              <ion-card-title class="d-block ml-auto"
-                style="width: auto; font-size: medium; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <ion-card-header style="display: flex">
+              <ion-card-title
+                class="d-block ml-auto"
+                style="
+                  width: auto;
+                  font-size: medium;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
                 {{ s.username }}
               </ion-card-title>
             </ion-card-header>
 
-            <ion-card-content style="display: flex; font-size: small;">
-              <ion-button color="success" @click="aceptarSolicitud(s.id)" size="small"
-                style="width: 40%;">ACEPTAR</ion-button>
-              <ion-button color="danger" @click="rechazarSolicitud(s.id)" size="small"
-                style="width: 50%;">RECHAZAR</ion-button>
+            <ion-card-content style="display: flex; font-size: small">
+              <ion-button
+                color="success"
+                @click="aceptarSolicitud(s.id)"
+                size="small"
+                style="width: 40%"
+                >ACEPTAR</ion-button
+              >
+              <ion-button
+                color="danger"
+                @click="rechazarSolicitud(s.id)"
+                size="small"
+                style="width: 50%"
+                >RECHAZAR</ion-button
+              >
             </ion-card-content>
           </ion-card>
-
         </div>
       </div>
     </div>
   </Transition>
 </template>
-
 
 <style>
 .customTab {
@@ -353,7 +483,6 @@ export default {
   border-radius: 13px;
 
   background-color: rgb(69, 69, 69);
-  ;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
 }

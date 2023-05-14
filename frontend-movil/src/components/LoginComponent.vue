@@ -15,9 +15,9 @@
         ¿Aun no tienes una cuenta?
         Registrate <span class="register-link" @click="moveToRegister">aquí</span>
         <p></p>
-      <a class="register-link" @click="showModalPass = true" >Olvidé mi contraseña</a>
+        <a class="register-link" @click="showModalPass = true">Olvidé mi contraseña</a>
       </form>
-      
+
     </div>
 
     <Teleport to="body">
@@ -35,8 +35,8 @@ import Cookies from 'js-cookie';
 import RecoverPass from "@/components/RecoverPassComponent.vue"
 export default defineComponent({
   components: {
-      RecoverPass
-    },
+    RecoverPass
+  },
   data() {
     return {
       idUsuario: 0,
@@ -50,62 +50,78 @@ export default defineComponent({
     };
   },
   methods: {
-    verSkinsActivas(id){
-       console.log('cargando skins activas de ',id);
-       axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/'+ parseInt(id))
-         .then(response => {
-           console.log('responseo= ',response);
-           this.tableroActivo = response.data.id;
-           Cookies.set('tableroActivo', this.tableroActivo);
-         })
-         .catch(error => {
-           console.log(error); 
-         });
+    async verSkinsActivas(id) {
+      console.log('cargando skins activas de ', id);
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + id)
+        .then(response => {
+          console.log('TableroAvtivo= ', response.data.id);
+          this.fichaActiva = response.data.id;
+          Cookies.set('fichaActiva', this.fichaActiva);
+        })
+        .catch(error => {
+          console.log(error);
+        });
 
-       axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/'+id)
-         .then(response => {
-           console.log('TableroAvtivo= ',response.data.id);
-           this.fichaActiva = response.data.id;
-           Cookies.set('fichaActiva', this.fichaActiva);
-         })
-         .catch(error => {
-           console.log(error);
-         });
 
-        Cookies.set('tableroActivo', this.tableroActivo);
-        Cookies.set('fichaActiva', this.fichaActiva);
+      axios.get('https://lamesa-backend.azurewebsites.net/usuario/tablero-activo/' + parseInt(id))
+        .then(response => {
+          console.log('responseo= ', response);
+          this.tableroActivo = response.data.id;
+          Cookies.set('sessionId', id);
+          
+          
+          Cookies.set('tableroActivo', this.tableroActivo);
+          router.push({
+            path: '/menu',
+            query: {
+              userId: id,
+              tablero: this.tableroActivo,
+              username: response.data.username,
+              monedas: response.data.numMonedas
+            }
+          });
+
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      
+
+      Cookies.set('tableroActivo', this.tableroActivo);
+      Cookies.set('fichaActiva', this.fichaActiva);
     },
     login() {
-  this.showErrorPass = false;
-  this.loading = true;
-  axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
-    login: this.userLogin,
-    password: this.password
-  })
-    .then(async (response) => {
-      const success = response.status === 200;
-      console.log(response.data.username)
-      if (success) {
-        Cookies.set('sessionId', response.data.id);
-      
-       await this.verSkinsActivas(response.data.id); // cambiar funcion cuando funcione el backend
-        
-        router.push({ path: '/menu', query: { userId: response.data.id, tablero: this.tableroActivo , username: response.data.username, monedas: response.data.numMonedas } }); // navigate to /menu route
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      if (error.response && error.response.status === 400) {
-        this.showErrorPass = true;
+      this.showErrorPass = false;
+      this.loading = true;
+      axios.post('https://lamesa-backend.azurewebsites.net/usuario/login', {
+        login: this.userLogin,
+        password: this.password
+      })
+        .then(async (response) => {
+          const success = response.status === 200;
+          console.log(response.data.username)
+          if (success) {
+            Cookies.set('username', response.data.username);
+            Cookies.set('email', response.data.email);
 
-      }
-    }).finally((response) => {
-      this.loading = false;
-      
-      
-    });
-}
-,
+            await this.verSkinsActivas(response.data.id); // cambiar funcion cuando funcione el backend
+
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response && error.response.status === 400) {
+            this.showErrorPass = true;
+
+          }
+        }).finally((response) => {
+          this.loading = false;
+
+
+        });
+    }
+    ,
     moveToRegister() {
       router.push('/registrarse'); // navigate to /registrarse route
     }

@@ -73,11 +73,11 @@ export default {
                 </div>
 
                 <div class="margin0 botonesInline">
-                    <ion-button class="boton">
+                    <ion-button class="botonAbajo">
                         CERRAR <br> SESIÓN
                         <img class="iconoBoton" src="../../public/assets/salir.png">
                     </ion-button>
-                    <ion-button color="danger" class="boton">
+                    <ion-button color="danger" class="botonAbajo">
                         ELIMINAR <br> CUENTA
                         <img class="iconoBoton" src="../../public/assets/eliminarUsuario.png">
                     </ion-button>
@@ -95,7 +95,7 @@ export default {
     margin:5px
 }
 
-.boton{
+.botonAbajo{
     width: 50%;
     font-size: 12px;
     font-weight: bold;

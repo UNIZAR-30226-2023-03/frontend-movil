@@ -112,7 +112,7 @@ export default {
                 { idCasilla: 73, numCasilla: 74, x: 0, y: 0, numFichas: 0, esVertical: false },
                 { idCasilla: 74, numCasilla: 75, x: 0, y: 0, numFichas: 0, esVertical: false },
                 { idCasilla: 75, numCasilla: 76, x: 0, y: 0, numFichas: 0, esVertical: false },
-                { idCasilla: 76, numCasilla: 77, x: 0.7563587684, y: 0.1515957447, numFichas: 0, esVertical: true },
+                { idCasilla: 76, numCasilla: 77, x: 0.7563587684, y: 0.1515957447, numFichas: 0, esVertical: true }, // amarillo +8
                 { idCasilla: 77, numCasilla: 78, x: 0.8540829987, y: 0.1515957447, numFichas: 0, esVertical: true },
                 { idCasilla: 78, numCasilla: 79, x: 0.7563587684, y: 0.2513297872, numFichas: 0, esVertical: true },
                 { idCasilla: 79, numCasilla: 80, x: 0.8540829987, y: 0.2513297872, numFichas: 0, esVertical: true },
@@ -120,7 +120,7 @@ export default {
                 { idCasilla: 81, numCasilla: 82, x: 0.2436412316, y: 0.1515957447, numFichas: 0, esVertical: true },
                 { idCasilla: 82, numCasilla: 83, x: 0.1485943775, y: 0.2513297872, numFichas: 0, esVertical: true },
                 { idCasilla: 83, numCasilla: 84, x: 0.2436412316, y: 0.2513297872, numFichas: 0, esVertical: true },
-                { idCasilla: 84, numCasilla: 85, x: 0.1485943775, y: 0.7513297872, numFichas: 0, esVertical: true },
+                { idCasilla: 84, numCasilla: 85, x: 0.1485943775, y: 0.7513297872, numFichas: 0, esVertical: true },// azul +16
                 { idCasilla: 85, numCasilla: 86, x: 0.2436412316, y: 0.7513297872, numFichas: 0, esVertical: true },
                 { idCasilla: 86, numCasilla: 87, x: 0.1485943775, y: 0.8537234043, numFichas: 0, esVertical: true },
                 { idCasilla: 87, numCasilla: 88, x: 0.2436412316, y: 0.8537234043, numFichas: 0, esVertical: true },
@@ -128,7 +128,7 @@ export default {
                 { idCasilla: 89, numCasilla: 90, x: 0.8540829987, y: 0.7513297872, numFichas: 0, esVertical: true },
                 { idCasilla: 90, numCasilla: 91, x: 0.7563587684, y: 0.8537234043, numFichas: 0, esVertical: true },
                 { idCasilla: 91, numCasilla: 92, x: 0.8540829987, y: 0.8537234043, numFichas: 0, esVertical: true },
-                { idCasilla: 92, numCasilla: 93, x: 0.9477911647, y: 0.5026595745, numFichas: 0, esVertical: true },
+                { idCasilla: 92, numCasilla: 93, x: 0.9477911647, y: 0.5026595745, numFichas: 0, esVertical: true },// rojo +24
                 { idCasilla: 93, numCasilla: 94, x: 0.9022757697, y: 0.5026595745, numFichas: 0, esVertical: true },
                 { idCasilla: 94, numCasilla: 95, x: 0.8567603748, y: 0.5026595745, numFichas: 0, esVertical: true },
                 { idCasilla: 95, numCasilla: 96, x: 0.8112449799, y: 0.5026595745, numFichas: 0, esVertical: true },
@@ -210,27 +210,11 @@ export default {
                 this.jugadores.forEach(j => {
                     if (((j.idJugador != -1) && (j.idJugador != -2)) && j.color == ficha.color) { // comprobar que esa posicion no está vacía o es el jugador local
                         console.log('jugador en el forecha j: ', j);
-                        // axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
-                        //     .then(response => {
-                        //         console.log('fihaActiva de un jugador= ', response.data.id);
-                        //         const skinActiva = response.data.id;
-                        //         import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
-                        //             boton.style.backgroundImage = `url(${imageUrl.default})`;
-
-                        //         });
-                        //         /* Set the background size */
-                        //         boton.style.backgroundSize = "cover";
-                        //         /* Set the background position */
-                        //         boton.style.backgroundPosition = "center center";
-                        //         /* Set the background repeat */
-                        //         boton.style.backgroundRepeat = "no-repeat";
-
-                        //     })
-                            // .catch(error => {
-                            //     console.log(error);
-                            // });
-
-                            import(`../../public/assets/FICHA4.png`).then(imageUrl => { //Demomento para probar que funcionan las skins multijugador
+                        axios.get('https://lamesa-backend.azurewebsites.net/usuario/ficha-activa/' + j.idJugador) // cuando vaya el backend
+                            .then(response => {
+                                console.log('fihaActiva de un jugador= ', response.data.id);
+                                const skinActiva = response.data.id;
+                                import(`../../public/assets/FICHA${skinActiva}.png`).then(imageUrl => {
                                     boton.style.backgroundImage = `url(${imageUrl.default})`;
 
                                 });
@@ -240,6 +224,22 @@ export default {
                                 boton.style.backgroundPosition = "center center";
                                 /* Set the background repeat */
                                 boton.style.backgroundRepeat = "no-repeat";
+
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+
+                            // import(`../../public/assets/FICHA4.png`).then(imageUrl => { //Demomento para probar que funcionan las skins multijugador
+                            //         boton.style.backgroundImage = `url(${imageUrl.default})`;
+
+                            //     });
+                            //     /* Set the background size */
+                            //     boton.style.backgroundSize = "cover";
+                            //     /* Set the background position */
+                            //     boton.style.backgroundPosition = "center center";
+                            //     /* Set the background repeat */
+                            //     boton.style.backgroundRepeat = "no-repeat";
                     }
                 });
 
@@ -269,17 +269,17 @@ export default {
                                 if (ficha.idFicha < fichaComp.idFicha) {
                                     //Abajo MAS ARRIBA
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
-                                    pixelesy = (yTablero + casilla.y * heightTablero) + boton.getBoundingClientRect().height / 2.5;
+                                    pixelesy = (yTablero + casilla.y * heightTablero);
                                 } else {
                                     //Arriba MAS ARRIBA
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width / 2;
-                                    pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 2.5;
+                                    pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 2;
                                 }
                             } else {
                                 if (ficha.idFicha < fichaComp.idFicha) {
                                     //Izquierda
                                     pixelesx = xTablero + casilla.x * widthTablero - boton.getBoundingClientRect().width;
-                                    pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 3;
+                                    pixelesy = (yTablero + casilla.y * heightTablero) - boton.getBoundingClientRect().height / 2;
                                 } else {
                                     //Derecha MAS A LA IZQUIERDA
                                     pixelesx = xTablero + casilla.x * widthTablero;

@@ -54,6 +54,7 @@ export default {
     },
     unirsePrivada(){
       console.log("unirse:", this.codigoPartida, this.passwdPartida, this.idJugador);
+      
       axios.post('https://lamesa-backend.azurewebsites.net/partida/conectar', {
           nombre: this.codigoPartida,
           password: this.passwdPartida,

@@ -23,12 +23,13 @@ export default {
       tabSelected: "top",
       selected: 'pganadas',
       options: [
-        { text: 'Partidas ganadas', value: 'pganadas' },
-        { text: 'Partidas jugadas', value: 'pjugadas' },
-        { text: 'Torneos jugados', value: 'tjugados' },
-        { text: 'Torneos ganados', value: 'tganados' },
+        { text: 'Partidas ganadas', value: 'partidasGanadas' },
+        { text: 'Partidas jugadas', value: 'partidasJugadas' },
+        { text: 'Torneos jugados', value: 'torneosJugados' },
+        { text: 'Torneos ganados', value: 'torneosGanados' },
         { text: 'Media comidas', value: 'mediaComidas' },
         { text: 'Media en meta', value: 'mediaEnMeta' }
+
       ],
       listaRanking: [],
       stats: {}
@@ -216,12 +217,12 @@ export default {
                 Posición
               </div>
 
-              <div style=" width: 50%;">
+              <div style=" width: 40%;">
                 Nombre
               </div>
 
               <div
-                style="font-size: smaller; width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+                style="font-size: smaller; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
                 Medida
               </div>
             </div>
@@ -229,7 +230,7 @@ export default {
             <ion-card v-for="(r, index) in listaRanking" :key="index" class="margin0">
               <div style="display: flex;">
 
-                <div style="width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                <div style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
                   {{ index + 1 }}
                 </div>
 
@@ -238,7 +239,7 @@ export default {
                 </div>
 
                 <div
-                  style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
+                  style="text-align: center; width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; color: white;">
                   {{ r[selected] }}
                 </div>
 
