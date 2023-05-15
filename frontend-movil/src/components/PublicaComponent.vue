@@ -73,7 +73,7 @@ export default {
         </ion-segment-button>
       </ion-segment>
 
-      <h5 style="width: 100%; margin-top: 10px; margin-bottom: 0px;">Barreras</h5>
+      <h5 style="width: 100%; margin-top: 30px; margin-bottom: 0px;">Barreras</h5>
       <ion-segment value="default">
         <ion-segment-button value="default" @click="confB='SOLO_SEGUROS'">
           <ion-label style="font-size: smaller;">Solo seguros</ion-label>
@@ -83,7 +83,7 @@ export default {
         </ion-segment-button>
       </ion-segment>
 
-        <div style="align-items: center;">
+        <div style="display: flex; justify-content: center; margin-top: 30px;">
           <ion-button id="publica" class="boton-submenu" style="width: 48%;" @click="conectarPublica()" >
               CONECTAR
           </ion-button>
