@@ -151,7 +151,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "AMARILLO",
-          fichasEnMeta : 0
+          fichasEnMeta: 0
         }, //amarillo 0
         {
           id: 2,
@@ -159,7 +159,7 @@ export default {
           idJugador: -1,
           ocupado: false,
           color: "AZUL",
-          fichasEnMeta : 0
+          fichasEnMeta: 0
         }, // azul 1
         {
           id: 3,
@@ -233,7 +233,7 @@ export default {
     casaFicha(id, color) {
       //Devuelve la casilla de casa de la ficha en funcion de su id y color
       const offset = this.offsetColor(color);
-      console.log("A la casilla ", offset + id - 1);
+      console.log("Ficha ", offset + id - 1);
       return this.$refs.tablero.fichas[offset + id - 1].casa;
     },
     movimiento(
@@ -254,17 +254,15 @@ export default {
       if (nuevaCasilla == 74) {
         this.jugadores.find(item => item.color == colorFicha).fichasEnMeta++;
         this.movimientoAMeta = true;
-      }else{
+      } else {
         this.movimientoAMeta = false;
       }
 
       // Mover ficha
       const offset = this.offsetColor(colorFicha);
-      const casillaActual =
-      this.$refs.tablero.fichas[offset + idFicha - 1].casilla;
+      const casillaActual = this.$refs.tablero.fichas[offset + idFicha - 1].casilla;
       this.$refs.tablero.casillas[casillaActual].numFichas--; // se va ficha de la antigua casilla
-      this.$refs.tablero.fichas[offset + idFicha - 1].casilla =
-        casillaCalculada;
+      this.$refs.tablero.fichas[offset + idFicha - 1].casilla = casillaCalculada;
       this.$refs.tablero.casillas[casillaCalculada].numFichas++; // lega ficha a la nueva casilla
 
       //Si hay comida
@@ -311,9 +309,9 @@ export default {
             console.log("Casilla: ", data.casilla);
             //Sacar casilla de casa
             const numeroFicha =
-              data.casilla.fichas[data.casilla.fichas.length - 1].numero;
+              data.fichas[data.fichas.length - 1].numero;
             const colorFicha =
-              data.casilla.fichas[data.casilla.fichas.length - 1].color; //Debería ser siempre mi color
+              data.fichas[data.fichas.length - 1].color; //Debería ser siempre mi color
             const casillaDestino = data.casilla.posicion;
             this.movimiento(numeroFicha, colorFicha, casillaDestino);
           }
@@ -335,6 +333,11 @@ export default {
           console.log("/topic/movimiento/");
           const data = JSON.parse(response.body);
           console.log(data);
+
+          if (data.vueltaACasa) {
+            return;
+          }
+
           const casillaDestino = data.destino.posicion;
           const ficha = data.ficha;
           let fichaComida = false;
@@ -415,6 +418,7 @@ export default {
       //Realizar jugada
       this.miTurno = true;
       this.$refs.dado.activarDado();
+      this.esperarTiempo()
     },
     actualizarTurno(color, fichaComida, movimientoRealizado, vueltaACasa) {
       if (this.partidaTerminada) {
@@ -423,26 +427,10 @@ export default {
 
       let fichasFuera = 0;
       const oc = this.offsetColor(color);
-      fichasFuera =
-        this.$refs.tablero.fichas[oc + 0].casilla !=
-          this.$refs.tablero.fichas[oc + 0].casa
-          ? fichasFuera + 1
-          : fichasFuera;
-      fichasFuera =
-        this.$refs.tablero.fichas[oc + 1].casilla !=
-          this.$refs.tablero.fichas[oc + 0].casa
-          ? fichasFuera + 1
-          : fichasFuera;
-      fichasFuera =
-        this.$refs.tablero.fichas[oc + 2].casilla !=
-          this.$refs.tablero.fichas[oc + 0].casa
-          ? fichasFuera + 1
-          : fichasFuera;
-      fichasFuera =
-        this.$refs.tablero.fichas[oc + 2].casilla !=
-          this.$refs.tablero.fichas[oc + 0].casa
-          ? fichasFuera + 1
-          : fichasFuera;
+      fichasFuera = this.$refs.tablero.fichas[oc + 0].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+      fichasFuera = this.$refs.tablero.fichas[oc + 1].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+      fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
+      fichasFuera = this.$refs.tablero.fichas[oc + 2].casilla != this.$refs.tablero.fichas[oc + 0].casa ? fichasFuera + 1 : fichasFuera;
 
       console.log("Actualizando turno. Fichas fuera: ", fichasFuera);
       console.log("Actualizando turno. fichaComida: ", fichaComida);
@@ -494,45 +482,51 @@ export default {
         ficha.activada = activar;
       });
     },
-    verMovimientos(valorDado) {
+    async verMovimientos(valorDado) {
       console.log("verMovimientos");
-      axios
-        .post(
-          "https://lamesa-backend.azurewebsites.net/partida/dado/" +
-          this.idPartida +
-          "?dado=" +
-          valorDado,
-          {}
-        )
-        .then((response) => {
-          const success = response.status === 200;
-          if (success) {
-            console.log(response.data);
-            if (response.data.sacar == true) {
-              //Sacar casilla de casa
-              return; //Se encarga el websocket
-            } else if (
-              response.data.sacar == false &&
-              response.data.fichas.length < 4
-            ) {
-              //Mostrar todas las fichas del color
-              this.activarFichasColor(this.turno, true);
-              //Desactivar no disponibles
-              const noDisponibles = response.data.fichas;
-              noDisponibles.forEach((ficha) => {
-                this.activarFicha(ficha.numero, ficha.color, false);
-              });
-              this.$refs.tablero.actualizarPosiciones();
-              //Guardar dado
-              this.valorDado = valorDado;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            "https://lamesa-backend.azurewebsites.net/partida/dado/" +
+            this.idPartida +
+            "?dado=" +
+            valorDado,
+            {}
+          )
+          .then((response) => {
+            const success = response.status === 200;
+            if (success) {
+              console.log(response.data);
+              if (response.data.sacar == true) {
+                // Sacar casilla de casa
+                resolve(); // Se encarga el websocket
+              } else if (
+                response.data.sacar == false &&
+                response.data.fichas.length < 4
+              ) {
+                // Mostrar todas las fichas del color
+                if (!response.data.vueltaACasa) {
+                  this.activarFichasColor(this.turno, true);
+                }
+                // Desactivar no disponibles
+                const noDisponibles = response.data.fichas;
+                noDisponibles.forEach((ficha) => {
+                  this.activarFicha(ficha.numero, ficha.color, false);
+                });
+                this.$refs.tablero.actualizarPosiciones();
+                // Guardar dado
+                this.valorDado = valorDado;
+              }
+              // Cambiar de turno si corresponde
+              this.actualizarTurno(response.data.turno, false, false, false);
+              resolve();
             }
-            //Cambiar de turno si corresponde
-            this.actualizarTurno(response.data.turno, false, false, false);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
     },
     realizarMovimiento(event, ficha) {
       if (!ficha.activada) {
@@ -638,12 +632,13 @@ export default {
       if (await this.setAlarm(30)) {
         console.log("Se acabo el tiempo");
         console.log("Dado activado: ", this.$refs.dado.activado);
-        
-        if(this.$refs.dado.activado){
+
+        if (this.$refs.dado.activado) {
           console.log("Tirando dado");
           const valorDado = await this.$refs.dado.tirarDado();
           console.log("Valor del dado: ", valorDado);
           await this.verMovimientos(valorDado);
+          console.log("Movimientos mostrados");
         }
         // Seleccionar movimiento aleatorio
         const fichaSeleccionada = this.fichaActivaRandom();
@@ -654,7 +649,8 @@ export default {
     },
 
     async setAlarm(t) {
-      this.sleep(1000);
+      await this.sleep(1000);
+      console.log("alarma:", t)
       if (this.miTurno) {
         if (t <= 0) {
           return true;
@@ -666,7 +662,7 @@ export default {
       }
     },
 
-    fichaActivaRandom(){
+    fichaActivaRandom() {
       const activas = this.$refs.tablero.fichas.filter(item => item.activada == true);
       const indiceAleatorio = Math.floor(Math.random() * activas.length);
       const fichaAleatoria = activas[indiceAleatorio];
@@ -685,49 +681,50 @@ export default {
 
       // Modificar nombre
     },
-    
+
     terminarPartida() {
       console.log("Terminando partida");
       // Ordenar jugadores por fichas en meta
-      this.jugadores.sort((a,b) => (b.fichasEnMeta - a.fichasEnMeta))
+      this.jugadores.sort((a, b) => (b.fichasEnMeta - a.fichasEnMeta))
 
       // Ir a pantalla de fin
       router.push({
-            path: '/final',
-            query: {
-              primero: this.jugadores[0].nombre,
-              segundo: this.jugadores[1].nombre,
-              tercero: this.jugadores[2].nombre,
-              cuarto: this.jugadores[3].nombre
-            }
-          });
+        path: '/final',
+        query: {
+          primero: this.jugadores[0].nombre,
+          segundo: this.jugadores[1].nombre,
+          tercero: this.jugadores[2].nombre,
+          cuarto: this.jugadores[3].nombre
+        }
+      });
     },
 
-    ganarPorAbandono(color){
+    ganarPorAbandono(color) {
       console.log("Terminando partida");
+      this.partidaTerminada = true;
       // Ordenar jugadores por fichas en meta
-      this.jugadores.sort((a,b) => (b.fichasEnMeta - a.fichasEnMeta))
+      this.jugadores.sort((a, b) => (b.fichasEnMeta - a.fichasEnMeta))
 
       // Poner el color el primero
       for (let index = 1; index < 4; index++) {
-        
-        if(this.jugadores[index].color == color){
+
+        if (this.jugadores[index].color == this.color) {
           const j = this.jugadores[index];
-          this.jugadores[index] = this.jugadores[index-1];
+          this.jugadores[index] = this.jugadores[index - 1];
           this.jugadores[index] = j;
         }
-      } 
+      }
 
       // Ir a pantalla de fin
       router.push({
-            path: '/final',
-            query: {
-              primero: this.jugadores[0].nombre,
-              segundo: this.jugadores[1].nombre,
-              tercero: this.jugadores[2].nombre,
-              cuarto: this.jugadores[3].nombre
-            }
-          });
+        path: '/final',
+        query: {
+          primero: this.jugadores[0].nombre,
+          segundo: this.jugadores[1].nombre,
+          tercero: this.jugadores[2].nombre,
+          cuarto: this.jugadores[3].nombre
+        }
+      });
     }
 
   },

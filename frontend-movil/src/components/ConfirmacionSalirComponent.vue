@@ -1,7 +1,7 @@
 <template>
   <Transition name="victorias">
-    <div v-if="show" class="modal-mask">
-      <div class="modal-container" style="text-align: center;">
+    <div v-if="show" class="modal-mask-small">
+      <div class="modal-container-small" style="text-align: center;">
         <a class="close-icon-img" @click="$emit('close'); mostrarConfirmacion = false">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
