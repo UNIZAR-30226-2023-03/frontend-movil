@@ -28,7 +28,7 @@
       <a class="login-button" id="torneo" @click="showModalNoti = true">
         Torneo
       </a>
-      <a class="login-button" id="jugar" @click="showModalJugar = true">
+      <a class="login-button" id="jugar" @click="jugar()">
         Jugar
       </a>
     </div>
@@ -101,20 +101,19 @@ export default {
   // },
   methods: {
     jugar() {
-      console.log("jugar publica:", this.codigoPartida, this.passwdPartida, this.idJugador);
-      axios.post('https://lamesa-backend.azurewebsites.net/partida/publica', {
-        jugador: this.idJugador,
-        configuracionB: "SOLO_SEGUROS",
-        configuracionF: "NORMAL"
-      })
+      console.log("intentando reconectar: ",this.idUsuario);
+      axios.post('https://lamesa-backend.azurewebsites.net/partida/reconectar/'+ this.idUsuario, {})
         .then((response) => {
-          const success = response.status === 200;
-          if (success) {
-            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, color: response.data.color, jugadores: response.data.jugadores, hostPrivada: false } });
+          const success = response.data; // es null si no se puede reconectar a nada
+          if (success) { // falta poner las fichas
+            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, jugadores: JSON.stringify(response.data.jugadores) , color: response.data.color,  turno: response.data.turno} });
+          }else{
+            this.showModalJugar = true // no puedes reconectarte a ninguna partida
           }
         })
         .catch((error) => {
           console.log(error);
+          this.showModalJugar = true // no puedes reconectarte a ninguna partida
         });
     },
     goShop() {

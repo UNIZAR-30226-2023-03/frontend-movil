@@ -85,7 +85,7 @@
   <Teleport to="body">
     <Chat ref="chatHijo" :show="showModalChat" @close="showModalChat = false" :nombreUsuario="nombreUsuario"
       :idPartida="idPartida" />
-    <Confirmacion :show="showModalConfirmacion" :partida="idPartida" @close="showModalConfirmacion = false" />
+    <Confirmacion @cerrarStomp="cerrarConexion()" :stompClient="stompClient" :miTurno="miTurno" :show="showModalConfirmacion" :partida="idPartida" @close="showModalConfirmacion = false" />
   </Teleport>
 </template>
 
@@ -144,6 +144,7 @@ export default {
       showModalConfirmacion: false,
       showModalChat: false,
       tiempoRestante: 60,
+      hayPausa: false,
       jugadores: [
         {
           id: 1,
@@ -190,7 +191,8 @@ export default {
       tableroActivo: "",
       activarDebug: true,
       partidaTerminada: false,
-      movimientoAMeta: false
+      movimientoAMeta: false,
+      stompClient: null
     };
   },
   methods: {
@@ -288,6 +290,7 @@ export default {
       console.log("connecting to the game");
       const socket = new SockJS(url + "/ws");
       const stompClient = Stomp.over(socket);
+      this.stompClient = stompClient;
       stompClient.connect({}, (frame) => {
         console.log("connected to the frame: " + frame);
         stompClient.subscribe(
@@ -371,14 +374,23 @@ export default {
           const data = JSON.parse(response.body);
           this.comenzarPartida(data);
         });
-        stompClient.subscribe("/topic/salir/" + idPartida, (response) => {
+        stompClient.subscribe("/topic/salir/" + idPartida, (response) => { 
           //Sacar a alguien de la partida
-          const data = JSON.parse(response.body);
-          this.sacarJugador(data);
+          this.jugadorSacar = JSON.parse(response.body);
+
+          if (!this.hayPausa || this.turno != this.jugadorSacar) {  // las fichas del jugador que ha puesto la pausa no se quitan si sale
+            this.sacarJugador(this.jugadorSacar);
+            this.jugadorSacar = null;
+          }
+          
         });
         stompClient.subscribe("/topic/pausa/" + idPartida, (response) => {
+          this.hayPausa = response.data //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
           //Sacar a alguien de la partida
           const data = JSON.parse(response.body);
+          if (this.jugadorSacar) {
+            this.sacarJugador(this.jugadorSacar); // si se había salido el jugador que puso pausa, no se ha reconectado a tiempo y hay que quitar sus fichas
+          }
         });
         stompClient.subscribe("/topic/ultimo/" + idPartida, (response) => {
           //Sacar a alguien de la partida
@@ -717,13 +729,26 @@ export default {
 
       // Ir a pantalla de fin
       router.push({
-        path: '/final',
-        query: {
-          primero: this.jugadores[0].nombre,
-          segundo: this.jugadores[1].nombre,
-          tercero: this.jugadores[2].nombre,
-          cuarto: this.jugadores[3].nombre
-        }
+            path: '/final',
+            query: {
+              primero: this.jugadores[0].nombre,
+              segundo: this.jugadores[1].nombre,
+              tercero: this.jugadores[2].nombre,
+              cuarto: this.jugadores[3].nombre
+            }
+          });
+    },
+
+    cerrarConexion(){
+        this.stompClient.disconnect();
+        console.log("Socket connection closed");
+    },
+
+    repoblarTablero(){
+      console.log("Replobando tablero al reconectar");
+      const fichas = JSON.parse(this.$route.query.fichas);
+      fichas.forEach(f => {
+        this.movimiento(f.numero, f.color, f.casilla.posicion);
       });
     }
 
@@ -741,6 +766,10 @@ export default {
       this.ocuparJugador({ color: j.color, username: j.username });
       console.log("cookies get");
     });
+
+    if(this.$route.query.reconectado){
+      this.repoblarTablero();
+    }
 
     this.connectToSocket(this.idPartida);
   },

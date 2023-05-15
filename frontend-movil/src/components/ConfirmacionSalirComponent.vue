@@ -7,7 +7,8 @@
         </a>
 
         <div v-if="!mostrarConfirmacion">
-          <ion-button @click="pausa()" size="small" style="width: 50%;">PAUSAR</ion-button>
+          <ion-button v-if="miTurno" @click="pausa()" size="small" style="width: 50%;">PAUSAR</ion-button>
+         
           <p></p>
           <ion-button color="danger" @click="mostrarConfirmacion = true" size="small"
             style="width: 50%;">SALIR</ion-button>
@@ -41,13 +42,17 @@ export default {
   data() {
     return {
       message: null,
-      stompClient: null,
       messages: [],
       mostrarConfirmacion: false
+  
     }
   },
   props: {
     show: {
+      type: Boolean,
+      required: true
+    },
+    miTurno: {
       type: Boolean,
       required: true
     },
@@ -59,13 +64,15 @@ export default {
   mounted() {
     console.log('Cargado popup confirmacion');
     this.mostrarConfirmacion = false;
+
   },
   methods: {
     pausa() {
-      console.log('Pausandoo');
-      axios.post(
-        "https://lamesa-backend.azurewebsites.net/partida/pausa/"+this.partida
-      )
+      if (this.miTurno) {
+        console.log('Pausandoo');
+        axios.post(
+          "https://lamesa-backend.azurewebsites.net/partida/pausa/"+this.partida
+        )
         .then((response) => {
           const success = response.status === 200;
           if (success) {
@@ -75,6 +82,9 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+      }else{
+        console.log('no es tu turno y no puedes pausar');
+      }
     },
     salir() {
       console.log('Saliendoo');
@@ -89,7 +99,11 @@ export default {
       )
         .then((response) => {
           const success = response.status === 200;
+          // console.log("Socket stomp: ",this.stompClient);
           if (success) {
+            this.emit('cerrarStomp');
+            // this.stompClient.disconnect();
+            // console.log("Socket connection closed");
             router.push({
             path: '/menu'
           });
