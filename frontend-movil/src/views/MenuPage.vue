@@ -106,7 +106,7 @@ export default {
         .then((response) => {
           const success = response.data; // es null si no se puede reconectar a nada
           if (success) { // falta poner las fichas
-            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, jugadores: JSON.stringify(response.data.jugadores) , color: response.data.color,  turno: response.data.turno} });
+            router.push({ path: '/partida', query: { nombreUsuario: this.nombreUsuario, id: response.data.id, jugadores: JSON.stringify(response.data.jugadores) , color: response.data.color,  turno: response.data.turno, reconectado:true, fichas: JSON.stringify(response.data.fichas)} });
           }else{
             this.showModalJugar = true // no puedes reconectarte a ninguna partida
           }

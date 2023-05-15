@@ -41,6 +41,12 @@
       style="position: absolute; width: 50%; left: 25%; top: 40%; font-weight: bold; background-color: gray; border-radius: 10px; text-align: center;">
       ESPERANDO JUGADORES...
     </h1>
+
+    <h1 v-if="hayPausa === 'true'"
+      style="position: absolute; width: 50%; left: 25%; top: 40%; font-weight: bold; background-color: gray; border-radius: 10px; text-align: center;">
+      PARTIDA EN PAUSA
+    </h1>
+    
   </div>
 
   <div v-if="activarDebug" style="display: flex; justify-content: flex-start">
@@ -85,7 +91,7 @@
   <Teleport to="body">
     <Chat ref="chatHijo" :show="showModalChat" @close="showModalChat = false" :nombreUsuario="nombreUsuario"
       :idPartida="idPartida" />
-    <Confirmacion @cerrarStomp="cerrarConexion()" :stompClient="stompClient" :miTurno="miTurno" :show="showModalConfirmacion" :partida="idPartida" @close="showModalConfirmacion = false" />
+    <Confirmacion @cerrarStomp="cerrarConexion" :stompClient="stompClient" :miTurno="miTurno" :show="showModalConfirmacion" :partida="idPartida" @close="showModalConfirmacion = false" />
   </Teleport>
 </template>
 
@@ -144,7 +150,7 @@ export default {
       showModalConfirmacion: false,
       showModalChat: false,
       tiempoRestante: 60,
-      hayPausa: false,
+      hayPausa: 'false',
       jugadores: [
         {
           id: 1,
@@ -196,11 +202,6 @@ export default {
     };
   },
   methods: {
-    logout() {
-      Cookies.remove("sessionId");
-      // redirigir al usuario a la página de inicio de sesión
-      this.$router.push("/");
-    },
     obtenerId(username) {
       return axios
         .get(
@@ -378,18 +379,23 @@ export default {
           //Sacar a alguien de la partida
           this.jugadorSacar = JSON.parse(response.body);
 
-          if (!this.hayPausa || this.turno != this.jugadorSacar) {  // las fichas del jugador que ha puesto la pausa no se quitan si sale
+          if (this.hayPausa == 'false' || this.turno != this.jugadorSacar) {  // las fichas del jugador que ha puesto la pausa no se quitan si sale
             this.sacarJugador(this.jugadorSacar);
             this.jugadorSacar = null;
           }
           
         });
         stompClient.subscribe("/topic/pausa/" + idPartida, (response) => {
-          this.hayPausa = response.data //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
+          this.hayPausa = response.body; //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
           //Sacar a alguien de la partida
+          console.log('VALOR DE THIS.HAYPAUSA = ',this.hayPausa,' RESPONSE BODY = ',response.body);
           const data = JSON.parse(response.body);
           if (this.jugadorSacar) {
             this.sacarJugador(this.jugadorSacar); // si se había salido el jugador que puso pausa, no se ha reconectado a tiempo y hay que quitar sus fichas
+          }
+
+          if(this.hayPausa == 'false'){
+            this.actualizarTurno(this.turno, false, false, false);
           }
         });
         stompClient.subscribe("/topic/ultimo/" + idPartida, (response) => {
@@ -740,15 +746,23 @@ export default {
     },
 
     cerrarConexion(){
+       console.log("cerrando socket");
         this.stompClient.disconnect();
+        router.push({
+            path: '/menu'
+          });
         console.log("Socket connection closed");
     },
 
     repoblarTablero(){
       console.log("Replobando tablero al reconectar");
-      const fichas = JSON.parse(this.$route.query.fichas);
-      fichas.forEach(f => {
-        this.movimiento(f.numero, f.color, f.casilla.posicion);
+      const fichasRecuperadas = JSON.parse(this.$route.query.fichas);
+      console.log(fichasRecuperadas);
+      fichasRecuperadas.forEach((f) => {
+        if(f.length > 0){
+          console.log(f);
+          this.movimiento(f[0].numero, f[0].color, f[0].casilla.posicion);
+        }
       });
     }
 
@@ -768,6 +782,9 @@ export default {
     });
 
     if(this.$route.query.reconectado){
+      this.hayPausa = 'true';
+      //this.turno = this.$route.query.turno;
+      //this.miTurno = this.turno = this.color;
       this.repoblarTablero();
     }
 

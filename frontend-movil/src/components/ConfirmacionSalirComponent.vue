@@ -101,12 +101,9 @@ export default {
           const success = response.status === 200;
           // console.log("Socket stomp: ",this.stompClient);
           if (success) {
-            this.emit('cerrarStomp');
+            this.$emit('cerrarStomp');
             // this.stompClient.disconnect();
             // console.log("Socket connection closed");
-            router.push({
-            path: '/menu'
-          });
           }
         })
         .catch((error) => {
