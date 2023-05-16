@@ -308,6 +308,7 @@ export default {
         );
         stompClient.subscribe("/topic/dado/" + idPartida, (response) => {
           //Un jugador ha sacado ficha de casa -> Actualizar tablero
+          this.partidaComenzada = true;
           const data = JSON.parse(response.body);
           console.log(data);
 
@@ -337,10 +338,11 @@ export default {
         });
         stompClient.subscribe("/topic/movimiento/" + idPartida, (response) => {
           //Un jugador ha hecho un movimiento -> Actualizar tablero
+          this.partidaComenzada = true;
           console.log("/topic/movimiento/");
           const data = JSON.parse(response.body);
           console.log(data);
-
+          
           if (data.vueltaACasa) {
             return;
           }
