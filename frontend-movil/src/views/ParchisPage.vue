@@ -366,7 +366,7 @@ export default {
           this.$refs.tablero.actualizarPosiciones();
 
           this.partidaTerminada = data.acabada;
-          this.finalTorneo = data.finalTorneo;
+          this.finalTorneo = Boolean(data.finalTorneo);
           this.actualizarTurno(data.turno, fichaComida, true, false);
         });
         stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
