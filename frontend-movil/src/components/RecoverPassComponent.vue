@@ -2,7 +2,7 @@
 import { IonButton } from '@ionic/vue';
 import axios from 'axios';
 export default {
-  components:{
+  components: {
     IonButton
   },
   props: {
@@ -19,20 +19,14 @@ export default {
   methods: {
     recoverPass() {
       this.errorUser = false;
-      axios.get('https://lamesa-backend.azurewebsites.net/usuario/obtener-id?name=' + this.username)
+
+      
+      axios.post('https://lamesa-backend.azurewebsites.net/usuario/recuperar-password?email=' + this.username)
         .then((response) => {
           const success = response.status === 200;
-          console.log(response.data)
           if (success) {
-            this.userId = response.data
-            axios.post('https://lamesa-backend.azurewebsites.net/usuario/recuperar-password/' + this.userId)
-              .then((response) => {
-                const success = response.status === 200;
-                if (success) {
-                  console.log("perfecto")
-                  this.Enviado = true;
-                }
-              })
+            console.log("perfecto")
+            this.Enviado = true;
           }
         })
         .catch((error) => {
@@ -40,11 +34,12 @@ export default {
           console.log("error en la pri peticion");
           this.errorUser = true;
         })
+
     },
     closeModal() {
-      this.$emit('close')
+      this.$emit('close');
       this.Enviado = false
-    }
+;    }
   }
 }
 </script>
@@ -71,7 +66,7 @@ export default {
 <template>
   <Transition name="notificaciones">
     <div v-if="show" class="modal-mask">
-      <div  class="modal-container">
+      <div class="modal-container">
         <a class="close-icon-img" @click="closeModal">
           <img src="../../public/assets/close.png" alt="cerrar popup">
         </a>
@@ -80,15 +75,17 @@ export default {
         </div>
         <p></p>
         <div v-if="Enviado">Ve a tu correo</div>
-        <form  v-if="!Enviado" class="chat-input" @submit.prevent="recoverPass">
-          <input  v-model="username" placeholder="Nombre de usuario" required>
+        <form v-if="!Enviado" @submit.prevent="recoverPass">
+          <input v-model="username" placeholder="correo" required>
           <p></p>
           <div v-if="errorUser" style="color: red;">El usuario no existe</div>
           <div style="display: flex; justify-content: center;">
-            <ion-button type="submit">
-              Enviar
-            </ion-button>
+
           </div>
+
+          <ion-button type="submit">
+            Enviar
+          </ion-button>
 
         </form>
 

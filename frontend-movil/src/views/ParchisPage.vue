@@ -201,7 +201,8 @@ export default {
       stompClient: null,
       esTorneo: this.$route.query.esTorneo,
       finalTorneo: false,
-      tiempoTurno: 25
+      tiempoTurno: 25,
+      alarmaEncendida: true
     };
   },
   methods: {
@@ -257,7 +258,7 @@ export default {
       console.log("Casilla calculada:", casillaCalculada);
 
       // Comprobar si esta en meta
-      if (nuevaCasilla == 74) {
+      if (nuevaCasilla == 75) {
         this.jugadores.find(item => item.color == colorFicha).fichasEnMeta++;
         this.movimientoAMeta = true;
       } else {
@@ -334,7 +335,7 @@ export default {
             );
           }
 
-          this.actualizarTurno(data.turno, false, false, data.vueltaACasa);
+          this.actualizarTurno(data.turno, false, false, data.vueltaACasa, false);
         });
         stompClient.subscribe("/topic/movimiento/" + idPartida, (response) => {
           //Un jugador ha hecho un movimiento -> Actualizar tablero
@@ -350,6 +351,7 @@ export default {
           const casillaDestino = data.destino.posicion;
           const ficha = data.ficha;
           let fichaComida = false;
+          this.fichaComida = data.comida != null;
           if (data.comida == null) {
             this.movimiento(ficha.numero, ficha.color, casillaDestino);
           } else {
@@ -366,8 +368,8 @@ export default {
           this.$refs.tablero.actualizarPosiciones();
 
           this.partidaTerminada = data.acabada;
-          this.finalTorneo = Boolean(data.finalTorneo);
-          this.actualizarTurno(data.turno, fichaComida, true, false);
+          this.finalTorneo = data.finalTorneo;
+          this.actualizarTurno(data.turno, fichaComida, true, false, false);
         });
         stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
           //Mensaje de chat recibido
@@ -400,7 +402,7 @@ export default {
           }
           
           if(this.hayPausa == 'true'){
-            this.actualizarTurno(this.turno, false, false, false);
+            this.actualizarTurno(this.turno, false, false, false, false);
           }
           this.hayPausa = response.body; //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
         });
@@ -436,15 +438,26 @@ export default {
     },
     comenzarPartida(color) {
       this.partidaComenzada = true;
-      this.actualizarTurno(color, false, false, false);
+      this.actualizarTurno(color, false, false, false, false);
     },
     realizarTurno() {
       //Realizar jugada
       this.miTurno = true;
+      if(this.fichaComida){
+        console.log("Ficha comida. Forzando turno");
+        this.forzarDado(20);
+        return;
+      }
+      if(this.movimientoAMeta){
+        console.log("Ficha en meta. Forzando turno");
+        this.forzarDado(10);
+        return;
+      }
+
       this.$refs.dado.activarDado();
       this.esperarTiempo()
     },
-    actualizarTurno(color, fichaComida, movimientoRealizado, vueltaACasa) {
+    actualizarTurno(color, fichaComida, movimientoRealizado, vueltaACasa, desdeVerMovimientos) {
       if (this.partidaTerminada) {
         this.terminarPartida();
       }
@@ -472,18 +485,19 @@ export default {
         color != this.turno ||
         (color == this.turno && fichasFuera > 0 && this.valorDado == 6 && movimientoRealizado) ||
         fichaComida ||
-        this.movimientoAMeta ||
-        vueltaACasa ||
+        color == this.turno && this.movimientoAMeta ||
+        color == this.turno && vueltaACasa ||
         color == this.turno && this.hayPausa
       ) {
         this.turno = color;
-        if (this.color == this.turno) {
+        if (this.color == this.turno && !desdeVerMovimientos) {
           //Toca jugar
           console.log("Mi turno");
           this.realizarTurno();
         }
       }
     },
+
     async dadoPulsado() {
       if (this.$refs.dado.activado) {
         const valorDado = await this.$refs.dado.tirarDado();
@@ -491,6 +505,10 @@ export default {
         this.verMovimientos(valorDado);
       }
     },
+    forzarDado(x){
+      this.verMovimientos(x);
+    }
+    ,
     activarFichasColor(color, activar) {
       const inicio = this.offsetColor(color); // 0 4 8 12
       this.$refs.tablero.fichas[inicio].activada = activar;
@@ -543,7 +561,7 @@ export default {
                 this.valorDado = valorDado;
               }
               // Cambiar de turno si corresponde
-              this.actualizarTurno(response.data.turno, false, false, false);
+              this.actualizarTurno(response.data.turno, false, false, false, true);
               resolve();
             }
           })
@@ -654,6 +672,7 @@ export default {
     },
 
     async esperarTiempo() {
+      await this.apagarAlarmas();
       if (await this.setAlarm(this.tiempoTurno)) {
         console.log("Se acabo el tiempo");
         console.log("Dado activado: ", this.$refs.dado.activado);
@@ -673,10 +692,17 @@ export default {
       }
     },
 
+    async apagarAlarmas(){
+      this.alarmaEncendida = false;
+      await this.sleep(1000);
+      this.alarmaEncendida = true;
+      return true;
+    },
+
     async setAlarm(t) {
       await this.sleep(1000);
       console.log("alarma:", t)
-      if (this.miTurno) {
+      if (this.turno == this.color && this.alarmaEncendida) {
         if (t <= 0) {
           return true;
         } else {
