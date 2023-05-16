@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
 
-    if(this.primero == Cookies.get('username') && this.esTorneo){
+    if(this.primero == "YO" && this.esTorneo){
           // Pasar a la siguiente ronda del torneo
           router.push({ path: '/esperando', query: { finalista: true, esperando:!this.finalTorneo } });
       }
