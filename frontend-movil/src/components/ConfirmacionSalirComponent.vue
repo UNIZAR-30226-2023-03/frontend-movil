@@ -90,6 +90,8 @@ export default {
       console.log('Saliendoo');
       this.mostrarConfirmacion = true;
       const sessionId = Cookies.get('sessionId');
+      this.$emit('cerrarStomp');
+      console.log("evento de cerrar emitido");
       axios.post(
         "https://lamesa-backend.azurewebsites.net/partida/salir",
         {
@@ -101,9 +103,9 @@ export default {
           const success = response.status === 200;
           // console.log("Socket stomp: ",this.stompClient);
           if (success) {
-            this.$emit('cerrarStomp');
+            
             // this.stompClient.disconnect();
-            // console.log("Socket connection closed");
+             
           }
         })
         .catch((error) => {

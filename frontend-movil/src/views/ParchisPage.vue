@@ -386,17 +386,17 @@ export default {
           
         });
         stompClient.subscribe("/topic/pausa/" + idPartida, (response) => {
-          this.hayPausa = response.body; //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
           //Sacar a alguien de la partida
           console.log('VALOR DE THIS.HAYPAUSA = ',this.hayPausa,' RESPONSE BODY = ',response.body);
           const data = JSON.parse(response.body);
           if (this.jugadorSacar) {
             this.sacarJugador(this.jugadorSacar); // si se había salido el jugador que puso pausa, no se ha reconectado a tiempo y hay que quitar sus fichas
           }
-
-          if(this.hayPausa == 'false'){
+          
+          if(this.hayPausa == 'true'){
             this.actualizarTurno(this.turno, false, false, false);
           }
+          this.hayPausa = response.body; //Llega un true si un jugador (distinto a mí) ha puesto la pausa, y false si la pausa ha finalizado.
         });
         stompClient.subscribe("/topic/ultimo/" + idPartida, (response) => {
           //Sacar a alguien de la partida
@@ -467,7 +467,8 @@ export default {
         (color == this.turno && fichasFuera > 0 && this.valorDado == 6 && movimientoRealizado) ||
         fichaComida ||
         this.movimientoAMeta ||
-        vueltaACasa
+        vueltaACasa ||
+        color == this.turno && this.hayPausa
       ) {
         this.turno = color;
         if (this.color == this.turno) {
@@ -783,7 +784,7 @@ export default {
 
     if(this.$route.query.reconectado){
       this.hayPausa = 'true';
-      //this.turno = this.$route.query.turno;
+      this.turno = this.$route.query.turno;
       //this.miTurno = this.turno = this.color;
       this.repoblarTablero();
     }

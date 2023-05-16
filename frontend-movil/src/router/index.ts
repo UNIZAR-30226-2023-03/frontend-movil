@@ -8,7 +8,8 @@ import ParchisPage from '../views/ParchisPage.vue';
 import RegistroPage from '../views/RegistroPage.vue';
 import MenuPage from '../views/MenuPage.vue';
 import TiendaPage from '../views/TiendaPage.vue';
-import VictoriaPage from '../views/VictoriaPage.vue';
+import EsperandoPage from '../views/EsperandoPage.vue';
+
 // Middleware para comprobar si el usuario está autenticado
 const comprobarAutenticacion = (to:any, from:any, next:any) => {
   const sessionId = Cookies.get('sessionId');
@@ -43,6 +44,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/final',
     component: FinalPage,
+    beforeEnter: comprobarAutenticacion
+  },
+  {
+    path: '/esperando',
+    component: EsperandoPage,
     beforeEnter: comprobarAutenticacion
   },
   {

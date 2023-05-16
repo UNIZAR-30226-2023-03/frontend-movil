@@ -86,7 +86,8 @@ export default {
       primero: this.$route.query.primero,
       segundo: this.$route.query.segundo,
       tercero: this.$route.query.tercero,
-      cuarto: this.$route.query.cuarto
+      cuarto: this.$route.query.cuarto,
+      esTorneo: this.$route.query.esTorneo
     }
   },
   beforeMount() {
@@ -94,6 +95,11 @@ export default {
     this.idUsuario = Cookies.get('sessionId');
   },
   mounted() {
+
+    if(this.primero == Cookies.get('username') && this.esTorneo){
+          // Pasar a la siguiente ronda del torneo
+          router.push({ path: '/esperando', query: { finalista: true } });
+      }
 
     this.actualizarNombre();
     axios.get('https://lamesa-backend.azurewebsites.net/usuario/monedas/' + this.idUsuario)

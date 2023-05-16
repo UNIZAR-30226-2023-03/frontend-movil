@@ -25,7 +25,7 @@
 
     </div>
     <div class="containerBotonesJugar">
-      <a class="login-button" id="torneo" @click="showModalNoti = true">
+      <a class="login-button" id="torneo" @click="showModalTorneo = true">
         Torneo
       </a>
       <a class="login-button" id="jugar" @click="jugar()">
@@ -52,6 +52,14 @@
       </Inventario>
       <Usuario :show="showModalUsuario" @close="showModalUsuario = false" @recargar="cargarDatosUsuario()">
       </Usuario>
+      <Torneo :show="showModalTorneo" @close="showModalTorneo = false"
+        @torneoCrear="showModalTorneo = false; showModalTorneoCrear = true" @torneoLista="showModalTorneo = false; showModalTorneoLista = true">
+      </Torneo>
+      <TorneoCrear :show="showModalTorneoCrear" @close="showModalTorneoCrear = false">
+      </TorneoCrear>
+      <TorneoLista :show="showModalTorneoLista" @close="showModalTorneoLista = false">
+      </TorneoLista>
+      
     </Teleport>
   </div>
 </template>
@@ -67,6 +75,10 @@ import Privada from "@/components/PrivadaComponent.vue"
 import Publica from "@/components/PublicaComponent.vue"
 import Inventario from "@/components/InventarioComponent.vue"
 import Usuario from "@/components/UsuarioComponent.vue"
+import Torneo from "@/components/TorneoComponent.vue"
+import TorneoCrear from "@/components/TorneoCrearComponent.vue"
+import TorneoLista from "@/components/TorneoListaComponent.vue"
+
 
 export default {
   components: {
@@ -76,7 +88,10 @@ export default {
     Inventario,
     Privada,
     Usuario,
-    Publica
+    Publica,
+    Torneo,
+    TorneoCrear,
+    TorneoLista
   },
   data() {
     return {
@@ -90,7 +105,10 @@ export default {
       showModalInventario: false,
       showModalAmigos: false,
       showModalRanking: false,
-      showModalUsuario: false
+      showModalUsuario: false,
+      showModalTorneo: false,
+      showModalTorneoLista: false,
+      showModalTorneoCrear: false
     }
   },
   //   watch: {

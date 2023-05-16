@@ -14,11 +14,12 @@
         </div>
 
         <form class="chat-input" @submit.prevent="sendMessage">
-          <input v-model="message" placeholder="Escribe un mensaje...">
-          <ion-button type="submit">
-            Enviar
-          </ion-button>
+          <div class="input-container">
+            <input v-model="message" placeholder="Escribe un mensaje...">
+            <ion-button type="submit">Enviar</ion-button>
+          </div>
         </form>
+
       </div>
     </div>
   </Transition>
@@ -32,12 +33,12 @@ import Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 
 export default {
-  components:{
+  components: {
     IonButton
   },
   data() {
     return {
-      message:  null,
+      message: null,
       stompClient: null,
       messages: []
     }
@@ -76,18 +77,18 @@ export default {
     sendMessage() {
       console.log("Id Partida:" + this.idPartida);
       console.log("Stomp:" + this.stompClient);
-      console.log('enviando msg: '+this.$data.message);
+      console.log('enviando msg: ' + this.$data.message);
       this.stompClient.send("/app/chat/" + this.idPartida, {}, JSON.stringify({
         usuario: this.nombreUsuario,
         mensaje: this.$data.message
       }));
 
-      
+
 
       this.message = '';
     },
     Prueba() {
-      console.log('Prueba msg: '+this.message);
+      console.log('Prueba msg: ' + this.message);
     }
   }
 }
@@ -95,4 +96,30 @@ export default {
 
 <style>
 @import '../theme/estilos.css';
+
+/* .modal-container {
+  display: flex;
+  flex-direction: column;
+} */
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.chat-input {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+}
 </style>
