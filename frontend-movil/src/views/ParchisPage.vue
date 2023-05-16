@@ -198,7 +198,8 @@ export default {
       activarDebug: true,
       partidaTerminada: false,
       movimientoAMeta: false,
-      stompClient: null
+      stompClient: null,
+      esTorneo: this.$route.query.esTorneo
     };
   },
   methods: {
@@ -713,7 +714,8 @@ export default {
           primero: this.jugadores[0].nombre,
           segundo: this.jugadores[1].nombre,
           tercero: this.jugadores[2].nombre,
-          cuarto: this.jugadores[3].nombre
+          cuarto: this.jugadores[3].nombre,
+          esTorneo: this.esTorneo
         }
       });
     },
@@ -741,7 +743,8 @@ export default {
               primero: this.jugadores[0].nombre,
               segundo: this.jugadores[1].nombre,
               tercero: this.jugadores[2].nombre,
-              cuarto: this.jugadores[3].nombre
+              cuarto: this.jugadores[3].nombre,
+              esTorneo: this.esTorneo
             }
           });
     },
