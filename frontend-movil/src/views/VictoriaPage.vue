@@ -87,7 +87,8 @@ export default {
       segundo: this.$route.query.segundo,
       tercero: this.$route.query.tercero,
       cuarto: this.$route.query.cuarto,
-      esTorneo: this.$route.query.esTorneo
+      esTorneo: this.$route.query.esTorneo,
+      finalTorneo: this.$route.query.finalTorneo
     }
   },
   beforeMount() {
@@ -98,7 +99,7 @@ export default {
 
     if(this.primero == Cookies.get('username') && this.esTorneo){
           // Pasar a la siguiente ronda del torneo
-          router.push({ path: '/esperando', query: { finalista: true } });
+          router.push({ path: '/esperando', query: { finalista: true, esperando:!this.finalTorneo } });
       }
 
     this.actualizarNombre();

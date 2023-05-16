@@ -31,6 +31,12 @@ export default {
     },
     crearPrivada(){
       console.log("jugar:", this.codigoPartida, this.passwdPartida, this.idJugador, this.confB, this.confF);
+
+      if(this.codigoPartida == '' || this.passwdPartida == ''){
+        this.mostrarError("Por favor, completa los campos");
+        return;
+      }
+
       axios.post('https://lamesa-backend.azurewebsites.net/partida/crear', {
           nombre: this.codigoPartida,
           password: this.passwdPartida,
@@ -54,6 +60,12 @@ export default {
     },
     unirsePrivada(){
       console.log("unirse:", this.codigoPartida, this.passwdPartida, this.idJugador);
+
+      if(this.codigoPartida == '' || this.passwdPartida == ''){
+        this.mostrarError("Por favor, completa los campos");
+        return;
+      }
+
       
       axios.post('https://lamesa-backend.azurewebsites.net/partida/conectar', {
           nombre: this.codigoPartida,

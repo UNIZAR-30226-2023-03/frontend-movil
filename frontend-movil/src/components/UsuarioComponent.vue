@@ -90,8 +90,8 @@ export default {
                     console.log(response.status);
                     const success = response.status === 200;
                     if (success) {
-                        console.log("Email modificado a ", this.nuevoEmail);
-                        this.mostrarToast("Email modificado a ", this.nuevoEmail, "toastExito");
+                        console.log("Email modificado a " + this.nuevoEmail, "toastExito");
+                        this.mostrarToast("Email modificado a " + this.nuevoEmail, "toastExito");
                         Cookies.set('email', this.nuevoEmail);
                         this.cargarDatosUsuario();
                     }else{

@@ -149,7 +149,7 @@ export default {
       msgsNuevos: false,
       showModalConfirmacion: false,
       showModalChat: false,
-      tiempoRestante: 60,
+      tiempoRestante: 25,
       hayPausa: 'false',
       jugadores: [
         {
@@ -199,7 +199,9 @@ export default {
       partidaTerminada: false,
       movimientoAMeta: false,
       stompClient: null,
-      esTorneo: this.$route.query.esTorneo
+      esTorneo: this.$route.query.esTorneo,
+      finalTorneo: false,
+      tiempoTurno: 25
     };
   },
   methods: {
@@ -362,6 +364,7 @@ export default {
           this.$refs.tablero.actualizarPosiciones();
 
           this.partidaTerminada = data.acabada;
+          this.finalTorneo = data.finalTorneo;
           this.actualizarTurno(data.turno, fichaComida, true, false);
         });
         stompClient.subscribe("/topic/chat/" + idPartida, (response) => {
@@ -649,7 +652,7 @@ export default {
     },
 
     async esperarTiempo() {
-      if (await this.setAlarm(30)) {
+      if (await this.setAlarm(this.tiempoTurno)) {
         console.log("Se acabo el tiempo");
         console.log("Dado activado: ", this.$refs.dado.activado);
 
@@ -715,7 +718,8 @@ export default {
           segundo: this.jugadores[1].nombre,
           tercero: this.jugadores[2].nombre,
           cuarto: this.jugadores[3].nombre,
-          esTorneo: this.esTorneo
+          esTorneo: this.esTorneo,
+          finalTorneo: this.finalTorneo
         }
       });
     },
@@ -732,7 +736,7 @@ export default {
         if (this.jugadores[index].color == this.color) {
           const j = this.jugadores[index];
           this.jugadores[index] = this.jugadores[index - 1];
-          this.jugadores[index] = j;
+          this.jugadores[index - 1] = j;
         }
       }
 
@@ -744,7 +748,8 @@ export default {
               segundo: this.jugadores[1].nombre,
               tercero: this.jugadores[2].nombre,
               cuarto: this.jugadores[3].nombre,
-              esTorneo: this.esTorneo
+              esTorneo: this.esTorneo,
+              finalTorneo: this.finalTorneo
             }
           });
     },

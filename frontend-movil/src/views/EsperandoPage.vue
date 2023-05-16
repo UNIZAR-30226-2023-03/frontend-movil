@@ -259,7 +259,7 @@ export default {
       curiosity: "",
       currentIndex: 0,
       stompClient: null,
-      esperando: true,
+      esperando: this.$route.query.esperando,
     };
   },
   beforeMount() {

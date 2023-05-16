@@ -36,10 +36,11 @@ export default {
       if (esUltimo) {
         // Ir directamente a la pagina para darle a jugar
         console.log("Es ultimo");   // En principio nunca entra aqui
+        router.push({path: '/esperando', query: {esperando: false}});
       } else {
         // Ir a pantalla esperando
         console.log("No es ultimo");
-        router.push({path: '/esperando'});
+        router.push({path: '/esperando', query: {esperando: true}});
       }
     },
 
